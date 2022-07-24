@@ -1,6 +1,6 @@
 /* eslint-disable import/export */
 export * from 'lit'
-export * from 'lit/decorators.js'
+export { InternalPropertyDeclaration, QueryAssignedElementsOptions, QueryAssignedNodesOptions, eventOptions, queryAssignedElements, queryAssignedNodes, queryAsync } from 'lit/decorators.js'
 export * from 'lit-html'
 export * from 'lit/directive.js'
 export * from 'lit/directives/repeat.js'
@@ -23,3 +23,4 @@ export * from 'lit/directives/async-append'
 export * from 'lit/directives/template-content'
 
 import './types'
+export { Component, nothing } from './Component'
