@@ -1,0 +1,25 @@
+{
+	"name": "@a11d/lit",
+	"version": "0.0.1",
+	"description": "A thin wrapper around the Lit library",
+	"main": "index.js",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/arshia11d/lit.git"
+	},
+	"keywords": [
+		"lit"
+	],
+	"author": "arshia11d",
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/arshia11d/lit/issues"
+	},
+	"homepage": "https://github.com/arshia11d/lit#readme",
+	"dependencies": {
+		"lit": "^2.2.8"
+	},
+	"devDependencies": {
+		"@a11d/eslint-config": "0.0.1"
+	}
+}
