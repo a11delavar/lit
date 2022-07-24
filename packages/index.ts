@@ -21,3 +21,5 @@ export * from 'lit/directives/when.js'
 export * from 'lit/directives/async-replace'
 export * from 'lit/directives/async-append'
 export * from 'lit/directives/template-content'
+
+import './types'
