@@ -24,3 +24,4 @@ export * from 'lit/directives/template-content'
 
 import './types'
 export { Component, nothing } from './Component'
+export * from './Controller'
