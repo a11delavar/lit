@@ -23,7 +23,7 @@ export abstract class Component extends LitElement {
 		return nothing
 	}
 
-	override firstUpdated(props: PropertyValues) {
+	protected override firstUpdated(props: PropertyValues) {
 		super.firstUpdated(props)
 		this.initialized()
 	}

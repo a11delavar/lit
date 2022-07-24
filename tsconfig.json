@@ -1,12 +1,15 @@
 {
+	"exclude": [
+		"dist"
+	],
 	"compilerOptions": {
 		"incremental": true,
 		"declaration": true,
 		"target": "ES2020",
 		"module": "ES2015",
 		"moduleResolution": "Node",
-		"outDir": "./dist",
-		"rootDir": ".",
+		"outDir": "dist",
+		"rootDir": "packages",
 		"strict": true,
 		"noUnusedLocals": true,
 		"noUnusedParameters": true,
