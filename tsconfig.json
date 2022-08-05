@@ -3,6 +3,7 @@
 		"dist"
 	],
 	"compilerOptions": {
+		"baseUrl": ".",
 		"incremental": true,
 		"declaration": true,
 		"target": "ES2020",
