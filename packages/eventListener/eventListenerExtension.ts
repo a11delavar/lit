@@ -5,7 +5,7 @@ const originalLitElementConnectedCallback = LitElement.prototype.connectedCallba
 LitElement.prototype.connectedCallback = function (this: LitElement) {
 	originalLitElementConnectedCallback.call(this)
 	const eventListeners = getEventHandlers(this)
-	for (const { type, target, options, descriptor, propertyKey } of eventListeners.values()) {
+	for (const { type, target, options, descriptor, propertyKey } of eventListeners?.values() ?? []) {
 		defineBoundListener.call(this, propertyKey, descriptor)
 		extractEventTarget.call(this, target)
 			?.addEventListener(type, getBoundListener.call(this, propertyKey), options)
@@ -16,14 +16,14 @@ const originalLitElementDisconnectedCallback = LitElement.prototype.disconnected
 LitElement.prototype.disconnectedCallback = function (this: LitElement) {
 	originalLitElementDisconnectedCallback.call(this)
 	const eventListeners = getEventHandlers(this)
-	for (const { type, target, options, propertyKey } of eventListeners.values()) {
+	for (const { type, target, options, propertyKey } of eventListeners?.values() ?? []) {
 		extractEventTarget.call(this, target)
 			?.removeEventListener(type, getBoundListener.call(this, propertyKey), options)
 	}
 }
 
 function getEventHandlers(element: LitElement) {
-	return (element.constructor as any)[eventListenersSymbol] as Map<string, EventListenerMetadata>
+	return (element.constructor as any)[eventListenersSymbol] as Map<string, EventListenerMetadata> | undefined
 }
 
 function extractEventTarget(this: any, target: FullEventListenerDecoratorOptions[0]['target']): EventTarget | undefined {
