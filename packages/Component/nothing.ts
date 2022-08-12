@@ -1,3 +1,3 @@
-import { nothing as litNothing, TemplateResult } from 'lit'
+import { HTMLTemplateResult, nothing as litNothing } from 'lit'
 
-export const nothing = litNothing as unknown as TemplateResult
+export const nothing = litNothing as unknown as HTMLTemplateResult
