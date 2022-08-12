@@ -1,6 +1,6 @@
 {
 	"name": "@a11d/lit",
-	"version": "0.0.24",
+	"version": "0.0.26",
 	"description": "A thin wrapper around the Lit library",
 	"repository": {
 		"type": "git",
@@ -21,7 +21,7 @@
 	"main": "./dist/index.js",
 	"types": "./dist/index.d.ts",
 	"scripts": {
-		"build": "tsc"
+		"build": "tsc && webpack build"
 	},
 	"dependencies": {
 		"lit": "^2.2.8"
