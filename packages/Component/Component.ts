@@ -14,6 +14,7 @@ export abstract class Component extends LitElement {
 	/** Invoked every time the component is disconnected from the Document Object Model (DOM) */
 	protected disconnected() { }
 
+	/** The template rendered into renderRoot. Invoked on each update to perform rendering tasks. */
 	protected get template() {
 		return nothing
 	}
