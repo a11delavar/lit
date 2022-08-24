@@ -39,7 +39,7 @@ export class StyleDirective extends Directive {
 	}
 
 	// eslint-disable-next-line @typescript-eslint/ban-types
-	render(styles: StandardProperties & (Record<string, string> & {})) {
+	render(styles: StandardProperties | (Record<string, string> & {})) {
 		for (const [key, value] of Object.entries(styles)) {
 			const handler = [...StyleDirective.handlers].find(handler => handler.handles(this.element, [key, value])) ?? StyleDirective.defaultHandler
 			handler.apply(this.element, [key, value])
