@@ -4,7 +4,6 @@ import { nothing } from '.'
 
 export const component = customElement
 
-// @ts-expect-error Until TypeScript supports "final" methods this masks the those methods.
 export abstract class Component extends LitElement {
 	/** Invoked after first update i.e. render is completed */
 	protected initialized() { }
@@ -19,25 +18,25 @@ export abstract class Component extends LitElement {
 		return nothing
 	}
 
-	// @ts-expect-error Final method
-	private override firstUpdated(props: PropertyValues) {
+	/** @final */
+	protected override render() {
+		return this.template
+	}
+
+	/** @final */
+	protected override firstUpdated(props: PropertyValues) {
 		super.firstUpdated(props)
 		this.initialized()
 	}
 
-	// @ts-expect-error Final method
-	private override render() {
-		return this.template
-	}
-
-	// @ts-expect-error Final method
-	private override connectedCallback() {
+	/** @final */
+	override connectedCallback() {
 		super.connectedCallback()
 		this.connected()
 	}
 
-	// @ts-expect-error Final method
-	private override disconnectedCallback() {
+	/** @final */
+	override disconnectedCallback() {
 		super.disconnectedCallback()
 		this.disconnected()
 	}
