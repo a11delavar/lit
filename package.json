@@ -21,7 +21,8 @@
 	"main": "./dist/index.js",
 	"types": "./dist/index.d.ts",
 	"scripts": {
-		"build": "tsc && webpack build"
+		"build": "tsc && webpack build",
+		"release": "npm run build && npm version patch && npm publish"
 	},
 	"dependencies": {
 		"csstype": "^3.1.0",
