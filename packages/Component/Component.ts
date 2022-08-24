@@ -4,6 +4,7 @@ import { nothing } from '.'
 
 export const component = customElement
 
+// @ts-expect-error Until TypeScript supports "final" methods this masks the those methods.
 export abstract class Component extends LitElement {
 	/** Invoked after first update i.e. render is completed */
 	protected initialized() { }
@@ -14,26 +15,29 @@ export abstract class Component extends LitElement {
 	/** Invoked every time the component is disconnected from the Document Object Model (DOM) */
 	protected disconnected() { }
 
-	/** @deprecated Use template getter instead */
-	protected override render() {
-		return this.template
-	}
-
 	protected get template() {
 		return nothing
 	}
 
-	protected override firstUpdated(props: PropertyValues) {
+	// @ts-expect-error Final method
+	private override firstUpdated(props: PropertyValues) {
 		super.firstUpdated(props)
 		this.initialized()
 	}
 
-	override connectedCallback() {
+	// @ts-expect-error Final method
+	private override render() {
+		return this.template
+	}
+
+	// @ts-expect-error Final method
+	private override connectedCallback() {
 		super.connectedCallback()
 		this.connected()
 	}
 
-	override disconnectedCallback() {
+	// @ts-expect-error Final method
+	private override disconnectedCallback() {
 		super.disconnectedCallback()
 		this.disconnected()
 	}
