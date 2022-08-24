@@ -9,6 +9,7 @@
 		"target": "ES2020",
 		"module": "ES2015",
 		"moduleResolution": "Node",
+		"importHelpers": true,
 		"outDir": "dist",
 		"rootDir": "packages",
 		"strict": true,
