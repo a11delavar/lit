@@ -1,6 +1,6 @@
 {
 	"name": "@a11d/lit",
-	"version": "0.0.27",
+	"version": "0.0.30",
 	"description": "A thin wrapper around the Lit library",
 	"repository": {
 		"type": "git",
@@ -22,7 +22,7 @@
 	"types": "./dist/index.d.ts",
 	"scripts": {
 		"build": "tsc && webpack build",
-		"release": "npm run build && npm version patch && npm publish"
+		"release": "npm run build && npm version patch --no-git-tag-version && npm publish"
 	},
 	"dependencies": {
 		"csstype": "^3.1.0",
