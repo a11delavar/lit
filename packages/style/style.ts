@@ -21,7 +21,7 @@ export class StyleDirective extends Directive {
 	private static readonly defaultHandler = new class implements StyleHandler {
 		handles() { return true }
 		apply(element: HTMLElement, [key, value]: StyleEntry): void {
-			element.style[key as any] = value
+			element.style[key as any] = value === null || value === undefined ? '' : value
 		}
 	}
 
