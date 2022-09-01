@@ -1,6 +1,7 @@
 /* eslint-disable import/export */
 export * from 'lit'
 export { InternalPropertyDeclaration, QueryAssignedElementsOptions, QueryAssignedNodesOptions, eventOptions, queryAssignedElements, queryAssignedNodes, queryAsync } from 'lit/decorators.js'
+export { withStatic, literal, unsafeStatic, html as staticHtml, svg as staticSvg } from 'lit/static-html.js'
 export * from 'lit-html'
 export * from 'lit-html/directive.js'
 export * from 'lit-html/directives/async-append.js'
