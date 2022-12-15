@@ -1,11 +1,11 @@
-import type { EventPart } from 'packages'
+import { Part } from 'lit'
 
-export const extractEventHandler = <TEvent extends Event = Event>(eventListener: EventListenerOrEventListenerObject) => {
-	if ('_$committedValue' in eventListener) {
-		const eventPart = eventListener as EventPart
-		const handler = eventListener['_$committedValue'] as (event: TEvent) => void
+export const extractEventHandler = <TEvent extends Event = Event>(eventListener: EventListenerOrEventListenerObject): (event: TEvent) => void => {
+	return (eventListener as Part).type === 5
+		// @ts-expect-error - _$committedValue does actually exist on EventPart
 		// eslint-disable-next-line no-restricted-syntax
-		return handler.bind(eventPart.element)
-	}
-	return typeof eventListener === 'function' ? eventListener : eventListener.handleEvent
+		? eventListener._$committedValue.bind(eventListener.element)
+		: typeof eventListener === 'function'
+			? eventListener
+			: eventListener.handleEvent
 }
