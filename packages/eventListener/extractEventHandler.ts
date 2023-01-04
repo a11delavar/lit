@@ -1,4 +1,4 @@
-import { Part } from 'lit'
+import type { Part } from 'lit'
 
 export const extractEventHandler = <TEvent extends Event = Event>(eventListener: EventListenerOrEventListenerObject): (event: TEvent) => void => {
 	return (eventListener as Part).type === 5

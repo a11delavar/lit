@@ -1,5 +1,5 @@
-import { LitElement } from 'lit'
-import { decorateLitElement } from '../decorateLitElement'
+import type { ReactiveElement } from 'lit'
+import { decorateReactiveElement } from '../decorateReactiveElement'
 
 export type ShorthandEventListenerDecoratorOptions = [type: string, options?: EventListenerOptions | boolean]
 export type FullEventListenerDecoratorOptions = [{
@@ -26,10 +26,9 @@ export type EventListenerMetadata = ReturnType<typeof extractArguments> & {
 }
 
 export const eventListener = (...eventListenerOptions: EventListenerDecoratorOptions) => {
-	return (prototype: LitElement, propertyKey: string, descriptor?: PropertyDescriptor) => {
+	return (prototype: ReactiveElement, propertyKey: string, descriptor?: PropertyDescriptor) => {
 		const extractedArguments = extractArguments(eventListenerOptions)
-
-		decorateLitElement<Map<string, EventListenerMetadata>>({
+		decorateReactiveElement<Map<string, EventListenerMetadata>>({
 			prototype,
 			constructorPropertyKey: eventListenersSymbol,
 			initialValue: new Map,

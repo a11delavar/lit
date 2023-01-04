@@ -1,6 +1,6 @@
 {
 	"name": "@a11d/lit",
-	"version": "0.0.37",
+	"version": "0.0.39",
 	"description": "A thin wrapper around the Lit library",
 	"repository": {
 		"type": "git",
@@ -25,15 +25,15 @@
 		"release": "npm run build && npm version patch --no-git-tag-version && npm publish"
 	},
 	"dependencies": {
-		"csstype": "^3.1.0",
-		"lit": "^2.2.8"
+		"csstype": "x",
+		"lit": "2.x"
 	},
 	"devDependencies": {
-		"@a11d/eslint-config": "0.0.1",
-		"terser-webpack-plugin": "^5.3.3",
-		"ts-loader": "^9.3.1",
-		"tsconfig-paths-webpack-plugin": "^4.0.0",
-		"webpack": "^5.74.0",
-		"webpack-cli": "^4.10.0"
+		"@a11d/eslint-config": "x",
+		"terser-webpack-plugin": "5.x",
+		"ts-loader": "9.x",
+		"tsconfig-paths-webpack-plugin": "4.x",
+		"webpack": "5.x",
+		"webpack-cli": "4.x"
 	}
 }
