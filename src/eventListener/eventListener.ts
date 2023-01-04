@@ -1,5 +1,5 @@
 import type { ReactiveElement } from 'lit'
-import { decorateReactiveElement } from '../decorateReactiveElement'
+import { decorateReactiveElement } from '../decorateReactiveElement.js'
 
 export type ShorthandEventListenerDecoratorOptions = [type: string, options?: EventListenerOptions | boolean]
 export type FullEventListenerDecoratorOptions = [{

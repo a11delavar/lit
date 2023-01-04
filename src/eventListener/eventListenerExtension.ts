@@ -1,5 +1,5 @@
 import { ReactiveElement } from 'lit'
-import { EventListenerMetadata, eventListenersSymbol, FullEventListenerDecoratorOptions } from './eventListener'
+import { EventListenerMetadata, eventListenersSymbol, FullEventListenerDecoratorOptions } from './eventListener.js'
 
 const originalConnectedCallback = ReactiveElement.prototype.connectedCallback
 ReactiveElement.prototype.connectedCallback = function (this: ReactiveElement) {

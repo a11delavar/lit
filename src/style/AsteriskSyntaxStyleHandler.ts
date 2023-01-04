@@ -1,4 +1,4 @@
-import { StyleEntry, styleHandler, StyleHandler } from './style'
+import { StyleEntry, styleHandler, StyleHandler } from './style.js'
 
 @styleHandler()
 export class AsteriskSyntaxStyleHandler implements StyleHandler {

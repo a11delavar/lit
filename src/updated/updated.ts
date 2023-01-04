@@ -1,5 +1,5 @@
 import type { ReactiveElement } from 'lit'
-import { decorateReactiveElement } from '../decorateReactiveElement'
+import { decorateReactiveElement } from '../decorateReactiveElement.js'
 
 export type UpdatedCallback<T> = (value: T, oldValue: T) => void
 

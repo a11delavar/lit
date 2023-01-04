@@ -1,5 +1,5 @@
-import { HTMLElementEventDispatcher } from './HTMLElementEventDispatcher'
-import { PureEventDispatcher } from './PureEventDispatcher'
+import { HTMLElementEventDispatcher } from './HTMLElementEventDispatcher.js'
+import { PureEventDispatcher } from './PureEventDispatcher.js'
 
 export function event(options?: EventInit) {
 	return (prototype: unknown, propertyKey?: string) => {
