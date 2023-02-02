@@ -85,9 +85,6 @@ export class EventListenerController extends Controller {
 	}
 
 	override async hostConnected() {
-		if (typeof this.options.listener === 'function') {
-			this.options.listener = this.options.listener.bind(this.host)
-		}
 		await this.unsubscribe()
 	}
 }

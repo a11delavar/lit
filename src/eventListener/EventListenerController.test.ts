@@ -31,7 +31,7 @@ describe('EventListenerController', () => {
 	describe('used as method', () => {
 		@component('lit-test-event-listener-controller-used-as-method')
 		class TestComponent extends EventListenerControllerTestComponent {
-			readonly eventListenerController = new EventListenerController(this, 'click', this.handleEvent)
+			readonly eventListenerController = new EventListenerController(this, 'click', this.handleEvent.bind(this))
 		}
 
 		const fixture = new ComponentTestFixture(() => new TestComponent())
@@ -55,7 +55,7 @@ describe('EventListenerController', () => {
 			readonly eventListenerController = new EventListenerController(this, {
 				target,
 				type: 'click',
-				listener: this.handleEvent,
+				listener: this.handleEvent.bind(this),
 			})
 		}
 
@@ -73,7 +73,7 @@ describe('EventListenerController', () => {
 			readonly eventListenerController = new EventListenerController(this, {
 				target,
 				type: 'click',
-				listener: this.handleEvent,
+				listener: this.handleEvent.bind(this),
 			})
 		}
 
@@ -89,7 +89,7 @@ describe('EventListenerController', () => {
 			readonly eventListenerController = new EventListenerController(this, {
 				target,
 				type: 'click',
-				listener: this.handleEvent,
+				listener: this.handleEvent.bind(this),
 			})
 		}
 
@@ -108,7 +108,7 @@ describe('EventListenerController', () => {
 			readonly eventListenerController = new EventListenerController(this, {
 				target: target,
 				type: 'click',
-				listener: this.handleEvent,
+				listener: this.handleEvent.bind(this),
 			})
 		}
 

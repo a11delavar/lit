@@ -24,8 +24,7 @@ export default {
 	module: {
 		rules: [
 			{
-				test: /\.ts$/,
-				exclude: /\.test.ts$/,
+				test: /(?<!\.test)\.ts$/,
 				loader: 'ts-loader',
 			}
 		]
