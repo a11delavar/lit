@@ -32,12 +32,11 @@ export const eventListener = (...eventListenerOptions: EventListenerDecoratorOpt
 				}
 
 				override hostConnected() {
-					const unboundListener = !descriptor
+					this.options.listener = !descriptor
 						? Object.getOwnPropertyDescriptor(element, propertyKey)?.value
 						: typeof descriptor.get === 'function'
 							? descriptor.get
 							: descriptor.value
-					this.options.listener = unboundListener.bind(element)
 					return super.hostConnected()
 				}
 			})

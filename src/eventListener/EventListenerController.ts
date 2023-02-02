@@ -32,14 +32,16 @@ export async function extractEventTargets(this: any, target: EventListenerTarget
 	return handle(target ?? this as EventTarget)
 }
 
+type Listener = EventListenerObject | ((e: any) => void)
+
 type FullEventListenerControllerOptions = {
 	type: string
-	listener: EventListenerOrEventListenerObject
+	listener: Listener
 	target?: EventListenerTarget
 	options?: EventListenerOptions | boolean
 }
 
-type ShorthandEventListenerControllerOptions = [type: string, listener: EventListenerOrEventListenerObject, options?: EventListenerOptions | boolean]
+type ShorthandEventListenerControllerOptions = [type: string, listener: Listener, options?: EventListenerOptions | boolean]
 
 type EventListenerControllerOptions = ShorthandEventListenerControllerOptions | [FullEventListenerControllerOptions]
 
@@ -83,6 +85,9 @@ export class EventListenerController extends Controller {
 	}
 
 	override async hostConnected() {
+		if (typeof this.options.listener === 'function') {
+			this.options.listener = this.options.listener.bind(this.host)
+		}
 		await this.unsubscribe()
 	}
 }

@@ -1,4 +1,4 @@
-import { eventListener, Component, component, html, FullEventListenerOptions, queryAsync } from '../index.js'
+import { eventListener, Component, component, html, EventListenerTarget, queryAsync } from '../index.js'
 import { ComponentTestFixture } from '../../test/ComponentTestFixture.js'
 import { extractEventTargets } from './EventListenerController.js'
 
@@ -117,7 +117,7 @@ describe('@eventListener()', () => {
 	function test(specs: {
 		fixture: ComponentTestFixture<EventListenerTestComponent>
 		event?: Event
-		target?: FullEventListenerOptions['target']
+		target?: EventListenerTarget
 	}) {
 		const event = specs.event ?? new PointerEvent('click')
 
