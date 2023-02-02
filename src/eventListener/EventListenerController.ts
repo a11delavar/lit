@@ -2,9 +2,13 @@ import { ReactiveElement } from 'lit'
 import { Controller } from '../Controller/Controller.js'
 import { EventListenerArguments, extractOptions, FullEventListenerOptions } from './EventListenerOptions.js'
 
-export async function extractEventTarget(this: any, target: FullEventListenerOptions['target']) {
+export async function extractEventTargets(this: any, target: FullEventListenerOptions['target']) {
+	const handle = (value: Iterable<EventTarget> | EventTarget) => {
+		return Symbol.iterator in value ? [...value] : [value]
+	}
+
 	if (target === undefined) {
-		return this as EventTarget
+		return handle(this as EventTarget)
 	}
 
 	if (typeof target === 'function') {
@@ -15,13 +19,17 @@ export async function extractEventTarget(this: any, target: FullEventListenerOpt
 		}
 
 		if (eventTarget instanceof EventTarget) {
-			return eventTarget
+			return handle(eventTarget)
+		}
+
+		if (Symbol.iterator in eventTarget && [...eventTarget].every(t => t instanceof EventTarget)) {
+			return handle(eventTarget)
 		}
 
 		throw new TypeError(`${this.constructor}.target is not an EventTarget`)
 	}
 
-	return target ?? this as EventTarget
+	return handle(target ?? this as EventTarget)
 }
 
 export class EventListenerController extends Controller {
@@ -39,14 +47,18 @@ export class EventListenerController extends Controller {
 	}
 
 	override async hostDisconnected() {
-		const t = await extractEventTarget.call(this.host, this.options.target)
-		t?.removeEventListener(this.options.type, this.getBoundListener(this.propertyKey), this.options.options)
+		const targets = await extractEventTargets.call(this.host, this.options.target)
+		for (const target of targets) {
+			target.removeEventListener(this.options.type, this.getBoundListener(this.propertyKey), this.options.options)
+		}
 	}
 
 	override async hostConnected() {
 		this.defineBoundListener()
-		const t = await extractEventTarget.call(this.host, this.options.target)
-		t?.addEventListener(this.options.type, this.getBoundListener(this.propertyKey), this.options.options)
+		const targets = await extractEventTargets.call(this.host, this.options.target)
+		for (const target of targets) {
+			target?.addEventListener(this.options.type, this.getBoundListener(this.propertyKey), this.options.options)
+		}
 	}
 
 	private getBoundListener(propertyKey: string) {

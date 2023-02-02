@@ -1,6 +1,6 @@
 import { eventListener, Component, component, html, FullEventListenerOptions, queryAsync } from '../index.js'
 import { ComponentTestFixture } from '../../test/ComponentTestFixture.js'
-import { extractEventTarget } from './EventListenerController.js'
+import { extractEventTargets } from './EventListenerController.js'
 
 abstract class EventListenerTestComponent extends Component {
 	readonly fakeCall = jasmine.createSpy('fakeCall')
@@ -81,6 +81,39 @@ describe('@eventListener()', () => {
 		test({ fixture, target })
 	})
 
+	describe('used on custom iterable target', () => {
+		const target = [document, window]
+
+		@component('lit-test-event-listener-used-on-custom-iterable-target')
+		class TestComponent extends EventListenerTestComponent {
+			@eventListener({ target, type: 'click' })
+			protected handleClick(e: Event) {
+				super.handleEvent(e)
+			}
+		}
+
+		const fixture = new ComponentTestFixture(() => new TestComponent())
+		test({ fixture, target })
+	})
+
+	describe('used on custom iterable target getter', () => {
+		async function target(this: EventListenerTestComponent) {
+			const e = await this.ul
+			return [...e.querySelectorAll('li')]
+		}
+
+		@component('lit-test-event-listener-used-on-custom-iterable-target-getter')
+		class TestComponent extends EventListenerTestComponent {
+			@eventListener({ target, type: 'click' })
+			protected handleClick(e: Event) {
+				super.handleEvent(e)
+			}
+		}
+
+		const fixture = new ComponentTestFixture(() => new TestComponent())
+		test({ fixture, target })
+	})
+
 	function test(specs: {
 		fixture: ComponentTestFixture<EventListenerTestComponent>
 		event?: Event
@@ -88,13 +121,31 @@ describe('@eventListener()', () => {
 	}) {
 		const event = specs.event ?? new PointerEvent('click')
 
-		beforeEach(async () => {
-			const target = await extractEventTarget.call(specs.fixture.component, specs.target)
-			target.dispatchEvent(event)
+		const dispatchEvent = async () => {
+			const targets = await extractEventTargets.call(specs.fixture.component, specs.target)
+			targets.forEach(t => t.dispatchEvent(event))
+			return targets.length
+		}
+
+		it('calls the method', async () => {
+			const length = await dispatchEvent()
+			expect(specs.fixture.component.fakeCall).toHaveBeenCalledTimes(length)
 		})
 
-		it('calls the method', () => expect(specs.fixture.component.fakeCall).toHaveBeenCalledTimes(1))
-		it('bounds the method to the component', () => expect(specs.fixture.component.handlerThis).toBe(specs.fixture.component))
-		it('passes the event as the first argument', () => expect(specs.fixture.component.handlerEvent).toBe(event))
+		it('bounds the method to the component', async () => {
+			await dispatchEvent()
+			expect(specs.fixture.component.handlerThis).toBe(specs.fixture.component)
+		})
+
+		it('passes the event as the first argument', async () => {
+			await dispatchEvent()
+			expect(specs.fixture.component.handlerEvent).toBe(event)
+		})
+
+		it('removes the event listener on disconnect', async () => {
+			specs.fixture.component.remove()
+			await dispatchEvent()
+			expect(specs.fixture.component.fakeCall).toHaveBeenCalledTimes(0)
+		})
 	}
 })
