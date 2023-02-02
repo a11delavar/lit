@@ -1,6 +1,6 @@
 import { eventListener, Component, component, html, FullEventListenerDecoratorOptions, queryAsync } from '../index.js'
 import { ComponentTestFixture } from '../../test/ComponentTestFixture.js'
-import { extractEventTarget } from './eventListenerExtension.js'
+import { extractEventTarget } from './EventListenerController.js'
 
 abstract class EventListenerTestComponent extends Component {
 	readonly fakeCall = jasmine.createSpy('fakeCall')
@@ -93,7 +93,7 @@ describe('@eventListener()', () => {
 			target.dispatchEvent(event)
 		})
 
-		it('calls the method', () => expect(specs.fixture.component.fakeCall).toHaveBeenCalled())
+		it('calls the method', () => expect(specs.fixture.component.fakeCall).toHaveBeenCalledTimes(1))
 		it('bounds the method to the component', () => expect(specs.fixture.component.handlerThis).toBe(specs.fixture.component))
 		it('passes the event as the first argument', () => expect(specs.fixture.component.handlerEvent).toBe(event))
 	}
