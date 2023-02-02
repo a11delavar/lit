@@ -4,7 +4,7 @@ import { decorateReactiveElement } from '../decorateReactiveElement.js'
 export type ShorthandEventListenerDecoratorOptions = [type: string, options?: EventListenerOptions | boolean]
 export type FullEventListenerDecoratorOptions = [{
 	type: string
-	target?: EventTarget | ((this: any) => EventTarget)
+	target?: EventTarget | ((this: any) => EventTarget | Promise<EventTarget>)
 	options?: EventListenerOptions | boolean
 }]
 export type EventListenerDecoratorOptions = ShorthandEventListenerDecoratorOptions | FullEventListenerDecoratorOptions
