@@ -1,8 +1,8 @@
-import { eventListener, Component, component, html, EventListenerTarget, queryAsync } from '../index.js'
 import { ComponentTestFixture } from '../../test/ComponentTestFixture.js'
-import { extractEventTargets } from './EventListenerController.js'
+import { component, Component, EventListenerTarget, html, queryAsync } from '../index.js'
+import { EventListenerController, extractEventTargets } from './EventListenerController.js'
 
-abstract class EventListenerTestComponent extends Component {
+abstract class EventListenerControllerTestComponent extends Component {
 	readonly fakeCall = jasmine.createSpy('fakeCall')
 	handlerThis!: this
 	handlerEvent!: Event
@@ -11,6 +11,8 @@ abstract class EventListenerTestComponent extends Component {
 		this.handlerEvent = e
 		this.handlerThis = this
 	}
+
+	abstract readonly eventListenerController: EventListenerController
 
 	@queryAsync('ul') readonly ul!: Promise<HTMLUListElement>
 
@@ -25,14 +27,11 @@ abstract class EventListenerTestComponent extends Component {
 	}
 }
 
-describe('@eventListener()', () => {
+describe('EventListenerController', () => {
 	describe('used as method', () => {
-		@component('lit-test-event-listener-used-as-method')
-		class TestComponent extends EventListenerTestComponent {
-			@eventListener('click')
-			protected handleClick(e: Event) {
-				super.handleEvent(e)
-			}
+		@component('lit-test-event-listener-controller-used-as-method')
+		class TestComponent extends EventListenerControllerTestComponent {
+			readonly eventListenerController = new EventListenerController(this, 'click', this.handleEvent)
 		}
 
 		const fixture = new ComponentTestFixture(() => new TestComponent())
@@ -40,10 +39,9 @@ describe('@eventListener()', () => {
 	})
 
 	describe('used as arrow function', () => {
-		@component('lit-test-event-listener-used-as-arrow-function')
-		class TestComponent extends EventListenerTestComponent {
-			@eventListener('click')
-			protected handleClick = (e: Event) => super.handleEvent(e)
+		@component('lit-test-event-listener-controller-used-as-arrow-function')
+		class TestComponent extends EventListenerControllerTestComponent {
+			readonly eventListenerController = new EventListenerController(this, 'click', e => this.handleEvent(e))
 		}
 		const fixture = new ComponentTestFixture(() => new TestComponent())
 		test({ fixture })
@@ -52,12 +50,13 @@ describe('@eventListener()', () => {
 	describe('used on custom target', () => {
 		const target = window
 
-		@component('lit-test-event-listener-used-on-custom-target')
-		class TestComponent extends EventListenerTestComponent {
-			@eventListener({ target, type: 'click' })
-			protected handleClick(e: Event) {
-				super.handleEvent(e)
-			}
+		@component('lit-test-event-listener-controller-used-on-custom-target')
+		class TestComponent extends EventListenerControllerTestComponent {
+			readonly eventListenerController = new EventListenerController(this, {
+				target,
+				type: 'click',
+				listener: this.handleEvent,
+			})
 		}
 
 		const fixture = new ComponentTestFixture(() => new TestComponent())
@@ -65,16 +64,17 @@ describe('@eventListener()', () => {
 	})
 
 	describe('used on custom target getter', () => {
-		function target(this: EventListenerTestComponent) {
+		function target(this: EventListenerControllerTestComponent) {
 			return this.ul
 		}
 
-		@component('lit-test-event-listener-used-on-custom-target-getter')
-		class TestComponent extends EventListenerTestComponent {
-			@eventListener({ target, type: 'click' })
-			protected handleClick(e: Event) {
-				super.handleEvent(e)
-			}
+		@component('lit-test-event-listener-controller-used-on-custom-target-getter')
+		class TestComponent extends EventListenerControllerTestComponent {
+			readonly eventListenerController = new EventListenerController(this, {
+				target,
+				type: 'click',
+				listener: this.handleEvent,
+			})
 		}
 
 		const fixture = new ComponentTestFixture(() => new TestComponent())
@@ -84,12 +84,13 @@ describe('@eventListener()', () => {
 	describe('used on custom iterable target', () => {
 		const target = [document, window]
 
-		@component('lit-test-event-listener-used-on-custom-iterable-target')
-		class TestComponent extends EventListenerTestComponent {
-			@eventListener({ target, type: 'click' })
-			protected handleClick(e: Event) {
-				super.handleEvent(e)
-			}
+		@component('lit-test-event-listener-controller-used-on-custom-iterable-target')
+		class TestComponent extends EventListenerControllerTestComponent {
+			readonly eventListenerController = new EventListenerController(this, {
+				target,
+				type: 'click',
+				listener: this.handleEvent,
+			})
 		}
 
 		const fixture = new ComponentTestFixture(() => new TestComponent())
@@ -97,17 +98,18 @@ describe('@eventListener()', () => {
 	})
 
 	describe('used on custom iterable target getter', () => {
-		async function target(this: EventListenerTestComponent) {
+		async function target(this: EventListenerControllerTestComponent) {
 			const e = await this.ul
 			return e.querySelectorAll('li')
 		}
 
-		@component('lit-test-event-listener-used-on-custom-iterable-target-getter')
-		class TestComponent extends EventListenerTestComponent {
-			@eventListener({ target, type: 'click' })
-			protected handleClick(e: Event) {
-				super.handleEvent(e)
-			}
+		@component('lit-test-event-listener-controller-used-on-custom-iterable-target-getter')
+		class TestComponent extends EventListenerControllerTestComponent {
+			readonly eventListenerController = new EventListenerController(this, {
+				target: target,
+				type: 'click',
+				listener: this.handleEvent,
+			})
 		}
 
 		const fixture = new ComponentTestFixture(() => new TestComponent())
@@ -115,7 +117,7 @@ describe('@eventListener()', () => {
 	})
 
 	function test(specs: {
-		fixture: ComponentTestFixture<EventListenerTestComponent>
+		fixture: ComponentTestFixture<EventListenerControllerTestComponent>
 		event?: Event
 		target?: EventListenerTarget
 	}) {
