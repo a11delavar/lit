@@ -32,8 +32,8 @@ export class EventListenerController extends Controller {
 	constructor(
 		protected override readonly host: ReactiveElement,
 		protected readonly propertyKey: string,
-		protected readonly descriptor: PropertyDescriptor | undefined,
-		...options: EventListenerArguments) {
+		...options: EventListenerArguments
+	) {
 		super(host)
 		this.options = extractOptions(options)
 	}
@@ -60,11 +60,12 @@ export class EventListenerController extends Controller {
 			return isListener || isListenerObject
 		}
 
-		const unboundFunction = !this.descriptor
+		const descriptor = Object.getOwnPropertyDescriptor(this.host.constructor.prototype, this.propertyKey)
+		const unboundFunction = !descriptor
 			? Object.getOwnPropertyDescriptor(this.host, this.propertyKey)?.value
-			: typeof this.descriptor.get === 'function'
-				? this.descriptor.get
-				: this.descriptor.value
+			: typeof descriptor.get === 'function'
+				? descriptor.get
+				: descriptor.value
 
 		if (isEventListenerOrEventListenerObject(unboundFunction) === false) {
 			throw new TypeError(`${this.host.constructor}.${this.propertyKey} is not a function`)
