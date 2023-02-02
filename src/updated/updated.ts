@@ -1,27 +1,31 @@
 import type { ReactiveElement } from 'lit'
-import { decorateReactiveElement } from '../decorateReactiveElement.js'
+import { Controller } from '../Controller/index.js'
 
 export type UpdatedCallback<T> = (value: T, oldValue: T) => void
 
-export const updatedObserversSymbol = Symbol('updatedObservers')
-
 export const updated = <T>(callback: UpdatedCallback<T>) => {
 	return (prototype: ReactiveElement, propertyKey: PropertyKey) => {
-		decorateReactiveElement<Map<PropertyKey, UpdatedCallback<any>>>({
-			prototype,
-			constructorPropertyKey: updatedObserversSymbol,
-			initialValue: new Map,
-			lifecycleHooks: new Map([
-				['updated', function (this, observers, changedProperties: Parameters<ReactiveElement['updated']>[0]) {
-					for (const [propertyKey, value] of changedProperties) {
-						const key = propertyKey as keyof ReactiveElement
-						const observer = observers?.get(key)
-						if (observer !== undefined) {
-							observer.call(this, this[key], value)
-						}
-					}
-				}]
-			])
-		}).set(propertyKey, callback)
+		const Constructor = prototype.constructor as typeof ReactiveElement
+		Constructor.addInitializer(element => element.addController(new class extends Controller {
+			constructor() { super(element) }
+
+			private hasChanged = false
+			private oldValue: any
+			private get value() { return (this.host as any)[propertyKey] }
+
+			override hostUpdate() {
+				if (this.value !== this.oldValue) {
+					this.hasChanged = true
+				}
+			}
+
+			override hostUpdated() {
+				if (this.hasChanged) {
+					this.hasChanged = false
+					callback.call(this.host, this.value, this.oldValue)
+					this.oldValue = this.value
+				}
+			}
+		}))
 	}
 }
