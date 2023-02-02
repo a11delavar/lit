@@ -33,62 +33,36 @@ export async function extractEventTargets(this: any, target: FullEventListenerOp
 }
 
 export class EventListenerController extends Controller {
-	private static readonly getBoundMethodKey = (method: string) => `$BOUND_${method}$`
-
 	protected readonly options: FullEventListenerOptions
 
 	constructor(
 		protected override readonly host: ReactiveElement,
-		protected readonly propertyKey: string,
+		protected listener: EventListenerOrEventListenerObject,
 		...options: EventListenerArguments
 	) {
 		super(host)
 		this.options = extractOptions(options)
 	}
 
-	override async hostDisconnected() {
+	async subscribe() {
 		const targets = await extractEventTargets.call(this.host, this.options.target)
 		for (const target of targets) {
-			target.removeEventListener(this.options.type, this.getBoundListener(this.propertyKey), this.options.options)
+			target.removeEventListener(this.options.type, this.listener, this.options.options)
 		}
+	}
+
+	async unsubscribe() {
+		const targets = await extractEventTargets.call(this.host, this.options.target)
+		for (const target of targets) {
+			target?.addEventListener(this.options.type, this.listener, this.options.options)
+		}
+	}
+
+	override async hostDisconnected() {
+		await this.subscribe()
 	}
 
 	override async hostConnected() {
-		this.defineBoundListener()
-		const targets = await extractEventTargets.call(this.host, this.options.target)
-		for (const target of targets) {
-			target?.addEventListener(this.options.type, this.getBoundListener(this.propertyKey), this.options.options)
-		}
-	}
-
-	private getBoundListener(propertyKey: string) {
-		return Object.getOwnPropertyDescriptor(this.host, EventListenerController.getBoundMethodKey(propertyKey))?.value
-	}
-
-	private defineBoundListener() {
-		const isEventListenerOrEventListenerObject = (listener: unknown): listener is EventListenerOrEventListenerObject => {
-			const isListener = typeof listener === 'function'
-			const isListenerObject = typeof listener === 'object' && listener !== null && 'handleEvent' in listener && typeof listener.handleEvent === 'function'
-			return isListener || isListenerObject
-		}
-
-		const descriptor = Object.getOwnPropertyDescriptor(this.host.constructor.prototype, this.propertyKey)
-		const unboundFunction = !descriptor
-			? Object.getOwnPropertyDescriptor(this.host, this.propertyKey)?.value
-			: typeof descriptor.get === 'function'
-				? descriptor.get
-				: descriptor.value
-
-		if (isEventListenerOrEventListenerObject(unboundFunction) === false) {
-			throw new TypeError(`${this.host.constructor}.${this.propertyKey} is not a function`)
-		}
-
-		Object.defineProperty(this.host, EventListenerController.getBoundMethodKey(this.propertyKey), {
-			// eslint-disable-next-line no-restricted-syntax
-			value: unboundFunction.bind(this.host),
-			configurable: true,
-			enumerable: false,
-			writable: false,
-		})
+		await this.unsubscribe()
 	}
 }
