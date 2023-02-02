@@ -81,10 +81,10 @@ describe('@eventListener()', () => {
 		test({ fixture, target })
 	})
 
-	describe('used on custom array target', () => {
+	describe('used on custom iterable target', () => {
 		const target = [document, window]
 
-		@component('lit-test-event-listener-used-on-custom-array-target')
+		@component('lit-test-event-listener-used-on-custom-iterable-target')
 		class TestComponent extends EventListenerTestComponent {
 			@eventListener({ target, type: 'click' })
 			protected handleClick(e: Event) {
@@ -96,13 +96,13 @@ describe('@eventListener()', () => {
 		test({ fixture, target })
 	})
 
-	describe('used on custom array target getter', () => {
+	describe('used on custom iterable target getter', () => {
 		async function target(this: EventListenerTestComponent) {
 			const e = await this.ul
 			return [...e.querySelectorAll('li')]
 		}
 
-		@component('lit-test-event-listener-used-on-custom-array-target-getter')
+		@component('lit-test-event-listener-used-on-custom-iterable-target-getter')
 		class TestComponent extends EventListenerTestComponent {
 			@eventListener({ target, type: 'click' })
 			protected handleClick(e: Event) {

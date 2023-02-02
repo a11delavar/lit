@@ -22,7 +22,7 @@ export async function extractEventTargets(this: any, target: FullEventListenerOp
 			return handle(eventTarget)
 		}
 
-		if (Symbol.iterator in eventTarget && [...eventTarget].every((t) => t instanceof EventTarget)) {
+		if (Symbol.iterator in eventTarget && [...eventTarget].every(t => t instanceof EventTarget)) {
 			return handle(eventTarget)
 		}
 
