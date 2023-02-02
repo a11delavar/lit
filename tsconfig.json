@@ -1,6 +1,9 @@
 {
 	"exclude": [
-		"dist"
+		"dist",
+		"test",
+		"*.config.*",
+		"*.test.ts",
 	],
 	"compilerOptions": {
 		"baseUrl": ".",
