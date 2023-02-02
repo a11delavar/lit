@@ -1,8 +1,7 @@
-
 export type ShorthandEventListenerOptions = [type: string, options?: EventListenerOptions | boolean]
 export type FullEventListenerOptions = {
 	type: string
-	target?: EventTarget | ((this: any) => EventTarget | Promise<EventTarget>)
+	target?: EventTarget | Iterable<EventTarget> | ((this: any) => EventTarget | Iterable<EventTarget> | Promise<EventTarget | Iterable<EventTarget>>)
 	options?: EventListenerOptions | boolean
 }
 export type EventListenerArguments = ShorthandEventListenerOptions | [FullEventListenerOptions]
