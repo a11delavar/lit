@@ -1,8 +1,8 @@
 import { ReactiveElement } from 'lit'
 import { Controller } from '../Controller/Controller.js'
-import { EventListenerArguments, extractOptions, FullEventListenerOptions } from './EventListenerOptions.js'
+import type { EventListenerTarget } from './EventListenerTarget.js'
 
-export async function extractEventTargets(this: any, target: FullEventListenerOptions['target']) {
+export async function extractEventTargets(this: any, target: EventListenerTarget | undefined) {
 	const handle = (value: Iterable<EventTarget> | EventTarget) => {
 		return Symbol.iterator in value ? [...value] : [value]
 	}
@@ -32,13 +32,33 @@ export async function extractEventTargets(this: any, target: FullEventListenerOp
 	return handle(target ?? this as EventTarget)
 }
 
+type FullEventListenerControllerOptions = {
+	type: string
+	listener: EventListenerOrEventListenerObject
+	target?: EventListenerTarget
+	options?: EventListenerOptions | boolean
+}
+
+type ShorthandEventListenerControllerOptions = [type: string, listener: EventListenerOrEventListenerObject, options?: EventListenerOptions | boolean]
+
+type EventListenerControllerOptions = ShorthandEventListenerControllerOptions | [FullEventListenerControllerOptions]
+
+function extractOptions(options: EventListenerControllerOptions): FullEventListenerControllerOptions {
+	const short = ((args: EventListenerControllerOptions): args is ShorthandEventListenerControllerOptions => typeof args[0] === 'string')(options)
+	return {
+		target: short ? undefined : options[0].target,
+		type: short ? options[0] : options[0].type,
+		listener: short ? options[1] : options[0].listener,
+		options: short ? options[2] : options[0].options,
+	}
+}
+
 export class EventListenerController extends Controller {
-	protected readonly options: FullEventListenerOptions
+	protected readonly options: FullEventListenerControllerOptions
 
 	constructor(
 		protected override readonly host: ReactiveElement,
-		protected listener: EventListenerOrEventListenerObject,
-		...options: EventListenerArguments
+		...options: EventListenerControllerOptions
 	) {
 		super(host)
 		this.options = extractOptions(options)
@@ -47,14 +67,14 @@ export class EventListenerController extends Controller {
 	async subscribe() {
 		const targets = await extractEventTargets.call(this.host, this.options.target)
 		for (const target of targets) {
-			target.removeEventListener(this.options.type, this.listener, this.options.options)
+			target.removeEventListener(this.options.type, this.options.listener, this.options.options)
 		}
 	}
 
 	async unsubscribe() {
 		const targets = await extractEventTargets.call(this.host, this.options.target)
 		for (const target of targets) {
-			target?.addEventListener(this.options.type, this.listener, this.options.options)
+			target?.addEventListener(this.options.type, this.options.listener, this.options.options)
 		}
 	}
 
