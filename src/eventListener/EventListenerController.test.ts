@@ -100,7 +100,7 @@ describe('EventListenerController', () => {
 	describe('used on custom iterable target getter', () => {
 		async function target(this: EventListenerControllerTestComponent) {
 			const e = await this.ul
-			return [...e.querySelectorAll('li')]
+			return e.querySelectorAll('li')
 		}
 
 		@component('lit-test-event-listener-controller-used-on-custom-iterable-target-getter')
