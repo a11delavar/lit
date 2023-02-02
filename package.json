@@ -4,17 +4,17 @@
 	"description": "A thin wrapper around the Lit library",
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/arshia11d/lit.git"
+		"url": "git+https://github.com/a11delavar/lit.git"
 	},
 	"keywords": [
 		"lit"
 	],
-	"author": "arshia11d",
+	"author": "a11delavar",
 	"license": "MIT",
 	"bugs": {
-		"url": "https://github.com/arshia11d/lit/issues"
+		"url": "https://github.com/a11delavar/lit/issues"
 	},
-	"homepage": "https://github.com/arshia11d/lit#readme",
+	"homepage": "https://github.com/a11delavar/lit#readme",
 	"files": [
 		"dist"
 	],
@@ -24,7 +24,9 @@
 	"types": "./dist/index.d.ts",
 	"scripts": {
 		"build": "tsc && webpack build",
-		"release": "npm run build && npm version patch --no-git-tag-version && npm publish"
+		"release": "npm run build && npm version patch --no-git-tag-version && npm publish",
+		"test": "npm install && webpack --config ./webpack.config.test.mjs && concurrently --raw \"webpack --watch --config ./webpack.config.test.mjs\" \"karma start\" --restart-tries -1",
+		"test:ci": "webpack --config ./webpack.config.test.mjs && karma start --single-run"
 	},
 	"dependencies": {
 		"csstype": "x",
@@ -37,6 +39,13 @@
 		"tsconfig-paths-webpack-plugin": "4.x",
 		"resolve-typescript-plugin": "x",
 		"webpack": "5.x",
-		"webpack-cli": "4.x"
+		"webpack-cli": "4.x",
+		"karma": "x",
+		"karma-chrome-launcher": "x",
+		"karma-firefox-launcher": "x",
+		"karma-helpful-reporter": "x",
+		"karma-jasmine": "x",
+		"@types/jasmine": "x",
+		"concurrently": "x"
 	}
 }
