@@ -25,7 +25,7 @@ abstract class EventListenerTestComponent extends Component {
 	}
 }
 
-describe('@eventListener()', () => {
+describe(eventListener.name, () => {
 	describe('used as method', () => {
 		@component('lit-test-event-listener-used-as-method')
 		class TestComponent extends EventListenerTestComponent {

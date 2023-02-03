@@ -3,7 +3,7 @@ import { property } from './property.js'
 import { component, Component } from '../Component/index.js'
 import { updated } from './updated.js'
 
-describe('updated', () => {
+describe(updated.name, () => {
 	@component('lit-test-updated')
 	class TestComponent extends Component {
 		readonly callback = jasmine.createSpy()

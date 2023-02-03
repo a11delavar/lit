@@ -9,7 +9,7 @@ export default () => ({
 	entry: ['./test/index.ts', ...glob.sync('./**/*.test.ts').filter(path => path.includes('node_modules') === false)],
 	devtool: false,
 	output: {
-		path: resolve('dist'),
+		path: resolve('test-temp'),
 		filename: 'test.js'
 	},
 	module: {

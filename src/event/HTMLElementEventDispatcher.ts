@@ -9,14 +9,20 @@ export class HTMLElementEventDispatcher<T = void> implements EventDispatcher<T> 
 		private readonly options?: EventInit,
 	) { }
 
-	dispatch(value: T) {
-		this.element.dispatchEvent(new CustomEvent<T>(this.type, { detail: value, ...this.options }))
+	dispatch(value: T | CustomEvent<T>) {
+		this.element.dispatchEvent(
+			value instanceof CustomEvent
+				? value
+				: new CustomEvent<T>(this.type, { detail: value, ...this.options })
+		)
 	}
 
 	subscribe(handler: EventHandler<T>) {
-		const nativeHandler = (event: CustomEvent<T>) => handler(event.detail)
-		this.element.addEventListener(this.type, nativeHandler as EventListener)
-		this.handlersMap.set(handler, nativeHandler)
+		if (this.handlersMap.has(handler) === false) {
+			const nativeHandler = (event: CustomEvent<T>) => handler(event.detail)
+			this.element.addEventListener(this.type, nativeHandler as EventListener)
+			this.handlersMap.set(handler, nativeHandler)
+		}
 	}
 
 	unsubscribe(handler: EventHandler<T>) {
