@@ -1,12 +1,12 @@
 type CustomEventHandler<T> = (event: CustomEvent<T>) => void
 
 export class HTMLElementEventDispatcher<T = void> implements EventDispatcher<T> {
-	private readonly handlersMap = new Map<EventHandler<T>, CustomEventHandler<T>>()
+	protected readonly handlersMap = new Map<EventHandler<T>, CustomEventHandler<T>>()
 
 	constructor(
-		private readonly element: HTMLElement,
-		private readonly type: string,
-		private readonly options?: EventInit,
+		protected readonly element: HTMLElement,
+		protected readonly type: string,
+		protected readonly options?: EventInit,
 	) { }
 
 	dispatch(value: T | CustomEvent<T>) {

@@ -1,5 +1,5 @@
 import { eventListener, Component, component, html, EventListenerTarget, queryAsync } from '../index.js'
-import { ComponentTestFixture } from '../../test/ComponentTestFixture.js'
+import { ComponentTestFixture } from '../test/ComponentTestFixture.js'
 import { extractEventTargets } from './EventListenerController.js'
 
 abstract class EventListenerTestComponent extends Component {
