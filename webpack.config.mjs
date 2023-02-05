@@ -26,6 +26,9 @@ export default {
 			{
 				test: /(?<!\.test)\.ts$/,
 				loader: 'ts-loader',
+				options: {
+					configFile: 'tsconfig.build.json',
+				}
 			}
 		]
 	},

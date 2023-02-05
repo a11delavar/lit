@@ -1,9 +1,8 @@
 {
 	"exclude": [
 		"dist",
-		"test",
-		"*.config.*",
-		"*.test.ts",
+		"**/*.conf.ts",
+		"**/*.test.ts",
 	],
 	"compilerOptions": {
 		"baseUrl": "./src",
