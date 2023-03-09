@@ -31,7 +31,7 @@ export class StyleDirective extends Directive {
 		super(partInfo)
 
 		if (partInfo.type !== PartType.ELEMENT) {
-			throw new Error('observeMutation can only be used on an element')
+			throw new Error('style directive can only be used on an element')
 		}
 
 		const part = partInfo as ElementPart
