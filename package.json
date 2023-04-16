@@ -1,6 +1,6 @@
 {
 	"name": "@a11d/lit",
-	"version": "0.2.9",
+	"version": "0.2.10",
 	"description": "A thin wrapper around the Lit library",
 	"repository": {
 		"type": "git",

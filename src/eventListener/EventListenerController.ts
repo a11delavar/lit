@@ -69,22 +69,22 @@ export class EventListenerController extends Controller {
 	async subscribe() {
 		const targets = await extractEventTargets.call(this.host, this.options.target)
 		for (const target of targets) {
-			target.removeEventListener(this.options.type, this.options.listener, this.options.options)
+			target.addEventListener(this.options.type, this.options.listener, this.options.options)
 		}
 	}
 
 	async unsubscribe() {
 		const targets = await extractEventTargets.call(this.host, this.options.target)
 		for (const target of targets) {
-			target?.addEventListener(this.options.type, this.options.listener, this.options.options)
+			target?.removeEventListener(this.options.type, this.options.listener, this.options.options)
 		}
 	}
 
-	override async hostDisconnected() {
+	override async hostConnected() {
 		await this.subscribe()
 	}
 
-	override async hostConnected() {
+	override async hostDisconnected() {
 		await this.unsubscribe()
 	}
 }
