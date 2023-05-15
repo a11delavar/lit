@@ -1,21 +1,43 @@
-export class ComponentTestFixture<TComponent extends import('lit').LitElement> {
-	private _component?: TComponent
-	get component() { return this._component! }
+import { LitElement, HTMLTemplateResult, render } from 'lit'
 
-	constructor(private readonly constructComponentOrTagName: string | (() => TComponent)) {
+type ConstructorParameters<TComponent extends LitElement> =
+	| [tagName: string]
+	| [constructComponent: () => TComponent]
+	| [templateConsistingOfComponentAsRoot: HTMLTemplateResult]
+
+export class ComponentTestFixture<TComponent extends LitElement> {
+	private _component?: TComponent
+	get component() { return this._component as TComponent }
+
+	private readonly parameters: ConstructorParameters<TComponent>
+	constructor(...parameters: ConstructorParameters<TComponent>) {
+		this.parameters = parameters
 		beforeEach(() => this.initialize())
 		afterEach(() => this._component?.remove())
 	}
 
 	async initialize() {
 		this._component?.remove()
-		const constructComponent = typeof this.constructComponentOrTagName === 'string'
-			? () => document.createElement(this.constructComponentOrTagName as string) as TComponent
-			: this.constructComponentOrTagName
-		this._component = constructComponent()
+		this._component = this.constructComponent()
 		document.body.appendChild(this._component)
-		await this._component.updateComplete
+		await this.updateComplete
 		return this._component
+	}
+
+	private constructComponent() {
+		const [parameter] = this.parameters
+
+		if (typeof parameter === 'string') {
+			return document.createElement(parameter) as TComponent
+		}
+
+		if (parameter instanceof Function) {
+			return parameter()
+		}
+
+		const div = document.createElement('div')
+		render(parameter, div)
+		return div.firstElementChild as TComponent
 	}
 
 	get updateComplete() {
