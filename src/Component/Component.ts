@@ -1,11 +1,12 @@
 import { LitElement, PropertyValues } from 'lit'
 import { customElement } from 'lit/decorators.js'
 import { nothing } from './nothing.js'
+import { UpdateHook } from '../hookUpdate/UpdateHook.js'
 
 export const component = customElement
 
 export abstract class Component extends LitElement {
-	readonly updateHookPropertyKeys = new Set<PropertyKey>()
+	readonly updateHook = new UpdateHook(this)
 
 	/** Invoked after first update i.e. render is completed */
 	protected initialized() { }
@@ -19,9 +20,14 @@ export abstract class Component extends LitElement {
 	protected override async getUpdateComplete() {
 		const results = await Promise.all([
 			super.getUpdateComplete(),
-			...[...this.updateHookPropertyKeys].map(propertyKey => (this as any)[propertyKey]),
+			this.updateHook.getUpdateComplete(),
 		])
 		return results.every(result => result === true)
+	}
+
+	override update(changedProperties: PropertyValues) {
+		super.update(changedProperties)
+		this.updateHook.update()
 	}
 
 	/** The template rendered into renderRoot. Invoked on each update to perform rendering tasks. */
