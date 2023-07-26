@@ -1,3 +1,4 @@
+import '@a11d/constructor'
 export * from 'lit'
 export { InternalPropertyDeclaration, QueryAssignedElementsOptions, QueryAssignedNodesOptions, eventOptions, queryAssignedElements, queryAssignedNodes, queryAsync } from 'lit/decorators.js'
 export { withStatic, literal, unsafeStatic, html as staticHtml, svg as staticSvg } from 'lit/static-html.js'
@@ -26,7 +27,6 @@ export * from 'lit-html/directives/unsafe-svg.js'
 export * from 'lit-html/directives/until.js'
 export * from 'lit-html/directives/when.js'
 
-import './types.js'
 export { Component, nothing, component } from './Component/index.js'
 export * from './Controller/index.js'
 export * from './query/index.js'
