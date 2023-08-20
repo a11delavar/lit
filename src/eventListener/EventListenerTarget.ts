@@ -1,2 +1,4 @@
-type Targets = EventTarget | Iterable<EventTarget>
-export type EventListenerTarget = Targets | ((this: any) => Targets | Promise<Targets>)
+export type EventTargets = EventTarget | Iterable<EventTarget>
+export type EventTargetsResolver = (this: any) => EventTargets
+export type EventTargetsAsyncResolver = (this: any) => Promise<EventTargets>
+export type EventListenerTarget = EventTargets | EventTargetsResolver | EventTargetsAsyncResolver

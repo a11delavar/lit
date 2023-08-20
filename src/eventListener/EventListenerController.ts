@@ -1,18 +1,16 @@
 import { ReactiveElement } from 'lit'
 import { Controller } from '../Controller/Controller.js'
-import type { EventListenerTarget } from './EventListenerTarget.js'
+import type { EventListenerTarget, EventTargets } from './EventListenerTarget.js'
 
 export async function extractEventTargets(this: any, target: EventListenerTarget | undefined) {
-	const handle = (value: Iterable<EventTarget> | EventTarget) => {
-		return Symbol.iterator in value ? [...value] : [value]
-	}
+	const handle = (value: EventTargets) => Symbol.iterator in value ? [...value] : [value]
 
 	if (target === undefined) {
-		return handle(this as EventTarget)
+		return handle(this)
 	}
 
 	if (typeof target === 'function') {
-		let eventTarget = target.call(this)
+		let eventTarget = (target as (this: any) => EventTargets | Promise<EventTargets>).call(this)
 
 		if (eventTarget instanceof Promise) {
 			eventTarget = await eventTarget
