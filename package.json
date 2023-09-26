@@ -38,6 +38,7 @@
 		"terser-webpack-plugin": "5.x",
 		"ts-loader": "9.x",
 		"tsconfig-paths-webpack-plugin": "4.x",
+		"typescript": "5.x",
 		"resolve-typescript-plugin": "x",
 		"webpack": "5.x",
 		"webpack-cli": "4.x",
