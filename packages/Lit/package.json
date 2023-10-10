@@ -1,6 +1,6 @@
 {
 	"name": "@a11d/lit",
-	"version": "0.4.0",
+	"version": "0.4.1",
 	"description": "A thin wrapper around the Lit library",
 	"repository": {
 		"type": "git",
@@ -22,7 +22,7 @@
 	"dependencies": {
 		"csstype": "x",
 		"@a11d/constructor": "x",
-		"lit": "2.x"
+		"lit": "3.x"
 	},
 	"devDependencies": {
 		"@a11d/lit-testing": "x"
