@@ -5,7 +5,7 @@ import ResolveTypeScriptPlugin from 'resolve-typescript-plugin'
 
 export default {
 	mode: 'production',
-	entry: './src/index.ts',
+	entry: './packages/Lit/index.ts',
 	output: {
 		path: path.resolve('dist'),
 		filename: 'bundle.js',

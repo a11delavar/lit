@@ -1,0 +1,27 @@
+{
+	"name": "@a11d/lit",
+	"version": "0.3.2",
+	"description": "A thin wrapper around the Lit library",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/a11delavar/lit.git"
+	},
+	"keywords": [
+		"lit"
+	],
+	"author": "a11delavar",
+	"license": "MIT",
+	"homepage": "https://github.com/a11delavar/lit#readme",
+	"type": "module",
+	"module": "./dist/index.js",
+	"main": "./dist/index.js",
+	"types": "./dist/index.d.ts",
+	"files": [
+		"dist"
+	],
+	"dependencies": {
+		"csstype": "x",
+		"@a11d/constructor": "x",
+		"lit": "2.x"
+	}
+}

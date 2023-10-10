@@ -1,4 +1,4 @@
-# [`style` Directive](./src/style/README.md)
+# `style` Directive
 
 The `style` directive allows you to define styles for the underlying element.
 

@@ -25,13 +25,13 @@
 		"allowSyntheticDefaultImports": true,
 		"resolveJsonModule": true,
 		"noEmitOnError": true,
-		"experimentalDecorators": true,
 		"forceConsistentCasingInFileNames": true,
 		"noUncheckedIndexedAccess": true,
 		"noImplicitOverride": true,
 		"esModuleInterop": true,
 		"skipLibCheck": true,
 		"isolatedModules": true,
+		"experimentalDecorators": true,
 		"plugins": [
 			{
 				"name": "ts-lit-plugin",
@@ -44,11 +44,5 @@
 				}
 			}
 		]
-	},
-	"files": [],
-	"references": [
-		{
-			"path": "./packages/Lit"
-		}
-	],
+	}
 }

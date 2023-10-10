@@ -23,7 +23,7 @@ FileSystem.mkdirSync('./dist', { recursive: true })
 
 const testIndexFileContent = `
 globalThis.environment = 'test'
-${getTestFiles('./src').map(file => {
+${getTestFiles('./Packages').map(file => {
 	const relativePath = Path.relative('./dist', file)
 	return `import '${relativePath.replace(/\\/g, '/').replace(/\.ts$/, '')}'`
 }).join('\n')}`

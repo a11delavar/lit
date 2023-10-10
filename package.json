@@ -1,31 +1,11 @@
 {
-	"name": "@a11d/lit",
-	"version": "0.3.2",
-	"description": "A thin wrapper around the Lit library",
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/a11delavar/lit.git"
-	},
-	"keywords": [
-		"lit"
-	],
-	"author": "a11delavar",
-	"license": "MIT",
-	"bugs": {
-		"url": "https://github.com/a11delavar/lit/issues"
-	},
-	"homepage": "https://github.com/a11delavar/lit#readme",
-	"files": [
-		"dist"
-	],
-	"type": "module",
-	"module": "./dist/index.js",
-	"main": "./dist/index.js",
-	"types": "./dist/index.d.ts",
 	"scripts": {
 		"build": "tsc && webpack build",
 		"dev": "node ./scripts/test.mjs",
-		"release": "npm run build && npm version patch --no-git-tag-version && npm publish",
+		"watch": "npm-watch",
+		"clean": "node ./scripts/clean.mjs",
+		"release": "node ./scripts/release.mjs",
+		"release:all": "node ./scripts/release-all.mjs",
 		"test": "node ./scripts/test.mjs && karma start --single-run"
 	},
 	"watch": {
@@ -36,28 +16,43 @@
 			"extensions": "ts"
 		}
 	},
-	"dependencies": {
-		"csstype": "x",
-		"@a11d/constructor": "x",
-		"lit": "2.x"
-	},
+	"workspaces": [
+		"./packages/*"
+	],
 	"devDependencies": {
 		"@a11d/eslint-config": "x",
-		"terser-webpack-plugin": "5.x",
-		"ts-loader": "9.x",
-		"tsconfig-paths-webpack-plugin": "4.x",
-		"typescript": "5.x",
-		"resolve-typescript-plugin": "x",
-		"webpack": "5.x",
-		"webpack-cli": "4.x",
+		"@a11d/lit": "x",
+		"@custom-elements-manifest/analyzer": "x",
+		"@storybook/addon-actions": "6.x",
+		"@storybook/addon-essentials": "6.x",
+		"@storybook/addon-links": "6.x",
+		"@storybook/builder-webpack5": "6.x",
+		"@storybook/manager-webpack5": "6.x",
+		"@storybook/web-components": "6.x",
+		"@types/jasmine": "x",
+		"@typescript-eslint/eslint-plugin": "x",
+		"@typescript-eslint/parser": "x",
+		"concurrently": "x",
+		"del-cli": "x",
+		"esbuild": "0.x",
+		"eslint": "x",
+		"eslint-plugin-import": "x",
+		"eslint-plugin-lit": "x",
+		"html-webpack-plugin": "x",
 		"karma": "x",
 		"karma-chrome-launcher": "x",
 		"karma-firefox-launcher": "x",
 		"karma-helpful-reporter": "x",
 		"karma-jasmine": "x",
-		"@types/jasmine": "x",
-		"concurrently": "x",
-		"esbuild": "0.x",
-		"npm-watch": "0.x"
+		"minify-html-literals-loader": "x",
+		"npm-watch": "0.x",
+		"resolve-typescript-plugin": "x",
+		"terser-webpack-plugin": "x",
+		"ts-loader": "x",
+		"tsconfig-paths-webpack-plugin": "x",
+		"typescript": "5.x",
+		"webpack": "x",
+		"webpack-cli": "x",
+		"webpack-dev-server": "x"
 	}
 }
