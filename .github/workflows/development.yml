@@ -7,8 +7,8 @@ on:
       - main
 
 jobs:
-  Testing:
-    name: 🧪 Testing
+  Test:
+    name: 🧪 Test
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository ⬇️
@@ -22,4 +22,4 @@ jobs:
         run: npm ci
 
       - name: Test 🧪
-        run: npm run test:ci
+        run: npm run test

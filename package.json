@@ -24,9 +24,17 @@
 	"types": "./dist/index.d.ts",
 	"scripts": {
 		"build": "tsc && webpack build",
+		"dev": "node ./scripts/test.mjs",
 		"release": "npm run build && npm version patch --no-git-tag-version && npm publish",
-		"test": "npm install && webpack --config ./webpack.config.test.mjs && concurrently --raw \"webpack --watch --config ./webpack.config.test.mjs\" \"karma start\" --restart-tries -1",
-		"test:ci": "webpack --config ./webpack.config.test.mjs && karma start --single-run"
+		"test": "node ./scripts/test.mjs && karma start --single-run"
+	},
+	"watch": {
+		"dev": {
+			"patterns": [
+				"packages"
+			],
+			"extensions": "ts"
+		}
 	},
 	"dependencies": {
 		"csstype": "x",
@@ -48,6 +56,8 @@
 		"karma-helpful-reporter": "x",
 		"karma-jasmine": "x",
 		"@types/jasmine": "x",
-		"concurrently": "x"
+		"concurrently": "x",
+		"esbuild": "0.x",
+		"npm-watch": "0.x"
 	}
 }

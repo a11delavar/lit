@@ -5,6 +5,7 @@ on:
 
 jobs:
   Test:
+    name: 🧪 Test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -13,4 +14,4 @@ jobs:
           node-version: 19.x
           cache: 'npm'
       - run: npm ci
-      - run: npm run test:ci
+      - run: npm run test

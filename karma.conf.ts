@@ -4,7 +4,7 @@ module.exports = config => config.set({
 	basePath: '.',
 	frameworks: ['jasmine'],
 	plugins: ['karma-*'],
-	files: ['./test-temp/test.js'],
+	files: ['./dist/test.js'],
 	reporters: ['helpful'],
 	logLevel: 'ERROR',
 	port: 9876,
