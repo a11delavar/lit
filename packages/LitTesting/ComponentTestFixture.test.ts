@@ -1,5 +1,4 @@
-import { html } from 'lit'
-import { Component } from '../Component/index.js'
+import { html, Component } from '@a11d/lit'
 import { ComponentTestFixture } from './ComponentTestFixture.js'
 
 class FixtureTestComponent extends Component {

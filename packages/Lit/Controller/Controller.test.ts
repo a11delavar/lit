@@ -1,7 +1,7 @@
 import { ReactiveController } from 'lit'
 import { Controller } from './Controller.js'
 import { Component } from '../Component/index.js'
-import { ComponentTestFixture } from '../test/ComponentTestFixture.js'
+import { ComponentTestFixture } from '@a11d/lit-testing'
 
 class ControllerTestComponent extends Component {
 	readonly controllers = new Set<ReactiveController>()

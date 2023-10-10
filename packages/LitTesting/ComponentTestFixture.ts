@@ -1,4 +1,4 @@
-import { LitElement, HTMLTemplateResult, render } from 'lit'
+import { LitElement, HTMLTemplateResult, render } from '@a11d/lit'
 
 type ConstructorParameters<TComponent extends LitElement> =
 	| [tagName: string]

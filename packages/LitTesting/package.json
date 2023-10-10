@@ -1,7 +1,7 @@
 {
-	"name": "@a11d/lit",
-	"version": "0.4.0",
-	"description": "A thin wrapper around the Lit library",
+	"name": "@a11d/lit-testing",
+	"version": "0.0.2",
+	"description": "Utilities to facilitate testing lit components",
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/a11delavar/lit.git"
@@ -20,11 +20,6 @@
 		"dist"
 	],
 	"dependencies": {
-		"csstype": "x",
-		"@a11d/constructor": "x",
-		"lit": "2.x"
-	},
-	"devDependencies": {
-		"@a11d/lit-testing": "x"
+		"@a11d/lit": "x"
 	}
 }

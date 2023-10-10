@@ -1,4 +1,4 @@
-import { ComponentTestFixture } from '../test/ComponentTestFixture.js'
+import { ComponentTestFixture } from '@a11d/lit-testing'
 import { property } from './property.js'
 import { component, Component } from '../Component/index.js'
 import { updated } from './updated.js'

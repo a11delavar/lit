@@ -1,6 +1,6 @@
 import { html } from 'lit'
 import { Component } from '../Component/index.js'
-import { ComponentTestFixture } from '../test/ComponentTestFixture.js'
+import { ComponentTestFixture } from '@a11d/lit-testing'
 
 class TestComponent extends Component {
 	static template = html`<div></div>`
