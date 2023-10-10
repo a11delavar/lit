@@ -1,2 +1,2 @@
-export * from './nothing.js'
+export * from './html.js'
 export * from './Component.js'

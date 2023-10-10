@@ -1,6 +1,6 @@
 import { LitElement, PropertyValues } from 'lit'
 import { customElement } from 'lit/decorators.js'
-import { nothing } from './nothing.js'
+import { html } from './html.js'
 
 export const component = customElement
 
@@ -16,7 +16,7 @@ export abstract class Component extends LitElement {
 
 	/** The template rendered into renderRoot. Invoked on each update to perform rendering tasks. */
 	protected get template() {
-		return nothing
+		return html.nothing
 	}
 
 	/** @final */
