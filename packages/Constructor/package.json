@@ -1,0 +1,28 @@
+{
+	"name": "@a11d/constructor",
+	"version": "0.1.0",
+	"description": "Global constructor types",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/a11delavar/lit.git"
+	},
+	"keywords": [
+		"constructor",
+		"type"
+	],
+	"author": "a11delavar",
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/a11delavar/lit/issues"
+	},
+	"homepage": "https://github.com/a11delavar/lit#readme",
+	"type": "module",
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"files": [
+		"dist"
+	],
+	"scripts": {
+		"build": "tsc"
+	}
+}
