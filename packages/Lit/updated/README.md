@@ -1,4 +1,4 @@
-# `updated` Decorator (along with upgraded `state` and `property` decorators)
+# `updated` Decorator
 
 The `updated` decorator allows you to define a method on a reactive property that will be called after the component has been updated due to a change in the property. This is useful for dispatching events or performing other actions **after** the component has been updated.
 
