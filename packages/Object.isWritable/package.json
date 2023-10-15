@@ -1,0 +1,25 @@
+{
+	"name": "@a11d/is-writable",
+	"version": "1.0.1",
+	"description": "A function on the Object constructor that determines if a property is writable.",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/a11delavar/lit.git"
+	},
+	"keywords": [
+		"object",
+		"property",
+		"writable",
+		"settable"
+	],
+	"author": "a11delavar",
+	"license": "MIT",
+	"homepage": "https://github.com/a11delavar/lit#readme",
+	"type": "module",
+	"module": "./dist/index.js",
+	"main": "./dist/index.js",
+	"types": "./dist/index.d.ts",
+	"files": [
+		"dist"
+	]
+}
