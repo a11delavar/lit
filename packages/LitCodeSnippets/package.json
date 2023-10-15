@@ -1,0 +1,27 @@
+{
+	"name": "lit-vscode-snippets",
+	"displayName": "Lit Snippets",
+	"description": "Visual Studio Code snippets support for using the @a11d/lit package.",
+	"version": "0.0.1",
+	"engines": {
+		"vscode": "^1.83.0"
+	},
+	"categories": [
+		"Snippets"
+	],
+	"contributes": {
+		"configuration": {
+			"lit-snippets.tag-name-prefix": {
+				"type": "string",
+				"default": "app",
+				"description": "The prefix for the component tag names."
+			}
+		},
+		"snippets": [
+			{
+				"language": "typescript",
+				"path": "./snippets/snippets.code-snippets"
+			}
+		]
+	}
+}
