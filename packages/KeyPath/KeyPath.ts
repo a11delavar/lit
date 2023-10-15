@@ -20,11 +20,21 @@ export function setValueByKeyPath<T, KeyPath extends KeyPathOf<T>>(object: T, ke
 	}
 }
 
+export function isKeyPathWritable<T, KeyPath extends KeyPathOf<T>>(object: T, keyPath: KeyPath): boolean {
+	if (!keyPath) return false
+	const keys = keyPath.split('.')
+	const lastKey = keys[keys.length - 1] as keyof T
+	const otherKeysButLast = keys.slice(0, keys.length - 1)
+	const lastObject = getValueByKeyPath(object, otherKeysButLast.join('.') as KeyPath) ?? object as any
+	return Object.isWritable(lastObject, lastKey)
+}
+
 // @ts-expect-error = TypeScript deconstructs the types if we get it's type
 globalThis.getKeyPath = getKeyPath
 globalThis.getValueByKeyPath = getValueByKeyPath
 // @ts-expect-error = TypeScript deconstructs the types if we get it's type
 globalThis.setValueByKeyPath = setValueByKeyPath
+globalThis.isKeyPathWritable = isKeyPathWritable
 
 type DepthLevels = [never, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
 type DefaultDepth = 1
@@ -35,6 +45,7 @@ declare global {
 	function getKeyPath<T>(keyPath: KeyPathOf<T>): KeyPathOf<T>
 	function getValueByKeyPath<T, KeyPath extends KeyPathOf<T>>(object: T, keyPath: KeyPath): KeyPathValueOf<T, KeyPath>
 	function setValueByKeyPath<T, KeyPath extends KeyPathOf<T>>(object: T, keyPath: KeyPath, value: KeyPathValueOf<T, KeyPath>): void
+	function isKeyPathWritable<T, KeyPath extends KeyPathOf<T>>(object: T, keyPath: KeyPath): boolean
 
 	type KeyPathOf<T, Depth extends DepthLevels[number] = DefaultDepth> =
 		ShouldBreak<Depth> extends true ? never :
