@@ -1,4 +1,4 @@
-import { AttributePart, BooleanAttributePart, PropertyPart } from '@a11d/lit'
+import { AttributePart, BindingMode, BooleanAttributePart, PropertyPart, noChange } from '@a11d/lit'
 import { ValueBinder } from './ValueBinder.js'
 
 export class PropertyValueBinder extends ValueBinder<PropertyPart | AttributePart | BooleanAttributePart> {
@@ -11,6 +11,6 @@ export class PropertyValueBinder extends ValueBinder<PropertyPart | AttributePar
 	}
 
 	get template() {
-		return this.value
+		return this.mode === BindingMode.OneWayToSource ? noChange : this.sourceValue
 	}
 }

@@ -1,5 +1,5 @@
 import { Part } from 'lit'
-import { BindDirectiveParameters } from './BindDirective.js'
+import { BindDirectiveParameters, BindingMode } from './BindDirective.js'
 import { getAssociatedEvent } from './associatedEvent/getAssociatedEvent.js'
 
 export abstract class ValueBinder<TPart extends Part> {
@@ -12,7 +12,7 @@ export abstract class ValueBinder<TPart extends Part> {
 		return this.parameters[0]
 	}
 
-	protected get objectKey() {
+	protected get sourceKey() {
 		return this.parameters[1]
 	}
 
@@ -21,34 +21,46 @@ export abstract class ValueBinder<TPart extends Part> {
 	}
 
 	protected get mode() {
-		return this.parameters[2]?.mode ?? this.getDefaultBindingMode()
+		const mode = this.parameters[2]?.mode
+
+		if (mode) {
+			return mode
+		}
+
+		const sourceWritable = this.keyPath
+			? isKeyPathWritable(this.component[this.sourceKey], this.keyPath)
+			: Object.isWritable(this.component, this.sourceKey)
+
+		const targetWritable = Object.isWritable(this.component, this.property)
+
+		return sourceWritable && targetWritable
+			? BindingMode.TwoWay
+			: sourceWritable
+				? BindingMode.OneWayToSource
+				: BindingMode.OneWay
 	}
 
 	protected get event() {
 		return this.parameters[2]?.event ?? getAssociatedEvent(this.element, this.property)
 	}
 
-	private getDefaultBindingMode() {
-		return 'two-way'
-		// For accessors
-		// const isSourceWritable = Object.getOwnPropertyDescriptor(this.component, this.keyPath)?.set !== undefined
-	}
-
-	get value() {
+	get sourceValue() {
 		return this.keyPath
-			? getValueByKeyPath(this.component[this.objectKey], this.keyPath as string)
-			: this.component[this.objectKey]
+			? getValueByKeyPath(this.component[this.sourceKey], this.keyPath as string)
+			: this.component[this.sourceKey]
 	}
-	set value(value: any) {
-		this.keyPath
-			? setValueByKeyPath(this.component[this.objectKey], this.keyPath as string, value)
-			: this.component[this.objectKey] = value
+	set sourceValue(value: any) {
+		if (this.mode !== BindingMode.OneWay) {
+			this.keyPath
+				? setValueByKeyPath(this.component[this.sourceKey], this.keyPath as string, value)
+				: this.component[this.sourceKey] = value
+		}
 	}
 
 	abstract get template(): unknown
 
 	connected() {
-		if (this.mode !== 'one-way') {
+		if (this.mode !== BindingMode.OneWay) {
 			this.element.addEventListener(this.event, this.eventListener)
 		}
 	}
@@ -58,10 +70,10 @@ export abstract class ValueBinder<TPart extends Part> {
 	}
 
 	private readonly eventListener = (e: Event) => {
-		this.value = e instanceof CustomEvent
+		this.sourceValue = e instanceof CustomEvent
 			? e.detail
 			: (e.target as any)[this.property]
 
-		this.component.requestUpdate(this.objectKey)
+		this.component.requestUpdate(this.sourceKey)
 	}
 }

@@ -1,5 +1,5 @@
-import { directive, AsyncDirective, type ElementPart, type PartInfo, PartType, AttributePart, BooleanAttributePart, PropertyPart, ReactiveElement, DirectiveResult } from '../index.js'
-import '@3mo/key-path'
+import { directive, AsyncDirective, type ElementPart, type PartInfo, PartType, AttributePart, BooleanAttributePart, PropertyPart, ReactiveElement, DirectiveResult, noChange } from '../index.js'
+import '@a11d/key-path'
 import { ValueBinder } from './ValueBinder.js'
 import { PropertyValueBinder } from './PropertyValueBinder.js'
 import { DefaultPropertyBinder } from './DefaultPropertyBinder.js'
@@ -7,16 +7,17 @@ import { DefaultPropertyBinder } from './DefaultPropertyBinder.js'
 export enum BindingMode {
 	/**
 	 * Indicates a one-way binding from the data source to the target property.
+	 * This is the default mode when the source is read-only.
 	 */
 	OneWay = 'one-way',
 	/**
-	 * Indicated a two-way binding between the data source and the target property.
-	 * This is the default mode when the source is not read-only.
+	 * Indicates a two-way binding between the data source and the target property.
+	 * This is the default mode when neither the source nor target is read-only.
 	 */
 	TwoWay = 'two-way',
 	/**
 	 * Indicates a one-way binding from the target property to the data source.
-	 * This is the default mode when the source is read-only.
+	 * This is the default mode when the target is read-only.
 	 */
 	OneWayToSource = 'one-way-to-source',
 }
@@ -44,7 +45,7 @@ class BindDirective<Component extends ReactiveElement, Property extends keyof Co
 	}
 
 	render() {
-		return this.valueBinder?.template
+		return this.valueBinder?.template ?? noChange
 	}
 
 	override update(part: BindDirectivePart, parameters: BindDirectiveParameters<Component, Property>) {

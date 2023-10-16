@@ -1,4 +1,4 @@
-import { type ElementPart, nothing } from '@a11d/lit'
+import { type ElementPart, noChange, BindingMode } from '@a11d/lit'
 import { ValueBinder } from './ValueBinder.js'
 import { bindingDefaultPropertyKey } from './bindingDefaultProperty.js'
 
@@ -17,14 +17,16 @@ export class DefaultPropertyBinder extends ValueBinder<ElementPart> {
 		return property
 	}
 
-	override get value() { return super.value }
-	override set value(value: unknown) {
-		super.value = value;
-		(this.element as any)[this.property] = value
+	override get sourceValue() { return super.sourceValue }
+	override set sourceValue(value: unknown) {
+		super.sourceValue = value
+		if (this.mode !== BindingMode.OneWayToSource && Object.isWritable(this.element, this.property)) {
+			(this.element as any)[this.property] = value
+		}
 	}
 
 	get template() {
-		this.value = this.value
-		return nothing
+		this.sourceValue = this.sourceValue
+		return noChange
 	}
 }
