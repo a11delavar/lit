@@ -2,12 +2,12 @@
 
 The `bind` directive is used to setup a synchronization binding between a component property and a data source, by listening to the given or associated event.
 
-<!-- ## Modes
+## Modes
 
 The `bind` directive supports 3 modes:
-- `one-way`: The component property is updated when the data source changes.
-- `two-way`: The component property is updated when the data source changes and the data source is updated when the component property changes.
-- `one-way-to-source`: The data source is updated when the component property changes. -->
+- `one-way`: The component property is updated when the data source changes. This is the default mode when the source is read-only.
+- `two-way`: The component property is updated when the data source changes and the data source is updated when the component property changes. This is the default mode when the source and target are not read-only.
+- `one-way-to-source`: The data source is updated when the component property changes. This is the default mode when the target is read-only.
 
 ## Associated Events
 
