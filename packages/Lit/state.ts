@@ -1,8 +1,8 @@
 import type { ReactiveElement } from 'lit'
-import { InternalPropertyDeclaration, state as litState } from 'lit/decorators.js'
-import { updated, UpdatedCallback } from './updated.js'
+import { StateDeclaration, state as litState } from 'lit/decorators.js'
+import { updated, UpdatedCallback } from './updated/updated.js'
 
-export const state = <T>(options?: InternalPropertyDeclaration & { updated?: UpdatedCallback<T> }) => {
+export const state = <T>(options?: StateDeclaration & { updated?: UpdatedCallback<T> }) => {
 	return (prototype: ReactiveElement, propertyKey: PropertyKey) => {
 		if (options?.updated) {
 			updated(options.updated)(prototype, propertyKey)
