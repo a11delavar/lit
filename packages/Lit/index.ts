@@ -1,7 +1,7 @@
 import '@a11d/constructor'
 export * from 'lit'
 export { type InternalPropertyDeclaration, type QueryAssignedElementsOptions, type QueryAssignedNodesOptions, eventOptions, queryAssignedElements, queryAssignedNodes, queryAsync } from 'lit/decorators.js'
-export { withStatic, literal, unsafeStatic, html as staticHtml, svg as staticSvg } from 'lit/static-html.js'
+export { withStatic, literal, unsafeStatic, html as staticHtml, svg as staticSvg, type StaticValue } from 'lit/static-html.js'
 export * from 'lit-html'
 export * from 'lit-html/directive-helpers.js'
 export * from 'lit-html/directive.js'
