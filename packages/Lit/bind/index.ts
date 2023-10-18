@@ -1,4 +1,5 @@
 export * from './bindingDefaultProperty.js'
 export * from './associatedEvent/associatedEvent.js'
 export * from './BindDirective.js'
+export * from './Binder.js'
 import './nativeElementSupport.js'

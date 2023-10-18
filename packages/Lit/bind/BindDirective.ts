@@ -25,17 +25,19 @@ export enum BindingMode {
 export type BindDirectiveParameters<Component extends ReactiveElement, Property extends keyof Component> = [
 	component: Component,
 	property: Property,
-	options?: {
-		keyPath?: KeyPathOf<Component[Property]>
-		mode?: BindingMode
-		event?: string
-	}
+	options?: BindDirectiveParametersOptions<Component[Property]>
 ]
+
+export type BindDirectiveParametersOptions<Data> = {
+	keyPath?: KeyPathOf<Data>
+	mode?: BindingMode
+	event?: string
+}
 
 type BindDirectivePart = ElementPart | AttributePart | BooleanAttributePart | PropertyPart
 
 class BindDirective<Component extends ReactiveElement, Property extends keyof Component> extends AsyncDirective {
-	private valueBinder?: ValueBinder<BindDirectivePart>
+	#valueBinder?: ValueBinder<BindDirectivePart>
 
 	constructor(partInfo: PartInfo) {
 		super(partInfo)
@@ -45,27 +47,27 @@ class BindDirective<Component extends ReactiveElement, Property extends keyof Co
 	}
 
 	render() {
-		return this.valueBinder?.template ?? noChange
+		return this.#valueBinder?.template ?? noChange
 	}
 
 	override update(part: BindDirectivePart, parameters: BindDirectiveParameters<Component, Property>) {
-		if (!this.valueBinder) {
-			this.valueBinder = [PartType.PROPERTY, PartType.BOOLEAN_ATTRIBUTE, PartType.ATTRIBUTE].includes(part.type as any)
+		if (!this.#valueBinder) {
+			this.#valueBinder = [PartType.PROPERTY, PartType.BOOLEAN_ATTRIBUTE, PartType.ATTRIBUTE].includes(part.type as any)
 				? new PropertyValueBinder(part as any, parameters)
 				: new DefaultPropertyBinder(part as any, parameters)
-			this.valueBinder.connected()
+			this.#valueBinder.connected()
 		}
-		this.valueBinder.parameters = parameters
+		this.#valueBinder.parameters = parameters
 
 		return super.update(part, parameters)
 	}
 
-	protected override disconnected() {
-		this.valueBinder?.disconnected()
+	override disconnected() {
+		this.#valueBinder?.disconnected()
 	}
 
-	protected override reconnected() {
-		this.valueBinder?.connected()
+	override reconnected() {
+		this.#valueBinder?.connected()
 	}
 }
 
