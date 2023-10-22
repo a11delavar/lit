@@ -52,6 +52,18 @@
 		},
 		{
 			"path": "./packages/Constructor"
+		},
+		{
+			"path": "./packages/KeyPath"
+		},
+		{
+			"path": "./packages/LitTesting"
+		},
+		{
+			"path": "./packages/Object.equals"
+		},
+		{
+			"path": "./packages/Object.isWritable"
 		}
 	],
 }

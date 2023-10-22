@@ -1,0 +1,25 @@
+{
+	"name": "@a11d/object.equals",
+	"version": "0.0.2",
+	"description": "A value equality utility library.",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/a11delavar/lit.git"
+	},
+	"keywords": [
+		"object",
+		"equals",
+		"equality",
+		"value-equality"
+	],
+	"author": "a11delavar",
+	"license": "MIT",
+	"homepage": "https://github.com/a11delavar/lit#readme",
+	"type": "module",
+	"module": "./dist/index.js",
+	"main": "./dist/index.js",
+	"types": "./dist/index.d.ts",
+	"files": [
+		"dist"
+	]
+}

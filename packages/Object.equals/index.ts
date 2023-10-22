@@ -1,0 +1,5 @@
+import './equals.js'
+import './Map.equals.js'
+import './Set.equals.js'
+import './Object.equals.js'
+import './Array.equals.js'
