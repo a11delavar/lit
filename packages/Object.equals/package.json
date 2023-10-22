@@ -1,6 +1,6 @@
 {
-	"name": "@a11d/object.equals",
-	"version": "0.0.2",
+	"name": "@a11d/equals",
+	"version": "0.0.3",
 	"description": "A value equality utility library.",
 	"repository": {
 		"type": "git",
