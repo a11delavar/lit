@@ -5,6 +5,7 @@
 		"watch": "npm-watch",
 		"clean": "node ./scripts/clean.mjs",
 		"release": "node ./scripts/release.mjs",
+		"readme": "node ./scripts/readme.mjs",
 		"release:all": "node ./scripts/release-all.mjs",
 		"test": "node ./scripts/test.mjs && karma start --single-run"
 	},
