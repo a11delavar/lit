@@ -1,0 +1,25 @@
+{
+	"name": "@a11d/bidirectional-map",
+	"version": "0.1.0",
+	"description": "A bidirectional map for JavaScript",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/a11delavar/lit.git"
+	},
+	"keywords": [
+		"map",
+		"bidirectional",
+		"bimap",
+		"bijective-map"
+	],
+	"author": "a11delavar",
+	"license": "MIT",
+	"homepage": "https://github.com/a11delavar/lit#readme",
+	"type": "module",
+	"module": "./dist/index.js",
+	"main": "./dist/index.js",
+	"types": "./dist/index.d.ts",
+	"files": [
+		"dist"
+	]
+}
