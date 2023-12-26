@@ -1,4 +1,4 @@
-import { eventListener, Component, component, html, EventListenerTarget, queryAsync } from '../index.js'
+import { eventListener, Component, component, html, EventListenerTarget, queryAsync, Controller } from '../index.js'
 import { ComponentTestFixture } from '../test/ComponentTestFixture.js'
 import { extractEventTargets } from './EventListenerController.js'
 
@@ -112,6 +112,24 @@ describe(eventListener.name, () => {
 
 		const fixture = new ComponentTestFixture(() => new TestComponent())
 		test({ fixture, target })
+	})
+
+	describe('used in a controller', () => {
+		class TestController extends Controller {
+			@eventListener({ type: 'click' })
+			protected handleClick(e: Event) {
+				const component = this.host as EventListenerTestComponent
+				component.handleEvent(e)
+			}
+		}
+
+		@component('lit-test-event-listener-used-on-non-reactive-element-class')
+		class TestComponent extends EventListenerTestComponent {
+			readonly testController = new TestController(this)
+		}
+
+		const fixture = new ComponentTestFixture(() => new TestComponent())
+		test({ fixture })
 	})
 
 	function test(specs: {

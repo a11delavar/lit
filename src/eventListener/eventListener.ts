@@ -1,5 +1,6 @@
 import { EventListenerController } from './EventListenerController.js'
-import type { ReactiveElement } from 'lit'
+import { Controller } from '../Controller/index.js'
+import { ReactiveElement } from 'lit'
 import type { EventListenerTarget } from './EventListenerTarget.js'
 
 type ShorthandEventListenerDecoratorOptions = [type: string, options?: EventListenerOptions | boolean]
@@ -22,8 +23,8 @@ export function extractOptions(args: EventListenerDecoratorOptions): FullEventLi
 }
 
 export const eventListener = (...eventListenerOptions: EventListenerDecoratorOptions) => {
-	return (prototype: ReactiveElement, propertyKey: string, descriptor?: PropertyDescriptor) => {
-		const Constructor = prototype.constructor as typeof ReactiveElement
+	return (prototype: ReactiveElement | Controller, propertyKey: string, descriptor?: PropertyDescriptor) => {
+		const Constructor = prototype.constructor as typeof ReactiveElement | typeof Controller
 		Constructor.addInitializer(element => {
 			element.addController(new class extends EventListenerController {
 				constructor() {

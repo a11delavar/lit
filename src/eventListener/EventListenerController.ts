@@ -59,7 +59,7 @@ export class EventListenerController extends Controller {
 	protected readonly options: FullEventListenerControllerOptions
 
 	constructor(
-		protected override readonly host: ReactiveElement,
+		override readonly host: ReactiveElement,
 		...options: EventListenerControllerOptions
 	) {
 		super(host)
