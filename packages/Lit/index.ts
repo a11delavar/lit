@@ -38,3 +38,8 @@ export * from './event/index.js'
 export * from './bind/index.js'
 export * from './property.js'
 export * from './state.js'
+
+globalThis.window ??= undefined!
+globalThis.document ??= undefined!
+globalThis.navigator ??= undefined!
+globalThis.location ??= {} as Location

@@ -1,3 +1,4 @@
+import { isServer } from 'lit'
 import { HTMLElementEventDispatcher } from './HTMLElementEventDispatcher.js'
 import { PureEventDispatcher } from './PureEventDispatcher.js'
 
@@ -11,7 +12,7 @@ export function event(options?: EventInit) {
 		Object.defineProperty(prototype, propertyKey, {
 			get(this: any) {
 				if (!this[eventFieldName]) {
-					this[eventFieldName] = this instanceof HTMLElement
+					this[eventFieldName] = !isServer && this instanceof HTMLElement
 						? new HTMLElementEventDispatcher(this, propertyKey, options)
 						: new PureEventDispatcher()
 				}
