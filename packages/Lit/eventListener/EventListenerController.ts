@@ -78,6 +78,11 @@ export class EventListenerController extends Controller {
 		}
 	}
 
+	async resubscribe() {
+		await this.unsubscribe()
+		await this.subscribe()
+	}
+
 	override async hostConnected() {
 		await this.subscribe()
 	}
