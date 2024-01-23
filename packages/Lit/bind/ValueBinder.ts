@@ -1,26 +1,27 @@
 import { Part } from 'lit'
 import { BindDirectiveParameters, BindingMode } from './BindDirective.js'
 import { getAssociatedEvent } from './associatedEvent/getAssociatedEvent.js'
+import { bindingIntegrations } from './BindingIntegration.js'
 
-export abstract class ValueBinder<TPart extends Part> {
-	protected abstract get element(): Element
-	protected abstract get property(): string
+export abstract class ValueBinder<TPart extends Part = any> {
+	abstract get element(): Element
+	abstract get property(): string
 
 	constructor(protected readonly part: TPart, public parameters: BindDirectiveParameters<any, any>) { }
 
-	protected get component() {
+	get component() {
 		return this.parameters[0]
 	}
 
-	protected get sourceKey() {
+	get sourceKey() {
 		return this.parameters[1]
 	}
 
-	protected get keyPath() {
+	get keyPath() {
 		return this.parameters[2]?.keyPath
 	}
 
-	protected get mode() {
+	get mode() {
 		const mode = this.parameters[2]?.mode
 
 		if (mode) {
@@ -40,20 +41,27 @@ export abstract class ValueBinder<TPart extends Part> {
 				: BindingMode.OneWay
 	}
 
-	protected get event() {
+	get event() {
 		return this.parameters[2]?.event ?? getAssociatedEvent(this.element, this.property)
 	}
 
+	get source() { return this.component[this.sourceKey] }
+	set source(value) { this.component[this.sourceKey] = value }
+
 	get sourceValue() {
 		return this.keyPath
-			? getValueByKeyPath(this.component[this.sourceKey], this.keyPath as string)
-			: this.component[this.sourceKey]
+			? getValueByKeyPath(this.source, this.keyPath as string)
+			: this.source
 	}
 	set sourceValue(value: any) {
 		if (this.mode !== BindingMode.OneWay) {
 			this.keyPath
-				? setValueByKeyPath(this.component[this.sourceKey], this.keyPath as string, value)
-				: this.component[this.sourceKey] = value
+				? setValueByKeyPath(this.source, this.keyPath as string, value)
+				: this.source = value
+
+			for (const integration of bindingIntegrations) {
+				integration.bind(this)
+			}
 		}
 	}
 

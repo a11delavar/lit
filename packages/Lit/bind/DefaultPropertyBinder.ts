@@ -3,11 +3,11 @@ import { ValueBinder } from './ValueBinder.js'
 import { bindingDefaultPropertyKey } from './bindingDefaultProperty.js'
 
 export class DefaultPropertyBinder extends ValueBinder<ElementPart> {
-	protected get element() {
+	get element() {
 		return this.part.element
 	}
 
-	protected get property() {
+	get property() {
 		const property = (this.element.constructor as any)[bindingDefaultPropertyKey]
 
 		if (!property) {
