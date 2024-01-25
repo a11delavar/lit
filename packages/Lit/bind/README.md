@@ -198,3 +198,44 @@ class MyComponent extends Component {
 	// ...
 }
 ```
+
+# `Binder` Class
+
+The `Binder` class facilitates the creation of `bind` directives with deep bindings. It is specially useful for components which have a few central properties which are used often in bindings:
+
+```ts
+type Data = {
+	name: string
+	active: boolean
+}
+
+class DataComponent extends Component {
+	@property({ type: Array }) data!: Data
+
+	protected readonly dataBinder = new Binder<Data>(this, 'data')
+
+	get template() {
+		const { bind } = this.dataBinder
+		return html`
+			<input ${bind('name')} />
+			<input type='checkbox' ${bind('active')} />
+		`
+	}
+}
+```
+
+# Binding Integrations
+
+Sometimes, especially in larger applications, it is useful to have the ability to add behavior to the `bind` directive. For example automatically adding an `required` attribute to the underlying input elements, if you have a validation library behind the scenes and can extract related metadata from your data source. This can be achieved by registering a custom `BindingIntegration`:
+
+```ts
+@bindingIntegration()
+export class RequiredBindingIntegration extends BindingIntegration {
+	override bind({ element, source, keyPath }: ValueBinder<any>) {
+		if (element instanceof HTMLInputElement) {
+			const required = /* your logic using "source" and "keyPath" here */;
+			element.required = required
+		}
+	}
+}
+```
