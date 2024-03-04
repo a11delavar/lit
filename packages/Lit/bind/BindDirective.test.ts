@@ -37,8 +37,10 @@ function expectBindToPass<T>(parameters: {
 	customElements.define(bindableComponentTagName, TestBindableComponent)
 	const tag = literal`${unsafeStatic(bindableComponentTagName)}`
 
-	interface TestBinderComponent extends Component {
-		readonly bindableComponent: TestBindableComponent
+	abstract class TestBinderComponent extends Component {
+		@query(bindableComponentTagName) readonly bindableComponent!: TestBindableComponent
+		sourceUpdate = jasmine.createSpy('sourceUpdate')
+		sourceUpdated = jasmine.createSpy('sourceUpdated')
 	}
 
 	const expectBindingToPass = (parameters: {
@@ -52,95 +54,111 @@ function expectBindToPass<T>(parameters: {
 		const keyPath = !parameters.keyPath ? property : `${property}.${parameters.keyPath}`
 		const updateValue = parameters.updateValue ?? (updatedValue => setValueByKeyPath(fixture.component as any, keyPath, updatedValue))
 
-		if (expectedMode !== BindingMode.OneWayToSource) {
-			it('should initialize from source to target', () => {
-				expect(fixture.component.bindableComponent.value).toBe(initialValue)
-			})
-
-			it('should bind from source to target', async () => {
-				updateValue(updatedValue)
-				fixture.component.requestUpdate(property)
-				await fixture.updateComplete
-				expect(fixture.component.bindableComponent.value).toBe(updatedValue)
-			})
-
-			it('should bind from source to target with explicit update request', async () => {
-				updateValue(updatedValue)
-				await fixture.update()
-				expect(fixture.component.bindableComponent.value).toBe(updatedValue)
-			})
-		} else {
-			it('should not initialize from source to target', () => {
-				if (converterType === Boolean) {
-					expect(fixture.component.bindableComponent.value).toBe(undefined)
-				} else {
-					expect(fixture.component.bindableComponent.value).not.toBe(initialValue)
-				}
-			})
-
-			it('should not bind from source to target', async () => {
-				updateValue(updatedValue)
-				fixture.component.requestUpdate(property)
-				await fixture.updateComplete
-				expect(fixture.component.bindableComponent.value).not.toBe(updatedValue)
-			})
-
-			it('should not bind from source to target with explicit update request', async () => {
-				updateValue(updatedValue)
-				await fixture.update()
-				expect(fixture.component.bindableComponent.value).not.toBe(updatedValue)
-			})
+		const mit = (modes: Array<BindingMode>, name: string, callback: () => void) => {
+			if (modes.includes(expectedMode)) {
+				it(name, callback)
+			}
 		}
 
-		if (expectedMode !== BindingMode.OneWay) {
-			it('should bind from target to source when dispatching associated event', async () => {
-				fixture.component.bindableComponent.change.dispatch(updatedValue)
-				await fixture.updateComplete
-				expect(getValueByKeyPath(fixture.component as any, keyPath)).toBe(updatedValue)
-			})
+		mit([BindingMode.OneWay, BindingMode.TwoWay], 'should initialize from source to target', () => {
+			expect(fixture.component.bindableComponent.value).toBe(initialValue)
+		})
 
-			it('should call requestUpdate with the property key while binding from target to source', async () => {
-				spyOn(fixture.component, 'requestUpdate')
-				fixture.component.bindableComponent.change.dispatch(updatedValue)
-				await fixture.updateComplete
-				expect(fixture.component.requestUpdate).toHaveBeenCalledWith(property)
-			})
+		mit([BindingMode.TwoWay], 'should bind from source to target', async () => {
+			updateValue(updatedValue)
+			fixture.component.requestUpdate(property)
+			await fixture.updateComplete
+			expect(fixture.component.bindableComponent.value).toBe(updatedValue)
+		})
 
-			it('should register one event listener while binding from target to source', () => {
-				expect(fixture.component.bindableComponent.registeredEventsCount).toBe(1)
-				fixture.component.remove()
-				expect(fixture.component.bindableComponent.registeredEventsCount).toBe(0)
-			})
-		} else {
-			it('should not bind from target to source when dispatching associated event', async () => {
-				fixture.component.bindableComponent.change.dispatch(updatedValue)
-				await fixture.updateComplete
-				expect(getValueByKeyPath(fixture.component as any, keyPath)).not.toBe(updatedValue)
-			})
+		mit([BindingMode.OneWay, BindingMode.TwoWay], 'should bind from source to target with explicit update request', async () => {
+			updateValue(updatedValue)
+			await fixture.update()
+			expect(fixture.component.bindableComponent.value).toBe(updatedValue)
+		})
 
-			it('should not call requestUpdate with the property key while not binding from target to source', async () => {
-				spyOn(fixture.component, 'requestUpdate')
-				fixture.component.bindableComponent.change.dispatch(updatedValue)
-				await fixture.updateComplete
-				expect(fixture.component.requestUpdate).not.toHaveBeenCalledWith(property)
-			})
+		mit([BindingMode.OneWayToSource], 'should not initialize from source to target', () => {
+			if (converterType === Boolean) {
+				expect(fixture.component.bindableComponent.value).toBe(undefined)
+			} else {
+				expect(fixture.component.bindableComponent.value).not.toBe(initialValue)
+			}
+		})
 
-			it('should not register any event listeners while not binding from target to source', () => {
-				expect(fixture.component.bindableComponent.registeredEventsCount).toBeLessThanOrEqual(0)
-				fixture.component.remove()
-				expect(fixture.component.bindableComponent.registeredEventsCount).toBeLessThanOrEqual(0)
-			})
-		}
+		mit([BindingMode.OneWayToSource], 'should not bind from source to target', async () => {
+			updateValue(updatedValue)
+			fixture.component.requestUpdate(property)
+			await fixture.updateComplete
+			expect(fixture.component.bindableComponent.value).not.toBe(updatedValue)
+		})
+
+		mit([BindingMode.OneWayToSource], 'should not bind from source to target with explicit update request', async () => {
+			updateValue(updatedValue)
+			await fixture.update()
+			expect(fixture.component.bindableComponent.value).not.toBe(updatedValue)
+		})
+
+		mit([BindingMode.OneWayToSource, BindingMode.TwoWay], 'should bind from target to source when dispatching associated event', async () => {
+			fixture.component.bindableComponent.change.dispatch(updatedValue)
+			await fixture.updateComplete
+			expect(getValueByKeyPath(fixture.component as any, keyPath)).toBe(updatedValue)
+		})
+
+		mit([BindingMode.OneWayToSource, BindingMode.TwoWay], 'should call sourceUpdate and sourceUpdated with the updated value while binding from target to source', async () => {
+			fixture.component.bindableComponent.change.dispatch(updatedValue)
+			await fixture.updateComplete
+			expect(fixture.component.sourceUpdate).toHaveBeenCalledOnceWith(updatedValue)
+			expect(getValueByKeyPath(fixture.component as any, keyPath)).toBe(updatedValue)
+			expect(fixture.component.sourceUpdated).toHaveBeenCalledOnceWith(updatedValue)
+		})
+
+		mit([BindingMode.OneWayToSource, BindingMode.TwoWay], 'should call requestUpdate with the property key while binding from target to source', async () => {
+			spyOn(fixture.component, 'requestUpdate')
+			fixture.component.bindableComponent.change.dispatch(updatedValue)
+			await fixture.updateComplete
+			expect(fixture.component.requestUpdate).toHaveBeenCalledWith(property)
+		})
+
+		mit([BindingMode.OneWayToSource, BindingMode.TwoWay], 'should register one event listener while binding from target to source', () => {
+			expect(fixture.component.bindableComponent.registeredEventsCount).toBe(1)
+			fixture.component.remove()
+			expect(fixture.component.bindableComponent.registeredEventsCount).toBe(0)
+		})
+
+		mit([BindingMode.OneWay], 'should not bind from target to source when dispatching associated event', async () => {
+			fixture.component.bindableComponent.change.dispatch(updatedValue)
+			await fixture.updateComplete
+			expect(getValueByKeyPath(fixture.component as any, keyPath)).not.toBe(updatedValue)
+		})
+
+		mit([BindingMode.OneWay], 'should not call sourceUpdate and sourceUpdated with the updated value while not binding from target to source', async () => {
+			fixture.component.bindableComponent.change.dispatch(updatedValue)
+			await fixture.updateComplete
+			expect(fixture.component.sourceUpdate).not.toHaveBeenCalledWith(updatedValue)
+			expect(getValueByKeyPath(fixture.component as any, keyPath)).not.toBe(updatedValue)
+			expect(fixture.component.sourceUpdated).not.toHaveBeenCalledWith(updatedValue)
+		})
+
+		mit([BindingMode.OneWay], 'should not call requestUpdate with the property key while not binding from target to source', async () => {
+			spyOn(fixture.component, 'requestUpdate')
+			fixture.component.bindableComponent.change.dispatch(updatedValue)
+			await fixture.updateComplete
+			expect(fixture.component.requestUpdate).not.toHaveBeenCalledWith(property)
+		})
+
+		mit([BindingMode.OneWay], 'should not register any event listeners while not binding from target to source', () => {
+			expect(fixture.component.bindableComponent.registeredEventsCount).toBeLessThanOrEqual(0)
+			fixture.component.remove()
+			expect(fixture.component.bindableComponent.registeredEventsCount).toBeLessThanOrEqual(0)
+		})
 	}
 
 	describe('non-deep two-way binding', () => {
-		class TestNonDeepTwoWayBinderComponent extends Component {
+		class TestNonDeepTwoWayBinderComponent extends TestBinderComponent {
 			@state() value = initialValue
 
-			@query(bindableComponentTagName) readonly bindableComponent!: TestBindableComponent
-
 			get template() {
-				return html`${getTemplate(tag, bind(this, 'value'))}`
+				return html`${getTemplate(tag, bind(this, 'value', { sourceUpdate: this.sourceUpdate, sourceUpdated: this.sourceUpdated }))}`
 			}
 		}
 		customElements.define(`test-non-deep-two-way-binder-component-${tagSuffix}`, TestNonDeepTwoWayBinderComponent)
@@ -151,13 +169,11 @@ function expectBindToPass<T>(parameters: {
 	})
 
 	describe('two-way binding', () => {
-		class TestDeepTwoWayBinderComponent extends Component {
+		class TestDeepTwoWayBinderComponent extends TestBinderComponent {
 			@state() deep = { object: { value: initialValue } }
 
-			@query(bindableComponentTagName) readonly bindableComponent!: TestBindableComponent
-
 			get template() {
-				return html`${getTemplate(tag, bind(this as TestDeepTwoWayBinderComponent, 'deep', { keyPath: 'object.value' }))}`
+				return html`${getTemplate(tag, bind(this as TestDeepTwoWayBinderComponent, 'deep', { keyPath: 'object.value', sourceUpdate: this.sourceUpdate, sourceUpdated: this.sourceUpdated }))}`
 			}
 		}
 
@@ -169,13 +185,11 @@ function expectBindToPass<T>(parameters: {
 	})
 
 	describe('two-way explicit binding', () => {
-		class TestTwoWayExplicitBinderComponent extends Component {
+		class TestTwoWayExplicitBinderComponent extends TestBinderComponent {
 			@state() deep = { object: { value: initialValue } }
 
-			@query(bindableComponentTagName) readonly bindableComponent!: TestBindableComponent
-
 			get template() {
-				return html`${getTemplate(tag, bind(this as TestTwoWayExplicitBinderComponent, 'deep', { keyPath: 'object.value', mode: BindingMode.TwoWay }))}`
+				return html`${getTemplate(tag, bind(this as TestTwoWayExplicitBinderComponent, 'deep', { keyPath: 'object.value', mode: BindingMode.TwoWay, sourceUpdate: this.sourceUpdate, sourceUpdated: this.sourceUpdated }))}`
 			}
 		}
 
@@ -187,17 +201,15 @@ function expectBindToPass<T>(parameters: {
 	})
 
 	describe('explicit one-way binding', () => {
-		class TestExplicitOneWayBinderComponent extends Component {
+		class TestExplicitOneWayBinderComponent extends TestBinderComponent {
 			@state() deep = {
 				object: {
 					value: initialValue
 				}
 			}
 
-			@query(bindableComponentTagName) readonly bindableComponent!: TestBindableComponent
-
 			get template() {
-				return html`${getTemplate(tag, bind(this as TestExplicitOneWayBinderComponent, 'deep', { keyPath: 'object.value', mode: BindingMode.OneWay }))}`
+				return html`${getTemplate(tag, bind(this as TestExplicitOneWayBinderComponent, 'deep', { keyPath: 'object.value', mode: BindingMode.OneWay, sourceUpdate: this.sourceUpdate, sourceUpdated: this.sourceUpdated }))}`
 			}
 		}
 
@@ -209,7 +221,7 @@ function expectBindToPass<T>(parameters: {
 	})
 
 	describe('implicit one-way binding', () => {
-		class TestImplicitOneWayBinderComponent extends Component {
+		class TestImplicitOneWayBinderComponent extends TestBinderComponent {
 			@state() deep = {
 				object: {
 					_value: initialValue,
@@ -219,10 +231,8 @@ function expectBindToPass<T>(parameters: {
 				}
 			}
 
-			@query(bindableComponentTagName) readonly bindableComponent!: TestBindableComponent
-
 			get template() {
-				return html`${getTemplate(tag, bind(this as TestImplicitOneWayBinderComponent, 'deep', { keyPath: 'object.value' }))}`
+				return html`${getTemplate(tag, bind(this as TestImplicitOneWayBinderComponent, 'deep', { keyPath: 'object.value', sourceUpdate: this.sourceUpdate, sourceUpdated: this.sourceUpdated }))}`
 			}
 		}
 
@@ -240,17 +250,15 @@ function expectBindToPass<T>(parameters: {
 	})
 
 	describe('explicit one-way-to-source binding', () => {
-		class TestExplicitOneWayToSourceBinderComponent extends Component {
+		class TestExplicitOneWayToSourceBinderComponent extends TestBinderComponent {
 			@state() deep = {
 				object: {
 					value: initialValue
 				}
 			}
 
-			@query(bindableComponentTagName) readonly bindableComponent!: TestBindableComponent
-
 			get template() {
-				return html`${getTemplate(tag, bind(this as TestExplicitOneWayToSourceBinderComponent, 'deep', { keyPath: 'object.value', mode: BindingMode.OneWayToSource }))}`
+				return html`${getTemplate(tag, bind(this as TestExplicitOneWayToSourceBinderComponent, 'deep', { keyPath: 'object.value', mode: BindingMode.OneWayToSource, sourceUpdate: this.sourceUpdate, sourceUpdated: this.sourceUpdated }))}`
 			}
 		}
 
@@ -269,17 +277,15 @@ function expectBindToPass<T>(parameters: {
 				!(key === 'value' && (target.tagName?.toLowerCase().includes('implicit-one-way-to-source-binder') ?? false)) && original(target, key))
 		})
 
-		class TestImplicitOneWayToSourceBinderComponent extends Component {
+		class TestImplicitOneWayToSourceBinderComponent extends TestBinderComponent {
 			@state() deep = {
 				object: {
 					value: initialValue
 				}
 			}
 
-			@query(bindableComponentTagName) readonly bindableComponent!: TestBindableComponent
-
 			get template() {
-				return html`${getTemplate(tag, bind(this as TestImplicitOneWayToSourceBinderComponent, 'deep', { keyPath: 'object.value' }))}`
+				return html`${getTemplate(tag, bind(this as TestImplicitOneWayToSourceBinderComponent, 'deep', { keyPath: 'object.value', sourceUpdate: this.sourceUpdate, sourceUpdated: this.sourceUpdated }))}`
 			}
 		}
 
@@ -290,7 +296,6 @@ function expectBindToPass<T>(parameters: {
 		expectBindingToPass({ fixture, property: 'deep', keyPath: 'object.value', expectedMode: BindingMode.OneWayToSource })
 	})
 }
-
 
 describe('BindDirective', () => {
 	describe('attribute', () => {

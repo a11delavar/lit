@@ -21,6 +21,14 @@ export abstract class ValueBinder<TPart extends Part = any> {
 		return this.parameters[2]?.keyPath
 	}
 
+	get sourceUpdate() {
+		return this.parameters[2]?.sourceUpdate
+	}
+
+	get sourceUpdated() {
+		return this.parameters[2]?.sourceUpdated
+	}
+
 	get mode() {
 		const mode = this.parameters[2]?.mode
 
@@ -53,7 +61,7 @@ export abstract class ValueBinder<TPart extends Part = any> {
 			? getValueByKeyPath(this.source, this.keyPath as string)
 			: this.source
 	}
-	set sourceValue(value: any) {
+	set sourceValue(value: unknown) {
 		if (this.mode !== BindingMode.OneWay) {
 			this.keyPath
 				? setValueByKeyPath(this.source, this.keyPath as string, value)
@@ -78,10 +86,12 @@ export abstract class ValueBinder<TPart extends Part = any> {
 	}
 
 	private readonly eventListener = (e: Event) => {
-		this.sourceValue = e instanceof CustomEvent
+		const value = e instanceof CustomEvent
 			? e.detail
 			: (e.target as any)[this.property]
-
+		this.sourceUpdate?.call(this.component, value)
+		this.sourceValue = value
 		this.component.requestUpdate(this.sourceKey)
+		this.sourceUpdated?.call(this.component, value)
 	}
 }

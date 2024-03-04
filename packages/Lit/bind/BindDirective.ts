@@ -32,6 +32,8 @@ export type BindDirectiveParametersOptions<Data> = {
 	keyPath?: KeyPathOf<Data>
 	mode?: BindingMode
 	event?: string
+	sourceUpdate?: (value: Data) => void
+	sourceUpdated?: (value: Data) => void
 }
 
 type BindDirectivePart = ElementPart | AttributePart | BooleanAttributePart | PropertyPart

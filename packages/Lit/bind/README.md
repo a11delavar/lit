@@ -199,6 +199,24 @@ class MyComponent extends Component {
 }
 ```
 
+## `sourceUpdate` and `sourceUpdated` lifecycle methods
+
+The `sourceUpdate` and `sourceUpdated` can be used to get notified before and after the source is being updated as a result of a target change:
+
+```ts
+@component('my-component')
+class MyComponent extends Component {
+	@event() readonly change!: EventDispatcher<string>
+	@property({ type: String, event: 'change' }) value = ''
+
+	protected get template() {
+		return html`
+			<input ${bind(this, 'value', { sourceUpdated: (value: string) => this.change.dispatch(value) })} />
+		`
+	}
+}
+```
+
 # `Binder` Class
 
 The `Binder` class facilitates the creation of `bind` directives with deep bindings. It is specially useful for components which have a few central properties which are used often in bindings:
