@@ -147,5 +147,15 @@ describe(eventListener.name, () => {
 			await dispatchEvent()
 			expect(specs.fixture.component.fakeCall).toHaveBeenCalledTimes(0)
 		})
+
+		it('removes and re-adds the event listener on reconnect', async () => {
+			const div = document.createElement('div')
+			document.body.appendChild(div)
+
+			div.appendChild(specs.fixture.component)
+			const length = await dispatchEvent()
+
+			expect(specs.fixture.component.fakeCall).toHaveBeenCalledTimes(length)
+		})
 	}
 })
