@@ -1,6 +1,7 @@
 import type { PropertyDeclaration, ReactiveElement } from 'lit'
 import { property as litProperty } from 'lit/decorators.js'
-import { updated, UpdatedCallback } from './updated/updated.js'
+import { updated } from './updated/updated.js'
+import { UpdatedCallback } from 'updated/UpdatedController.js'
 import { associatedEvent, bindingDefaultProperty } from './bind/index.js'
 
 export const property = <T>(options?: PropertyDeclaration & {
