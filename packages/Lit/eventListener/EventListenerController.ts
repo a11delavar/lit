@@ -1,34 +1,7 @@
 import { ReactiveElement } from 'lit'
 import { Controller } from '../Controller/Controller.js'
-import type { EventListenerTarget, EventTargets } from './EventListenerTarget.js'
-
-export async function extractEventTargets(this: any, target: EventListenerTarget | undefined) {
-	const handle = (value: EventTargets) => Symbol.iterator in value ? [...value] : [value]
-
-	if (target === undefined) {
-		return handle(this)
-	}
-
-	if (typeof target === 'function') {
-		let eventTarget = (target as (this: any) => EventTargets | Promise<EventTargets>).call(this)
-
-		if (eventTarget instanceof Promise) {
-			eventTarget = await eventTarget
-		}
-
-		if (eventTarget instanceof EventTarget) {
-			return handle(eventTarget)
-		}
-
-		if (Symbol.iterator in eventTarget && [...eventTarget].every(t => t instanceof EventTarget)) {
-			return handle(eventTarget)
-		}
-
-		throw new TypeError(`${this.constructor}.target is not an EventTarget`)
-	}
-
-	return handle(target ?? this as EventTarget)
-}
+import { type EventListenerTarget } from './extractEventTargets.js'
+import { extractEventTargets } from './extractEventTargets.js'
 
 type Listener = EventListenerObject | ((e: any) => void)
 
@@ -64,15 +37,19 @@ export class EventListenerController extends Controller {
 		this.options = extractOptions(options)
 	}
 
+	protected get context(): object {
+		return this.host
+	}
+
 	async subscribe() {
-		const targets = await extractEventTargets.call(this.host, this.options.target)
+		const targets = await extractEventTargets.call(this.context, this.host, this.options.target)
 		for (const target of targets) {
 			target.addEventListener(this.options.type, this.options.listener, this.options.options)
 		}
 	}
 
 	async unsubscribe() {
-		const targets = await extractEventTargets.call(this.host, this.options.target)
+		const targets = await extractEventTargets.call(this.context, this.host, this.options.target)
 		for (const target of targets) {
 			target?.removeEventListener(this.options.type, this.options.listener, this.options.options)
 		}

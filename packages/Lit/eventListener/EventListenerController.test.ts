@@ -1,6 +1,7 @@
 import { ComponentTestFixture } from '@a11d/lit-testing'
 import { component, Component, EventListenerTarget, html, queryAsync } from '../index.js'
-import { EventListenerController, extractEventTargets } from './EventListenerController.js'
+import { EventListenerController } from './EventListenerController.js'
+import { extractEventTargets } from './extractEventTargets.js'
 
 abstract class EventListenerControllerTestComponent extends Component {
 	readonly fakeCall = jasmine.createSpy('fakeCall')
@@ -124,7 +125,7 @@ describe('EventListenerController', () => {
 		const event = specs.event ?? new PointerEvent('click')
 
 		const dispatchEvent = async () => {
-			const targets = await extractEventTargets.call(specs.fixture.component, specs.target)
+			const targets = await extractEventTargets(specs.fixture.component, specs.target)
 			targets.forEach(t => t.dispatchEvent(event))
 			return targets.length
 		}

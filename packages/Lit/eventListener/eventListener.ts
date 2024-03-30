@@ -1,6 +1,7 @@
+import { ReactiveElement } from 'lit'
 import { EventListenerController } from './EventListenerController.js'
-import type { ReactiveElement } from 'lit'
-import type { EventListenerTarget } from './EventListenerTarget.js'
+import type { EventListenerTarget } from './extractEventTargets.js'
+import type { Controller } from '../Controller/Controller.js'
 
 type ShorthandEventListenerDecoratorOptions = [type: string, options?: EventListenerOptions | boolean]
 
@@ -22,25 +23,30 @@ export function extractOptions(args: EventListenerDecoratorOptions): FullEventLi
 }
 
 export const eventListener = (...eventListenerOptions: EventListenerDecoratorOptions) => {
-	return (prototype: ReactiveElement, propertyKey: string, descriptor?: PropertyDescriptor) => {
-		const Constructor = prototype.constructor as typeof ReactiveElement
-		Constructor.addInitializer(element => {
-			element.addController(new class extends EventListenerController {
+	return (prototype: ReactiveElement | Controller, propertyKey: string, descriptor?: PropertyDescriptor) => {
+		const Constructor = prototype.constructor as typeof ReactiveElement | typeof Controller
+		Constructor.addInitializer(context => {
+			const element = context instanceof ReactiveElement ? context : context['host'] as ReactiveElement
+			new class extends EventListenerController {
 				constructor() {
 					const { type, target, options } = extractOptions(eventListenerOptions)
 					super(element, { type, target, options, listener: undefined! })
+					this.options.listener = this
 				}
 
-				override hostConnected() {
-					this.options.listener ??= (!descriptor
-						? Object.getOwnPropertyDescriptor(element, propertyKey)!.value
+				protected override get context() {
+					return context
+				}
+
+				handleEvent(event: Event) {
+					(!descriptor
+						? Object.getOwnPropertyDescriptor(context, propertyKey)!.value
 						: typeof descriptor.get === 'function'
 							? descriptor.get
 							: descriptor.value
-					).bind(element)
-					return super.hostConnected()
+					).call(context, event)
 				}
-			})
+			}
 		})
 	}
 }
