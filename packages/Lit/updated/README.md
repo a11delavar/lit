@@ -27,6 +27,11 @@ class Data extends Component {
 }
 ```
 
+# `update` Callback
+
+The `update` decorator allows you to define a method on a reactive property that will be called before the component has been updated due to a change in the property. This is useful for dispatching events or performing other actions **during** the component has been updated.
+
+
 Additionally the `state` and `property` decorators have been upgraded to allow for an `updated` callback directly an a property. The below example is equivalent to the above example.
 
 ```ts

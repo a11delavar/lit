@@ -1,2 +1,2 @@
-export * from './UpdatedController.js'
+export * from './lifecycleUpdateDecorator.js'
 export * from './updated.js'
