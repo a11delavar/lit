@@ -1,31 +1,14 @@
-import { Directive, directive, ElementPart, PartInfo, PartType } from '../index.js'
+import { Directive, directive, ElementPart, noChange, PartInfo, PartType } from '../index.js'
 import type { StandardProperties } from 'csstype'
 
 export type StyleEntry = [key: string, value: string]
 
-export interface StyleHandler {
-	handles(element: HTMLElement, entry: StyleEntry): boolean
-	apply(element: HTMLElement, entry: StyleEntry): void
-}
-
-export const styleHandler = () => {
-	return (Constructor: Constructor<StyleHandler>) => {
-		const handler = new Constructor()
-		StyleDirective.handlers.add(handler)
-	}
-}
+// eslint-disable-next-line @typescript-eslint/ban-types
+type StyleDeclaration = StandardProperties | (Record<string, string> & {})
 
 export class StyleDirective extends Directive {
-	static readonly handlers = new Set<StyleHandler>()
-
-	private static readonly defaultHandler = new class implements StyleHandler {
-		handles() { return true }
-		apply(element: HTMLElement, [key, value]: StyleEntry): void {
-			element.style[key as any] = value === null || value === undefined ? '' : value
-		}
-	}
-
 	private readonly element: HTMLElement
+	private previousStyle?: StyleDeclaration
 
 	constructor(partInfo: PartInfo) {
 		super(partInfo)
@@ -38,12 +21,26 @@ export class StyleDirective extends Directive {
 		this.element = part.element as HTMLElement
 	}
 
-	// eslint-disable-next-line @typescript-eslint/ban-types
-	render(styles: StandardProperties | (Record<string, string> & {})) {
-		for (const [key, value] of Object.entries(styles)) {
-			const handler = [...StyleDirective.handlers].find(handler => handler.handles(this.element, [key, value])) ?? StyleDirective.defaultHandler
-			handler.apply(this.element, [key, value])
+	render(styles: StyleDeclaration) {
+		for (const k of [...Object.keys(styles), ...Object.keys(this.previousStyle ?? {})]) {
+			const key = k as keyof StyleDeclaration
+
+			const oldValue = this.previousStyle?.[key] as string | undefined
+			const newValue = styles[key] as string | undefined
+
+			if (oldValue === newValue) {
+				continue
+			}
+
+			if (key.startsWith('--')) {
+				this.element.style.setProperty(key, newValue ?? null)
+			} else {
+				this.element.style[key as any] = newValue === null || newValue === undefined ? '' : newValue
+			}
 		}
+
+		this.previousStyle = structuredClone(styles)
+		return noChange
 	}
 }
 
