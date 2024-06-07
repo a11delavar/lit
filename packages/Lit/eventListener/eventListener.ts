@@ -3,12 +3,12 @@ import { EventListenerController } from './EventListenerController.js'
 import type { EventListenerTarget } from './extractEventTargets.js'
 import type { Controller } from '../Controller/Controller.js'
 
-type ShorthandEventListenerDecoratorOptions = [type: string, options?: EventListenerOptions | boolean]
+type ShorthandEventListenerDecoratorOptions = [type: string, options?: AddEventListenerOptions | boolean]
 
 type FullEventListenerDecoratorOptions = {
 	type: string
 	target?: EventListenerTarget
-	options?: EventListenerOptions | boolean
+	options?: AddEventListenerOptions | boolean
 }
 
 type EventListenerDecoratorOptions = ShorthandEventListenerDecoratorOptions | [FullEventListenerDecoratorOptions]

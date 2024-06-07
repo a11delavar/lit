@@ -9,10 +9,10 @@ type FullEventListenerControllerOptions = {
 	type: string
 	listener: Listener
 	target?: EventListenerTarget
-	options?: EventListenerOptions | boolean
+	options?: AddEventListenerOptions | boolean
 }
 
-type ShorthandEventListenerControllerOptions = [type: string, listener: Listener, options?: EventListenerOptions | boolean]
+type ShorthandEventListenerControllerOptions = [type: string, listener: Listener, options?: AddEventListenerOptions | boolean]
 
 type EventListenerControllerOptions = ShorthandEventListenerControllerOptions | [FullEventListenerControllerOptions]
 
