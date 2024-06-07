@@ -28,6 +28,7 @@ function extractOptions(options: EventListenerControllerOptions): FullEventListe
 
 export class EventListenerController extends Controller {
 	protected readonly options: FullEventListenerControllerOptions
+	private targets?: Array<EventTarget>
 
 	constructor(
 		protected override readonly host: ReactiveElement,
@@ -42,15 +43,15 @@ export class EventListenerController extends Controller {
 	}
 
 	async subscribe() {
-		const targets = await extractEventTargets.call(this.context, this.host, this.options.target)
-		for (const target of targets) {
+		this.targets = await extractEventTargets.call(this.context, this.host, this.options.target)
+		for (const target of this.targets) {
 			target.addEventListener(this.options.type, this.options.listener, this.options.options)
 		}
 	}
 
 	async unsubscribe() {
-		const targets = await extractEventTargets.call(this.context, this.host, this.options.target)
-		for (const target of targets) {
+		this.targets ??= await extractEventTargets.call(this.context, this.host, this.options.target)
+		for (const target of this.targets) {
 			target?.removeEventListener(this.options.type, this.options.listener, this.options.options)
 		}
 	}
@@ -60,11 +61,11 @@ export class EventListenerController extends Controller {
 		await this.subscribe()
 	}
 
-	override async hostConnected() {
-		await this.subscribe()
+	override hostConnected() {
+		this.subscribe()
 	}
 
-	override async hostDisconnected() {
-		await this.unsubscribe()
+	override hostDisconnected() {
+		this.unsubscribe()
 	}
 }
