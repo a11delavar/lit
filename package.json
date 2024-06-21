@@ -1,6 +1,5 @@
 {
 	"scripts": {
-		"build": "tsc && webpack build",
 		"dev": "node ./scripts/test.mjs",
 		"watch": "npm-watch",
 		"clean": "node ./scripts/clean.mjs",
@@ -26,8 +25,6 @@
 		"@types/jasmine": "x",
 		"@typescript-eslint/eslint-plugin": "x",
 		"@typescript-eslint/parser": "x",
-		"concurrently": "x",
-		"del-cli": "x",
 		"esbuild": "0.x",
 		"eslint": "x",
 		"eslint-plugin-import": "x",
@@ -37,15 +34,7 @@
 		"karma-firefox-launcher": "x",
 		"karma-helpful-reporter": "x",
 		"karma-jasmine": "x",
-		"minify-html-literals-loader": "x",
 		"npm-watch": "0.x",
-		"resolve-typescript-plugin": "x",
-		"terser-webpack-plugin": "x",
-		"ts-loader": "x",
-		"tsconfig-paths-webpack-plugin": "x",
-		"typescript": "5.x",
-		"webpack": "x",
-		"webpack-cli": "x",
-		"webpack-dev-server": "x"
+		"typescript": "5.x"
 	}
 }
