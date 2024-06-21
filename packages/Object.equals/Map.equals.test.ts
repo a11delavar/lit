@@ -1,6 +1,7 @@
 import './index.js'
+import { equals } from './symbol.js'
 
-describe('Map.prototype.equals', () => {
+describe('Map.prototype[equals]', () => {
 	it('should compare two maps', () => {
 		const a = new Map([
 			['a', 1],
@@ -14,7 +15,7 @@ describe('Map.prototype.equals', () => {
 			['c', 3],
 		])
 
-		expect(a.equals(b)).toBe(true)
+		expect(a[equals](b)).toBe(true)
 	})
 
 	it('should compare two maps with different sizes', () => {
@@ -29,7 +30,7 @@ describe('Map.prototype.equals', () => {
 			['b', 2],
 		])
 
-		expect(a.equals(b)).toBe(false)
+		expect(a[equals](b)).toBe(false)
 	})
 
 	it('should compare two maps with different values', () => {
@@ -45,7 +46,7 @@ describe('Map.prototype.equals', () => {
 			['c', 4],
 		])
 
-		expect(a.equals(b)).toBe(false)
+		expect(a[equals](b)).toBe(false)
 	})
 
 	it('should compare two maps with different keys', () => {
@@ -61,6 +62,6 @@ describe('Map.prototype.equals', () => {
 			['d', 3],
 		])
 
-		expect(a.equals(b)).toBe(false)
+		expect(a[equals](b)).toBe(false)
 	})
 })

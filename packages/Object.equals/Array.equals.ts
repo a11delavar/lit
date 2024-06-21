@@ -1,4 +1,6 @@
-Array.prototype.equals = function (this: Array<unknown>, other: unknown) {
+import { equals } from './symbol.js'
+
+Array.prototype[equals] = function (this: Array<unknown>, other: unknown) {
 	if (this === other) {
 		return true
 	}
@@ -12,7 +14,7 @@ Array.prototype.equals = function (this: Array<unknown>, other: unknown) {
 	}
 
 	for (const index in this) {
-		if (Object.equals(this[index], other[index]) === false) {
+		if (Object[equals](this[index], other[index]) === false) {
 			return false
 		}
 	}
@@ -24,6 +26,6 @@ export { }
 
 declare global {
 	interface Array<T> {
-		equals(other: Array<T>): boolean
+		[equals](other: Array<T>): boolean
 	}
 }

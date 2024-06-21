@@ -1,5 +1,6 @@
+import { equals } from './symbol.js'
 
-Map.prototype.equals = function (this: Map<unknown, unknown>, other: unknown) {
+Map.prototype[equals] = function (this: Map<unknown, unknown>, other: unknown) {
 	if (this === other) {
 		return true
 	}
@@ -17,7 +18,7 @@ Map.prototype.equals = function (this: Map<unknown, unknown>, other: unknown) {
 			return false
 		}
 
-		if (Object.equals(value, other.get(key)) === false) {
+		if (Object[equals](value, other.get(key)) === false) {
 			return false
 		}
 	}
@@ -29,6 +30,6 @@ export { }
 
 declare global {
 	interface Map<K, V> {
-		equals(other: Map<K, V>): boolean
+		[equals](other: Map<K, V>): boolean
 	}
 }

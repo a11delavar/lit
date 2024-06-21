@@ -1,4 +1,6 @@
-Object.prototype.equals = function (this: object, other: unknown) {
+import { equals } from './symbol.js'
+
+Object.prototype[equals] = function (this: object, other: unknown) {
 	if (this === other) {
 		return true
 	}
@@ -24,7 +26,7 @@ Object.prototype.equals = function (this: object, other: unknown) {
 			return false
 		}
 
-		if (!Object.equals(value, (other as any)[key])) {
+		if (!Object[equals](value, (other as any)[key])) {
 			return false
 		}
 	}
@@ -36,6 +38,6 @@ export { }
 
 declare global {
 	interface Object {
-		equals(other: unknown): boolean
+		[equals](other: unknown): boolean
 	}
 }

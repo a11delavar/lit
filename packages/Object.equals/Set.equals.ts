@@ -1,4 +1,6 @@
-Set.prototype.equals = function (this: Set<unknown>, other: unknown) {
+import { equals } from './symbol.js'
+
+Set.prototype[equals] = function (this: Set<unknown>, other: unknown) {
 	if (this === other) {
 		return true
 	}
@@ -11,13 +13,13 @@ Set.prototype.equals = function (this: Set<unknown>, other: unknown) {
 		return false
 	}
 
-	return [...this].equals([...other])
+	return [...this][equals]([...other])
 }
 
 export { }
 
 declare global {
 	interface Set<T> {
-		equals(other: Set<T>): boolean
+		[equals](other: Set<T>): boolean
 	}
 }

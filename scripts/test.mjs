@@ -23,10 +23,12 @@ FileSystem.mkdirSync('./dist', { recursive: true })
 
 const testIndexFileContent = `
 globalThis.environment = 'test'
-${getTestFiles('./packages').map(file => {
-	const relativePath = Path.relative('./dist', file)
-	return `import '${relativePath.replace(/\\/g, '/').replace(/\.ts$/, '')}'`
-}).join('\n')}`
+${getTestFiles('./packages')
+		.filter(file => !file.includes('global.ts'))
+		.map(file => {
+			const relativePath = Path.relative('./dist', file)
+			return `import '${relativePath.replace(/\\/g, '/').replace(/\.ts$/, '')}'`
+		}).join('\n')}`
 FileSystem.writeFileSync('./dist/test.ts', testIndexFileContent)
 
 await esbuild.build({
