@@ -32,7 +32,6 @@ export function isKeyPathWritable<T, KeyPath extends KeyPathOf<T>>(object: T, ke
 // @ts-expect-error = TypeScript deconstructs the types if we get it's type
 globalThis.getKeyPath = getKeyPath
 globalThis.getValueByKeyPath = getValueByKeyPath
-// @ts-expect-error = TypeScript deconstructs the types if we get it's type
 globalThis.setValueByKeyPath = setValueByKeyPath
 globalThis.isKeyPathWritable = isKeyPathWritable
 

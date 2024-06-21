@@ -32,6 +32,8 @@ describe('extractEventHandler', () => {
 
 			const handler = extractEventHandler(eventListener)
 
+			// console.log(eventListener)
+
 			expect(handler).not.toBe(clickHandler) // Because the handler is bound to the element
 			handler(new MouseEvent('click'))
 

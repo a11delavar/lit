@@ -35,6 +35,7 @@
 		"karma-helpful-reporter": "x",
 		"karma-jasmine": "x",
 		"npm-watch": "0.x",
-		"typescript": "5.x"
+		"typescript": "5.x",
+		"tslib": "2.x"
 	}
 }
