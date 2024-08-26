@@ -3,7 +3,6 @@ import type { StandardProperties } from 'csstype'
 
 export type StyleEntry = [key: string, value: string]
 
-// eslint-disable-next-line @typescript-eslint/ban-types
 type StyleDeclaration = StandardProperties | (Record<string, string> & {})
 
 export class StyleDirective extends Directive {

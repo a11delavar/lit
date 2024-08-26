@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 // @ts-check
 import FileSystem from 'fs'
 import Path from 'path'

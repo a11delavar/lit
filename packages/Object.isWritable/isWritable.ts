@@ -1,4 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/ban-types
 type LooseKey<T> = keyof T | (string & {})
 
 export function isWritable<T>(object: T, key: LooseKey<T>) {
@@ -19,7 +18,6 @@ function getPropertyDescriptors<T>(object: T, key: LooseKey<T>) {
 Object.isWritable = isWritable
 
 declare global {
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	interface ObjectConstructor {
 		isWritable<T>(object: T, key: LooseKey<T>): boolean
 	}

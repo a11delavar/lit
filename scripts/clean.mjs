@@ -1,4 +1,3 @@
-/* eslint-disable */
 // @ts-check
 import { Packages } from './util/index.mjs'
 import FileSystem from 'fs'
