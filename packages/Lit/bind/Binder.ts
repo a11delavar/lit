@@ -29,8 +29,11 @@ export class Binder<T> {
 
 	bind = (...[parameter]: BinderParameters<T>) => {
 		const key = this.key as keyof ReactiveElement
-		return typeof parameter === 'string'
-			? bind(this.host, key, { keyPath: parameter })
-			: bind(this.host, key, parameter as any)
+		const parameters = (typeof parameter === 'string' ? { keyPath: parameter } : parameter) as BindDirectiveParametersOptions<T>
+		return bind(this.host, key, this.getParameters(parameters) as unknown as BindDirectiveParametersOptions<ReactiveElement[keyof ReactiveElement]>)
+	}
+
+	protected getParameters(parameters: BindDirectiveParametersOptions<T>): BindDirectiveParametersOptions<T> {
+		return parameters
 	}
 }
