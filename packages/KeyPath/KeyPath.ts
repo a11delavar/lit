@@ -49,7 +49,7 @@ declare global {
 	type KeyPathOf<T, Depth extends DepthLevels[number] = DefaultDepth> =
 		ShouldBreak<Depth> extends true ? never :
 		object extends Required<T> ? string :
-		T extends ReadonlyArray<any> ? Extract<keyof T, `${number}`> | SubKeyPathOf<T, Extract<keyof T, `${number}`>, Depth> :
+		T extends ReadonlyArray<any> ? Extract<keyof T, `${number}`> | Extract<keyof T, string> | SubKeyPathOf<T, Extract<keyof T, `${number}`>, Depth> :
 		T extends object ? Extract<keyof T, string> | SubKeyPathOf<T, Extract<keyof T, string>, Depth> :
 		never
 
