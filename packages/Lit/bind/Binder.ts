@@ -2,7 +2,7 @@ import { ReactiveElement } from 'lit'
 import { bind, type BindDirectiveParametersOptions } from './BindDirective.js'
 
 type BinderParameters<T> =
-	| [keyPath: KeyPathOf<T>]
+	| [keyPath: KeyPath.Of<T>]
 	| [options: BindDirectiveParametersOptions<T>]
 
 /**

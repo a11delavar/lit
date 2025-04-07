@@ -29,7 +29,7 @@ export type BindDirectiveParameters<Component extends ReactiveElement, Property 
 ]
 
 export type BindDirectiveParametersOptions<Data> = {
-	keyPath?: KeyPathOf<Data>
+	keyPath?: KeyPath.Of<Data>
 	mode?: BindingMode
 	event?: string
 	sourceUpdate?: (value: Data) => void
