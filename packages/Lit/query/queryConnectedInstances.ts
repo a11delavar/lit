@@ -16,17 +16,18 @@ const propertyName = Symbol('ConnectedInstances')
  * ```
  */
 export function queryConnectedInstances() {
-	return (elementConstructor: typeof LitElement, propertyKey: string) => {
-		Object.defineProperty(elementConstructor, propertyName, { value: new Set<LitElement>() })
+	return (elementConstructor: AbstractConstructor<LitElement>, propertyKey: string) => {
+		const constructor = elementConstructor as AbstractConstructor<LitElement> & typeof LitElement
+		Object.defineProperty(constructor, propertyName, { value: new Set<LitElement>() })
 
-		elementConstructor.addInitializer(element => element.addController({
+		constructor.addInitializer(element => element.addController({
 			hostConnected: () => (element.constructor as any)[propertyName].add(element),
 			hostDisconnected: () => (element.constructor as any)[propertyName].delete(element)
 		}))
 
-		Object.defineProperty(elementConstructor, propertyKey, {
+		Object.defineProperty(constructor, propertyKey, {
 			configurable: false,
-			get(this: typeof LitElement) {
+			get(this: AbstractConstructor<LitElement>) {
 				return (this as any)[propertyName]
 			},
 		})
