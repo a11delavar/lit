@@ -1,6 +1,6 @@
 {
 	"name": "@a11d/key-path",
-	"version": "2.0.0",
+	"version": "2.1.0",
 	"description": "A set of type-safe utilities for working with objects and their properties with support for array members.",
 	"repository": {
 		"type": "git",

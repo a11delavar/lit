@@ -6,30 +6,42 @@ export class KeyPath {
 	}
 
 	static get<T, KeyPath extends KeyPath.Of<T>>(object: T, keyPath: KeyPath): KeyPath.ValueOf<T, KeyPath> {
-		return !keyPath ? undefined! : keyPath
-			.split('.')
-			.reduce((value: any, key) => value === undefined || value === null ? value : value[key], object)
+		return KeyPath.entries(object, keyPath).at(-1)?.value
 	}
 
 	static set<T, KeyPath extends KeyPath.Of<T>>(object: T, keyPath: KeyPath, value: KeyPath.ValueOf<T, KeyPath>) {
-		const keys = keyPath.split('.')
-		const lastKey = keys[keys.length - 1] as keyof T
-		const otherKeysButLast = keys.slice(0, keys.length - 1)
-		const lastObject = KeyPath.get(object, otherKeysButLast.join('.') as KeyPath) ?? object as any
-		if (Object.isWritable(lastObject, lastKey)) {
-			lastObject[lastKey] = value
+		if (KeyPath.isWritable(object, keyPath)) {
+			const entries = KeyPath.entries(object, keyPath);
+			(entries.length <= 1 ? object : entries.at(-2)!.value)[entries.at(-1)!.key] = value
 		}
 	}
 
 	static isWritable<T, KeyPath extends KeyPath.Of<T>>(object: T, keyPath: KeyPath): boolean {
-		if (!keyPath) {
+		const o = object as any
+		if (!keyPath || o === null || o === undefined) {
 			return false
 		}
-		const keys = keyPath.split('.')
-		const lastKey = keys[keys.length - 1] as keyof T
-		const otherKeysButLast = keys.slice(0, keys.length - 1)
-		const lastObject = KeyPath.get(object, otherKeysButLast.join('.') as KeyPath) ?? object as any
-		return Object.isWritable(lastObject, lastKey)
+		const entries = KeyPath.entries(object, keyPath)
+		return Object.isWritable(
+			(entries.length <= 1 ? object : entries.at(-2)!.value),
+			entries.at(-1)!.key
+		)
+	}
+
+	static entries<T, K extends KeyPath.Of<T>>(object: T, keyPath: K): Array<KeyPath.Entry> {
+		if (object === null || object === undefined || !keyPath) {
+			return []
+		}
+
+		return keyPath.split('.').reduce((entries, key, index) => {
+			const lastEntry = entries.at(-1)
+			entries.push({
+				key,
+				path: [lastEntry?.path, key].filter(Boolean).join('.'),
+				value: (index === 0 ? object : lastEntry?.value)?.[key]
+			})
+			return entries
+		}, new Array<KeyPath.Entry>())
 	}
 }
 
@@ -56,9 +68,16 @@ declare global {
 			KeyPath extends `${infer K}.${infer R}` ? K extends keyof T ? ValueOf<T[K], R, Depth> : unknown :
 			unknown
 
+		type Entry = {
+			readonly key: string
+			readonly path: string
+			readonly value: any
+		}
+
 		function of<T>(keyPath: KeyPath.Of<T>): KeyPath.Of<T>
 		function get<T, KeyPath extends Of<T>>(object: T, keyPath: KeyPath): ValueOf<T, KeyPath>
 		function set<T, KeyPath extends Of<T>>(object: T, keyPath: KeyPath, value: ValueOf<T, KeyPath>): void
 		function isWritable<T, KeyPath extends KeyPath.Of<T>>(object: T, keyPath: KeyPath): boolean
+		function entries<T, KeyPath extends KeyPath.Of<T>>(object: T, keyPath: KeyPath): Array<KeyPath.Entry>
 	}
 }
