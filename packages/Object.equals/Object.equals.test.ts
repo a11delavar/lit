@@ -13,4 +13,13 @@ describe('Object.prototype.equals', () => {
 		expect(b[equals](c)).toBe(false)
 		expect(c[equals](b)).toBe(false)
 	})
+
+	it('should support objects created without proper prototype', () => {
+		const objectWithoutPrototype = Object.create(null)
+		objectWithoutPrototype.prop = 'value'
+
+		const objectWithPrototype = { prop: 'value' }
+
+		expect(objectWithPrototype[equals](objectWithoutPrototype)).toBe(true)
+	})
 })

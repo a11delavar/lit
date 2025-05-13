@@ -6,6 +6,10 @@ Object.prototype[equals] = function (this: object, other: unknown) {
 	}
 
 	if (!(other instanceof Object)) {
+		if (typeof other === 'object' && other !== null) {
+			return this[equals](Object.assign({}, other))
+		}
+
 		return false
 	}
 
