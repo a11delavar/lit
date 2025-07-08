@@ -1,4 +1,4 @@
-import { ReactiveElement } from '@a11d/lit'
+import { type ReactiveElement } from '@a11d/lit'
 
 export const bindingDefaultPropertyKey = Symbol('bindingDefaultProperty')
 

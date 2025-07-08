@@ -1,6 +1,6 @@
 import { ComponentTestFixture } from '@a11d/lit-testing'
 import '../index.js'
-import { event, Component, html, property, state, query, staticHtml, literal, unsafeStatic, TemplateResult, StaticValue } from '../index'
+import { event, Component, html, property, state, query, staticHtml, literal, unsafeStatic, type TemplateResult, type StaticValue } from '../index'
 import { BindingMode, bind } from './BindDirective.js'
 
 function expectBindToPass<T>(parameters: {

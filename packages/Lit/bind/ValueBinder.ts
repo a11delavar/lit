@@ -1,5 +1,5 @@
-import { Part } from 'lit'
-import { BindDirectiveParameters, BindingMode } from './BindDirective.js'
+import { type Part } from 'lit'
+import { type BindDirectiveParameters, BindingMode } from './BindDirective.js'
 import { getAssociatedEvent } from './associatedEvent/getAssociatedEvent.js'
 import { bindingIntegrations } from './BindingIntegration.js'
 

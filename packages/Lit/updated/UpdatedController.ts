@@ -1,6 +1,6 @@
 import { ReactiveElement, type PropertyValues } from 'lit'
 import { Controller } from '../Controller/index.js'
-import { Component } from '../Component/index.js'
+import { type Component } from '../Component/index.js'
 
 const changedPropertiesKey = Symbol('changedProperties')
 

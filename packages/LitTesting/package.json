@@ -1,6 +1,6 @@
 {
 	"name": "@a11d/lit-testing",
-	"version": "0.0.2",
+	"version": "0.0.3",
 	"description": "Utilities to facilitate testing lit components",
 	"repository": {
 		"type": "git",

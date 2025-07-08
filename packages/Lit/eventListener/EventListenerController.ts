@@ -1,7 +1,6 @@
-import { ReactiveElement } from 'lit'
+import { type ReactiveElement } from 'lit'
 import { Controller } from '../Controller/Controller.js'
-import { type EventListenerTarget } from './extractEventTargets.js'
-import { extractEventTargets } from './extractEventTargets.js'
+import { type EventListenerTarget, extractEventTargets } from './extractEventTargets.js'
 
 type Listener = EventListenerObject | ((e: any) => void)
 

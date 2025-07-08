@@ -1,5 +1,5 @@
-import { ReactiveElement } from 'lit'
-import { UpdatedCallback, UpdatedController } from './UpdatedController.js'
+import { type ReactiveElement } from 'lit'
+import { type UpdatedCallback, UpdatedController } from './UpdatedController.js'
 
 export const updated = <T>(callback: UpdatedCallback<T>) => {
 	return (prototype: ReactiveElement, propertyKey: PropertyKey) => {

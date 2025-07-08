@@ -1,4 +1,4 @@
-import { ReactiveController, ReactiveControllerHost } from 'lit'
+import { type ReactiveController, type ReactiveControllerHost } from 'lit'
 
 type Initializer = (controller: Controller) => void
 

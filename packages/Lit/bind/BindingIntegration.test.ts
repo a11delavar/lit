@@ -3,7 +3,7 @@ import { query } from '../query'
 import { Component, html, component } from '../Component'
 import { Binder } from './Binder'
 import { bindingIntegration, BindingIntegration } from './BindingIntegration'
-import { ValueBinder } from './ValueBinder'
+import { type ValueBinder } from './ValueBinder'
 import { property } from '..'
 
 @bindingIntegration()
@@ -33,7 +33,7 @@ describe('BindingIntegration', () => {
 		@query('input') readonly input!: HTMLInputElement
 
 		get template() {
-			return html`<input ${this.binder.bind('value')} />`
+			return html`<input ${this.binder.bind('value')}>`
 		}
 	}
 
@@ -80,7 +80,7 @@ describe('BindingIntegration', () => {
 		@query('input') readonly input!: HTMLInputElement
 
 		get template() {
-			return html`<input ?required=${this.required} ${this.binder.bind('value')} />`
+			return html`<input ?required=${this.required} ${this.binder.bind('value')}>`
 		}
 	}
 

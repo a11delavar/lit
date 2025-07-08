@@ -1,4 +1,4 @@
-import { ReactiveController } from 'lit'
+import { type ReactiveController } from 'lit'
 import { Controller } from './Controller.js'
 import { Component } from '../Component/index.js'
 import { ComponentTestFixture } from '@a11d/lit-testing'

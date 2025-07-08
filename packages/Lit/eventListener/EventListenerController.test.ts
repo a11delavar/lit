@@ -1,5 +1,5 @@
 import { ComponentTestFixture } from '@a11d/lit-testing'
-import { component, Component, EventListenerTarget, html, queryAsync } from '../index.js'
+import { component, Component, type EventListenerTarget, html, queryAsync } from '../index.js'
 import { EventListenerController } from './EventListenerController.js'
 import { extractEventTargets } from './extractEventTargets.js'
 

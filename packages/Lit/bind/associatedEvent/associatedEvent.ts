@@ -1,4 +1,4 @@
-import { ReactiveElement } from 'lit'
+import { type ReactiveElement } from 'lit'
 
 export const associatedEventsByPropertiesKey = Symbol('associatedEventsByPropertiesKey')
 

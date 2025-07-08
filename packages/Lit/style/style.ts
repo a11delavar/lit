@@ -1,4 +1,4 @@
-import { Directive, directive, ElementPart, noChange, PartInfo, PartType } from '../index.js'
+import { Directive, directive, type ElementPart, noChange, type PartInfo, PartType } from '../index.js'
 import type { StandardProperties } from 'csstype'
 
 export type StyleEntry = [key: string, value: string]
