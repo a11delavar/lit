@@ -1,4 +1,4 @@
-import { ReactiveElement } from 'lit'
+import { type ReactiveElement } from 'lit'
 import { bind, type BindDirectiveParametersOptions } from './BindDirective.js'
 
 type BinderParameters<T> =

@@ -1,4 +1,4 @@
-import { LitElement } from 'lit'
+import { type LitElement } from 'lit'
 
 const propertyName = Symbol('ConnectedInstances')
 

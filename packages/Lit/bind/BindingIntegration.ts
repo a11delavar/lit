@@ -1,4 +1,4 @@
-import { ValueBinder } from './ValueBinder.js'
+import { type ValueBinder } from './ValueBinder.js'
 
 export const bindingIntegrations = new Set<BindingIntegration>()
 

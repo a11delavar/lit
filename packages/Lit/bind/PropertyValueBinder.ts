@@ -1,4 +1,4 @@
-import { AttributePart, BindingMode, BooleanAttributePart, PropertyPart, noChange } from '@a11d/lit'
+import { type AttributePart, BindingMode, type BooleanAttributePart, type PropertyPart, noChange } from '@a11d/lit'
 import { ValueBinder } from './ValueBinder.js'
 
 export class PropertyValueBinder extends ValueBinder<PropertyPart | AttributePart | BooleanAttributePart> {

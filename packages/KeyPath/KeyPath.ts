@@ -58,15 +58,15 @@ declare global {
 		type Of<T, Depth extends DepthLevels[number] = DefaultDepth> =
 			ShouldBreak<Depth> extends true ? never :
 			object extends Required<T> ? string :
-			T extends ReadonlyArray<any> ? Extract<keyof T, `${number}`> | Extract<keyof T, string> | SubKeyPathOf<T, Extract<keyof T, `${number}`>, Depth> :
-			T extends object ? Extract<keyof T, string> | SubKeyPathOf<T, Extract<keyof T, string>, Depth> :
-			never
+				T extends ReadonlyArray<any> ? Extract<keyof T, `${number}`> | Extract<keyof T, string> | SubKeyPathOf<T, Extract<keyof T, `${number}`>, Depth> :
+					T extends object ? Extract<keyof T, string> | SubKeyPathOf<T, Extract<keyof T, string>, Depth> :
+						never
 
 		type ValueOf<T, KeyPath extends string = Of<T>, Depth extends DepthLevels[number] = DefaultDepth> =
 			ShouldBreak<Depth> extends true ? never :
-			KeyPath extends keyof T ? T[KeyPath] :
-			KeyPath extends `${infer K}.${infer R}` ? K extends keyof T ? ValueOf<T[K], R, Depth> : unknown :
-			unknown
+				KeyPath extends keyof T ? T[KeyPath] :
+					KeyPath extends `${infer K}.${infer R}` ? K extends keyof T ? ValueOf<T[K], R, Depth> : unknown :
+						unknown
 
 		type Entry = {
 			readonly key: string

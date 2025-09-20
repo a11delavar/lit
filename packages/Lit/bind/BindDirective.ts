@@ -1,6 +1,6 @@
-import { directive, AsyncDirective, type ElementPart, type PartInfo, PartType, AttributePart, BooleanAttributePart, PropertyPart, ReactiveElement, DirectiveResult, noChange } from '../index.js'
+import { directive, AsyncDirective, type ElementPart, type PartInfo, PartType, type AttributePart, type BooleanAttributePart, type PropertyPart, type ReactiveElement, type DirectiveResult, noChange } from '../index.js'
 import '@a11d/key-path'
-import { ValueBinder } from './ValueBinder.js'
+import { type ValueBinder } from './ValueBinder.js'
 import { PropertyValueBinder } from './PropertyValueBinder.js'
 import { DefaultPropertyBinder } from './DefaultPropertyBinder.js'
 

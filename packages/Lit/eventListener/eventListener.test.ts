@@ -1,4 +1,4 @@
-import { eventListener, Component, component, html, EventListenerTarget, queryAsync, Controller } from '../index.js'
+import { eventListener, Component, component, html, type EventListenerTarget, queryAsync, Controller } from '../index.js'
 import { ComponentTestFixture } from '@a11d/lit-testing'
 import { extractEventTargets } from './extractEventTargets.js'
 

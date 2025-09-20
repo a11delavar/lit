@@ -5,14 +5,10 @@
 		"incremental": true,
 		"declaration": true,
 		"declarationMap": true,
-		"target": "ES2020",
-		"lib": [
-			"ES2021",
-			"DOM",
-			"DOM.Iterable"
-		],
+		"target": "ES2022",
 		"module": "NodeNext",
 		"moduleResolution": "NodeNext",
+		"useDefineForClassFields": false,
 		"strict": true,
 		"importHelpers": true,
 		"noUnusedLocals": true,

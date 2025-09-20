@@ -1,4 +1,4 @@
-import { LitElement, PropertyValues } from 'lit'
+import { LitElement, type PropertyValues } from 'lit'
 import { customElement } from 'lit/decorators.js'
 import { html } from './html.js'
 
