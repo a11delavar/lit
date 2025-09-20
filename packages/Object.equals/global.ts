@@ -1,10 +1,11 @@
 import { equals } from './symbol.js'
 
-Object.equals = Object[equals]
 Object.prototype.equals = Object.prototype[equals]
+Function.prototype.equals = Function.prototype[equals]
 Array.prototype.equals = Array.prototype[equals]
 Set.prototype.equals = Set.prototype[equals]
 Map.prototype.equals = Map.prototype[equals]
+Object.equals = Object[equals]
 
 declare global {
 	interface ObjectConstructor {
@@ -12,18 +13,22 @@ declare global {
 	}
 
 	interface Object {
-		equals(...args: Parameters<typeof Object.prototype[typeof equals]>): ReturnType<typeof Object.prototype[typeof equals]>
+		equals(...args: Parameters<Object[typeof equals]>): ReturnType<Object[typeof equals]>
+	}
+
+	interface Function {
+		equals(...args: Parameters<Function[typeof equals]>): ReturnType<Function[typeof equals]>
 	}
 
 	interface Array<T> {
-		equals(...args: Parameters<typeof Array<T>[typeof equals]>): ReturnType<typeof Array<T>[typeof equals]>
+		equals(...args: Parameters<Array<T>[typeof equals]>): ReturnType<Array<T>[typeof equals]>
 	}
 
 	interface Set<T> {
-		equals(...args: Parameters<typeof Set<T>[typeof equals]>): ReturnType<typeof Set<T>[typeof equals]>
+		equals(...args: Parameters<Set<T>[typeof equals]>): ReturnType<Set<T>[typeof equals]>
 	}
 
 	interface Map<K, V> {
-		equals(...args: Parameters<typeof Map<K, V>[typeof equals]>): ReturnType<typeof Map<K, V>[typeof equals]>
+		equals(...args: Parameters<Map<K, V>[typeof equals]>): ReturnType<Map<K, V>[typeof equals]>
 	}
 }

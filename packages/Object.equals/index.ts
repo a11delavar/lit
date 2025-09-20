@@ -1,6 +1,8 @@
 import './equals.js'
+import './Function.equals.js'
 import './Map.equals.js'
 import './Set.equals.js'
 import './Object.equals.js'
 import './Array.equals.js'
 export * from './symbol.js'
+export * from './hasChanged.js'

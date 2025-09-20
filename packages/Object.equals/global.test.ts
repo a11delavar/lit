@@ -1,4 +1,5 @@
 import { equals } from './symbol'
+import './equals.js'
 
 describe('Global "equals" method', () => {
 	afterEach(() => {
@@ -7,6 +8,7 @@ describe('Global "equals" method', () => {
 		Array.prototype.equals = undefined!
 		Set.prototype.equals = undefined!
 		Map.prototype.equals = undefined!
+		Function.prototype.equals = undefined!
 	})
 
 	it('should compare two objects using "equals" method only when "global.js" is imported', async () => {
@@ -28,12 +30,12 @@ describe('Global "equals" method', () => {
 		a.equals = () => false
 		b.equals = () => true
 
-		// If called directly, nothing changes as the method is available in both
-		expect(a[equals](b)).toBe(true)
+		// When calling Object.prototype[equals] it returns false
+		// as the "equals" method are not equal.
+		expect(a[equals](b)).toBe(false)
 
-		// But if called through the global Object[equals] method,
-		// which is also used in all other comparer methods,
-		// the overridden method is in force
+		// When calling the global Object[equals] method
+		// the overridden "equals" method is in force.
 		expect(Object[equals](a, b)).toBe(false)
 		expect(Object[equals](b, a)).toBe(true)
 	})
