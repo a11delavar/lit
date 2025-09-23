@@ -21,11 +21,18 @@ Object.prototype[equals] = function (this: object, other: unknown) {
 		return this.valueOf() === other.valueOf()
 	}
 
-	if (Object.keys(this).length !== Object.keys(other).length) {
+	const nonUndefinedKeys = Object.keys(this).filter(key => this[key as keyof typeof this] !== undefined)
+	const otherNonUndefinedKeys = Object.keys(other).filter(key => other[key as keyof typeof other] !== undefined)
+
+	if (nonUndefinedKeys.length !== otherNonUndefinedKeys.length) {
 		return false
 	}
 
 	for (const [key, value] of Object.entries(this)) {
+		if (value === undefined) {
+			continue
+		}
+
 		if (!Object.prototype.hasOwnProperty.call(other, key)) {
 			return false
 		}

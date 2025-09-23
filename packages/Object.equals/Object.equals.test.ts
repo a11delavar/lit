@@ -22,4 +22,15 @@ describe('Object.prototype.equals', () => {
 
 		expect(objectWithPrototype[equals](objectWithoutPrototype)).toBe(true)
 	})
+
+	it('should consider absence and undefined as equal', () => {
+		const obj1 = { a: 1, b: undefined, c: { d: 1 } }
+		const obj2 = { a: 1, c: { d: 1, e: undefined } }
+		const obj3 = { a: 1, c: { d: 1, e: null } }
+
+		expect(obj1[equals](obj2)).toBe(true)
+		expect(obj2[equals](obj1)).toBe(true)
+		expect(obj2[equals](obj3)).toBe(false)
+		expect(obj3[equals](obj2)).toBe(false)
+	})
 })
