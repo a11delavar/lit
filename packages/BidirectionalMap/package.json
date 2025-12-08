@@ -1,7 +1,7 @@
 {
 	"name": "@a11d/bidirectional-map",
-	"version": "0.1.0",
-	"description": "A bidirectional map for JavaScript",
+	"version": "0.1.1",
+	"description": "Map with bidirectional lookups - query by key or value",
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/a11delavar/lit.git"
@@ -10,7 +10,8 @@
 		"map",
 		"bidirectional",
 		"bimap",
-		"bijective-map"
+		"bijective-map",
+		"reverse-lookup"
 	],
 	"author": "a11delavar",
 	"license": "MIT",
