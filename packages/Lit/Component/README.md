@@ -1,36 +1,38 @@
 # `Component` class
 
-The `Component` class is the base class for all components. In addition to [Lit's lifecycle](https://lit.dev/docs/components/lifecycle/) callbacks it also additionally supports:
-- `template` getter to define the component's template.
-- `initialized()` callback
-- `connected()` callback
-- `disconnected()` callback
+The `Component` class is the base class for all components.
+
+In addition to [Lit's standard lifecycle](https://lit.dev/docs/components/lifecycle/), `Component` provides:
+- `template` getter - Define the component's template
+- `initialized()` - Called once after the component is constructed
+- `connected()` - Called each time the component is connected to the DOM
+- `disconnected()` - Called each time the component is disconnected from the DOM
 
 ```ts
-import { component, Component, html, eventListener, property } from '@a11d/lit'
+import { component, Component, html, property } from '@a11d/lit'
 
-@component('lit-button')
-class Button extends Component {
-	@property({ type: Boolean }) hidden = false
+@component('custom-button')
+class CustomButton extends Component {
+	@property({ type: Boolean }) disabled = false
 
 	protected override initialized() {
-		console.log('initialized')
+		console.log('Component initialized')
 	}
 
 	protected override connected() {
-		console.log('connected')
+		console.log('Component connected to DOM')
 	}
 
 	protected override disconnected() {
-		console.log('disconnected')
+		console.log('Component disconnected from DOM')
 	}
 
 	protected override get template() {
-		return this.hidden ? html.nothing : html`
-			<button>
+		return html`
+			<button ?disabled=${this.disabled}>
 				<slot></slot>
 			</button>
-		`;
+		`
 	}
 }
 ```

@@ -1,56 +1,55 @@
 # `updated` Decorator
 
-The `updated` decorator allows you to define a method on a reactive property that will be called after the component has been updated due to a change in the property. This is useful for dispatching events or performing other actions **after** the component has been updated.
+React to property changes with callbacks. The `updated` decorator allows you to define a callback that runs after the component updates due to a property change.
 
 ```ts
-import { component, Component, html, state, updated } from '@a11d/lit'
+import { component, Component, css, html, property, updated } from '@a11d/lit'
 
-@component('lit-data')
-class Data extends Component {
-    @updated(async function(this: Data) {
-        await this.fetch()
+@component('progress-bar')
+class ProgressBar extends Component {
+    @updated(function(this: ProgressBar) {
+        this.style.setProperty('--_progress', `${this.value}%`)
     })
-    @state() code?: string
+    @property({ type: Number }) value = 0
 
-    private fetch() {
-        if (this.code) {
-            this.data = await fetch(`https://api.example.com/${this.code}`)
-        }
+    static get styles() {
+        return css`
+            :host { display: block; width: 100%; height: 20px; background: #e0e0e0; }
+            .bar { height: 100%; width: var(--_progress, 0%); background: #4caf50; }
+        `
     }
 
-    get template() {
-        return html`
-            <input placeholder='code' .value=${this.count} @change=${(e: Event) => this.count = Number((e.target as HTMLInputElement).value)} />
-            ${this.data.map(item => html`<div>${item}</div>`)}
-        `;
+    protected get template() {
+        return html`<div class="bar"></div>`
     }
 }
 ```
 
-Additionally the `state` and `property` decorators have been upgraded to allow for an `updated` callback directly an a property. The below example is equivalent to the above example.
+## Inline Syntax
+
+The `state` and `property` decorators support an `updated` callback directly:
 
 ```ts
-import { component, Component, html, state, updated } from '@a11d/lit'
+import { component, Component, css, html, property } from '@a11d/lit'
 
-@component('lit-data')
-class Data extends Component {
-    @state({
-        async updated(this: Data) {
-            await this.fetch()
+@component('progress-bar')
+class ProgressBar extends Component {
+    @property({
+        type: Number,
+        updated(this: ProgressBar) {
+            this.style.setProperty('--_progress', `${this.value}%`)
         }
-    }) code?: string
+    }) value = 0
 
-    private fetch() {
-        if (this.code) {
-            this.data = await fetch(`https://api.example.com/${this.code}`)
-        }
+    static get styles() {
+        return css`
+            :host { display: block; width: 100%; height: 20px; background: #e0e0e0; }
+            .bar { height: 100%; width: var(--_progress, 0%); background: #4caf50; }
+        `
     }
 
-    get template() {
-        return html`
-            <input placeholder='code' .value=${this.count} @change=${(e: Event) => this.count = Number((e.target as HTMLInputElement).value)} />
-            ${this.data.map(item => html`<div>${item}</div>`)}
-        `;
+    protected get template() {
+        return html`<div class="bar"></div>`
     }
 }
 ```

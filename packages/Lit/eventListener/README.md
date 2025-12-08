@@ -1,66 +1,78 @@
 # `eventListener` Decorator
 
-The `eventListener` decorator allows you to make a method to be an event listener.
+Declaratively register event listeners on methods. The decorator automatically handles listener registration and cleanup.
 
 ```ts
 import { component, Component, html, eventListener } from '@a11d/lit'
 
-@component('lit-event-listener')
-class EventListener extends Component {
+@component('event-handler')
+class EventHandler extends Component {
     @eventListener('delete')
-    private handleClick(e: CustomEvent<'single' | 'all'>) {
-        // This should have been (hopefully!) dispatched by the `lit-event-bubbles` component
+    private handleDelete(e: CustomEvent<'single' | 'all'>) {
+        // Listens to 'delete' events on the component itself
+        console.log('Delete:', e.detail)
     }
 
-    get template() {
+    protected get template() {
         return html`
-            <lit-event-bubbles></lit-event-bubbles>
-            <lit-event-bubbles></lit-event-bubbles>
-            <lit-event-bubbles></lit-event-bubbles>
-        `;
+            <delete-button></delete-button>
+            <delete-button></delete-button>
+            <delete-button></delete-button>
+        `
     }
 }
 ```
 
-Providing a shorthand parameter of type `string` will automatically add an event listener to the root component. This can be customized by providing an object with the following properties:
+## Options
 
-- `type` - The type of event to listen for. This can be a custom event or a native event.
-- `target` - The target to listen to events on. This can be one of the following types:
-    - `EventTarget`: The event listener will be added to this node.
-    - `Iterable<EventTarget>`: The event listener will be added to each node in the list.
-    - `() => EventTarget`: The event listener will be added to the node returned by the function. If a function is provided, it will be called with the component instance as its `this` context.
-    - `() => Iterable<EventTarget>`: The event listener will be added to each node returned by the function. If a function is provided, it will be called with the component instance as its `this` context.
-    - `() => Promise<EventTarget>`: The event listener will be added to the node resulted by awaiting the promise. If a function is provided, it will be called with the component instance as its `this` context.
-    - `() => Promise<Iterable<EventTarget>>`: The event listener will be added to each node resulted by awaiting the promise. If a function is provided, it will be called with the component instance as its `this` context.
-- `options` - An object of type `AddEventListenerOptions` that will be passed to the `addEventListener` method.
+Providing a string as the parameter adds an event listener to the component itself. For more control, pass an options object:
+
+### `type: string`
+The event type to listen for (custom or native events).
+
+### `target: EventTarget | Function`
+The target(s) to listen on. Can be:
+- `EventTarget` - A specific element
+- `Iterable<EventTarget>` - Multiple elements
+- `() => EventTarget` - Function returning an element
+- `() => Iterable<EventTarget>` - Function returning multiple elements
+- `() => Promise<EventTarget>` - Async function returning an element
+- `() => Promise<Iterable<EventTarget>>` - Async function returning multiple elements
+
+Functions are called with the component instance as `this`.
+
+### `options: AddEventListenerOptions`
+Standard event listener options passed to `addEventListener()`.
+
+## Advanced Usage
 
 ```ts
 import { component, Component, html, eventListener } from '@a11d/lit'
 
-@component('lit-event-listener')
-class EventListener extends Component {
+@component('event-handler')
+class EventHandler extends Component {
     @eventListener({
         type: 'delete',
-        async target(this: EventListener) {
+        async target(this: EventHandler) {
             await this.updateComplete
-            return this.renderRoot.querySelectorAll('lit-event')
+            return this.renderRoot.querySelectorAll('delete-button')
         },
     })
     private handleDelete(e: CustomEvent<'single' | 'all'>) {
-        // Now we know for sure that this event was dispatched by a `lit-event` components belonging to this component
+        // Only handles events from delete-button elements in this component
     }
 
     @eventListener({ type: 'keydown', target: document })
-    private handleDocumentKeyDown(e: PointerEvent) {
-        // Demonstration of listening to events on the document
+    private handleDocumentKeyDown(e: KeyboardEvent) {
+        // Listen to document-level events
     }
 
-    get template() {
+    protected get template() {
         return html`
-            <lit-event></lit-event>
-            <lit-event></lit-event>
-            <lit-event></lit-event>
-        `;
+            <delete-button></delete-button>
+            <delete-button></delete-button>
+            <delete-button></delete-button>
+        `
     }
 }
 ```

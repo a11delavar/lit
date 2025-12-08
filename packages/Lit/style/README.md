@@ -1,16 +1,25 @@
 # `style` Directive
 
-The `style` directive allows you to define styles for the underlying element.
+Apply inline styles to elements with proper typing and reactivity.
 
 ```ts
-import { component, Component, html, style } from '@a11d/lit'
+import { component, Component, html, style, property } from '@a11d/lit'
 
-@component('lit-style')
-class Style extends Component {
-    get template() {
+@component('styled-element')
+class StyledElement extends Component {
+    @property({ type: String }) color = 'red'
+    @property({ type: Number }) size = 16
+
+    protected get template() {
         return html`
-            <div ${style({ color: 'red' })}>Hello World</div>
-        `;
+            <div ${style({
+                color: this.color,
+                fontSize: `${this.size}px`,
+                fontWeight: 'bold'
+            })}>
+                Styled Text
+            </div>
+        `
     }
 }
 ```

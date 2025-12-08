@@ -1,6 +1,14 @@
 # `bind` Directive
 
-The `bind` directive is used to setup a synchronization binding between a component property and a data source, by listening to the given or associated event.
+Two-way data binding for Lit components. The `bind` directive synchronizes a component property with a data source by listening to the associated event, eliminating the need to manually wire up property and event handlers.
+
+```ts
+// With bind directive
+html`<input ${bind(this, 'value')} />`
+
+// Without bind directive
+html`<input .value=${this.value} @change=${(e: Event) => this.value = (e.target as HTMLInputElement).value} />`
+```
 
 ## Modes
 
@@ -164,7 +172,7 @@ class MyParentComponent extends Component {
 
 ### Default Property
 
-The default property of an element is can be declared using the `@bindingDefaultProperty()` decorator or by passing the `bindingDefault` property to the `@property()` decorator. Both examples below are equivalent:
+The default property of an element can be declared using the `@bindingDefaultProperty()` decorator or by passing the `bindingDefault` property to the `@property()` decorator. Both examples below are equivalent:
 
 ```ts
 @component('my-component')
@@ -219,7 +227,7 @@ class MyComponent extends Component {
 
 # `Binder` Class
 
-The `Binder` class facilitates the creation of `bind` directives with deep bindings. It is specially useful for components which have a few central properties which are used often in bindings:
+The `Binder` class facilitates the creation of `bind` directives with deep bindings. It is especially useful for components which have a few central properties which are used often in bindings:
 
 ```ts
 type Data = {
