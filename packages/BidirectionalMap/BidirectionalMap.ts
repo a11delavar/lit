@@ -77,7 +77,6 @@ export class BidirectionalMap<K, V> implements Map<K, V> {
 globalThis.BidirectionalMap = BidirectionalMap
 
 declare global {
-	// eslint-disable-next-line no-var
 	var BidirectionalMap: typeof import('./BidirectionalMap.js').BidirectionalMap
 	type BidirectionalMap<K, V> = import('./BidirectionalMap.js').BidirectionalMap<K, V>
 }

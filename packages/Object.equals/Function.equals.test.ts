@@ -1,4 +1,5 @@
 import './index.js'
+// eslint-disable-next-line no-duplicate-imports
 import { equals } from './index.js'
 
 describe('Function.prototype[equals]', () => {

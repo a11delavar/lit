@@ -24,7 +24,7 @@ export class Readme {
 			<div align="center">
 			<h3>Libraries</h3>
 
-			[![Tests](https://img.shields.io/github/actions/workflow/status/a11delavar/lit/development.yml?logo=github&style=for-the-badge&label=Tests)](https://a11delavar.github.io/lit/actions/workflows/development.yml)
+			[![Tests](https://img.shields.io/github/actions/workflow/status/a11delavar/lit/qa.yml?logo=github&style=for-the-badge&label=Tests)](https://a11delavar.github.io/lit/actions/workflows/qa.yml)
 
 
 			| Module  | Package | Version | Downloads |
