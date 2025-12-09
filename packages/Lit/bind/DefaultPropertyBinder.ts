@@ -7,7 +7,7 @@ export class DefaultPropertyBinder extends ValueBinder<ElementPart> {
 		return this.part.element
 	}
 
-	get property() {
+	get targetProperty() {
 		const property = (this.element.constructor as any)[bindingDefaultPropertyKey]
 
 		if (!property) {
@@ -17,16 +17,16 @@ export class DefaultPropertyBinder extends ValueBinder<ElementPart> {
 		return property
 	}
 
-	override get sourceValue() { return super.sourceValue }
-	override set sourceValue(value: unknown) {
-		super.sourceValue = value
-		if (this.mode !== BindingMode.OneWayToSource && Object.isWritable(this.element, this.property)) {
-			(this.element as any)[this.property] = value
+	override get value() { return super.value }
+	override set value(value: unknown) {
+		super.value = value
+		if (this.mode !== BindingMode.OneWayToSource && Object.isWritable(this.element, this.targetProperty)) {
+			(this.element as any)[this.targetProperty] = value
 		}
 	}
 
 	get template() {
-		this.sourceValue = this.sourceValue
+		this.value = this.value
 		return noChange
 	}
 }

@@ -3,6 +3,7 @@ import '@a11d/key-path'
 import { type ValueBinder } from './ValueBinder.js'
 import { PropertyValueBinder } from './PropertyValueBinder.js'
 import { DefaultPropertyBinder } from './DefaultPropertyBinder.js'
+import { type Property } from './Property.js'
 
 export enum BindingMode {
 	/**
@@ -30,10 +31,10 @@ export enum BindingMode {
  */
 export type BindSource = Pick<ReactiveElement, 'requestUpdate'>
 
-export type BindDirectiveParameters<Component extends BindSource, Property extends keyof Component> = [
+export type BindDirectiveParameters<Component extends BindSource, ComponentProperty extends keyof Component> = [
 	component: Component,
-	property: Property,
-	options?: BindDirectiveParametersOptions<Component[Property]>,
+	property: Property<Component[ComponentProperty]> | ComponentProperty,
+	options?: BindDirectiveParametersOptions<Component[ComponentProperty]>,
 ]
 
 export type BindDirectiveParametersOptions<Data> = {
