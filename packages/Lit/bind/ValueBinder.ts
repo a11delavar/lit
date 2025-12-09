@@ -2,10 +2,11 @@ import { type Part } from 'lit'
 import { type BindDirectiveParameters, BindingMode } from './BindDirective.js'
 import { getAssociatedEvent } from './associatedEvent/getAssociatedEvent.js'
 import { bindingIntegrations } from './BindingIntegration.js'
+import { Property } from './Property.js'
 
 export abstract class ValueBinder<TPart extends Part = any> {
 	abstract get element(): Element
-	abstract get property(): string
+	abstract get targetProperty(): string
 
 	constructor(protected readonly part: TPart, public parameters: BindDirectiveParameters<any, any>) { }
 
@@ -13,12 +14,30 @@ export abstract class ValueBinder<TPart extends Part = any> {
 		return this.parameters[0]
 	}
 
-	get sourceKey() {
-		return this.parameters[1]
+	private _property?: Property<any>
+	get property(): Property<any> {
+		if (!this._property) {
+			const param = this.parameters[1]
+			if (param instanceof Property) {
+				this._property = param
+			} else {
+				const keyPath = this.parameters[2]?.keyPath
+				this._property = keyPath
+					? Property.fromKeyPath(this.component[param as keyof typeof this.component], keyPath as any)
+					: Property.fromPropertyKey(this.component, param as string)
+			}
+		}
+		return this._property
 	}
 
-	get keyPath() {
-		return this.parameters[2]?.keyPath
+	private get sourceKey() {
+		const param = this.parameters[1]
+		return param instanceof Property ? undefined : param
+	}
+
+	get context() {
+		const key = this.sourceKey
+		return key ? this.component[key as keyof typeof this.component] : undefined
 	}
 
 	get sourceUpdate() {
@@ -36,11 +55,16 @@ export abstract class ValueBinder<TPart extends Part = any> {
 			return mode
 		}
 
-		const sourceWritable = this.keyPath
-			? KeyPath.isWritable(this.component[this.sourceKey], this.keyPath)
-			: Object.isWritable(this.component, this.sourceKey)
+		// Check source writability without creating the Property instance yet
+		// to allow proper mode detection based on runtime checks
+		const param = this.parameters[1]
+		const sourceWritable = param instanceof Property
+			? param.isWritable
+			: this.parameters[2]?.keyPath
+				? KeyPath.isWritable(this.component[param as keyof typeof this.component], this.parameters[2].keyPath)
+				: Object.isWritable(this.component, param as string)
 
-		const targetWritable = Object.isWritable(this.component, this.property)
+		const targetWritable = Object.isWritable(this.component, this.targetProperty)
 
 		return sourceWritable && targetWritable
 			? BindingMode.TwoWay
@@ -50,22 +74,16 @@ export abstract class ValueBinder<TPart extends Part = any> {
 	}
 
 	get event() {
-		return this.parameters[2]?.event ?? getAssociatedEvent(this.element, this.property)
+		return this.parameters[2]?.event ?? getAssociatedEvent(this.element, this.targetProperty)
 	}
 
-	get source() { return this.component[this.sourceKey] }
-	set source(value) { this.component[this.sourceKey] = value }
-
-	get sourceValue() {
-		return this.keyPath
-			? KeyPath.get(this.source, this.keyPath as string)
-			: this.source
+	get value() {
+		return this.property.get?.()
 	}
-	set sourceValue(value: unknown) {
+
+	set value(value: unknown) {
 		if (this.mode !== BindingMode.OneWay) {
-			this.keyPath
-				? KeyPath.set(this.source, this.keyPath as string, value)
-				: this.source = value
+			this.property.set?.(value)
 
 			for (const integration of bindingIntegrations) {
 				integration.bind(this)
@@ -88,10 +106,12 @@ export abstract class ValueBinder<TPart extends Part = any> {
 	private readonly eventListener = (e: Event) => {
 		const value = e instanceof CustomEvent
 			? e.detail
-			: (e.target as any)[this.property]
+			: (e.target as any)[this.targetProperty]
 		this.sourceUpdate?.call(this.component, value)
-		this.sourceValue = value
-		this.component.requestUpdate(this.sourceKey)
+		this.value = value
+		if (this.sourceKey) {
+			this.component.requestUpdate(this.sourceKey)
+		}
 		this.sourceUpdated?.call(this.component, value)
 	}
 }
