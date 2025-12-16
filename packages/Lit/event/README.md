@@ -22,10 +22,11 @@ The decorator converts the field into a getter that returns an instance of eithe
 
 ## Event Options
 
-The decorator accepts an options object of type `EventInit` to configure event behavior:
+The decorator accepts an options object to configure event behavior:
 - `bubbles` - Whether the event bubbles up the DOM tree (default: `false`)
 - `cancelable` - Whether the event can be cancelled (default: `false`)
 - `composed` - Whether the event triggers listeners outside of shadow DOM (default: `false`)
+- `type` - Custom DOM event type name (default: property name)
 
 ```ts
 import { component, Component, html, event, EventDispatcher } from '@a11d/lit'
@@ -41,4 +42,26 @@ class DeleteButton extends Component {
         `
     }
 }
+```
+
+### Custom Event Types
+
+By default, the DOM event type matches the property name. Use the `type` option to specify a custom event type:
+
+```ts
+@component('user-form')
+class UserForm extends Component {
+    @event({ type: 'user-save', bubbles: true }) readonly save!: EventDispatcher<User>
+    @event({ type: 'user-cancel' }) readonly cancel!: EventDispatcher<void>
+
+    protected get template() {
+        return html`
+            <button @click=${() => this.save.dispatch(user)}>Save</button>
+            <button @click=${() => this.cancel.dispatch()}>Cancel</button>
+        `
+    }
+}
+
+// Listen using the custom type
+html`<user-form @user-save=${(e: CustomEvent<User>) => this.handleUserSave(e.detail)}></user-form>`
 ```
