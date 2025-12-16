@@ -1,8 +1,9 @@
 import { Component, HTMLElementEventDispatcher, PureEventDispatcher, component } from '../index.js'
 import { event } from './event.js'
+import { ComponentTestFixture } from '@a11d/lit-testing'
 
 describe(event.name, () => {
-	describe('on element objects', () => {
+	describe('on non HTMLElement objects', () => {
 		class TestClass {
 			@event() readonly activation!: EventDispatcher<string>
 
@@ -13,19 +14,16 @@ describe(event.name, () => {
 
 		const object = new TestClass()
 
-		describe('on non HTMLElement objects', () => {
-			it('should create event dispatcher getter accessor', () => {
-				// @ts-expect-error - testing that setting the property throws an error
-				expect(() => sut.activation = null as any).toThrow()
-			})
+		it('should create event dispatcher getter accessor', () => {
+			expect(() => (object.activation as any) = null).toThrow()
+		})
 
-			it('should return the same instance', () => {
-				expect(object.activation).toBe(object.activation)
-			})
+		it('should return the same instance', () => {
+			expect(object.activation).toBe(object.activation)
+		})
 
-			it(`should create an ${PureEventDispatcher.name}`, () => {
-				expect(object.activation).toBeInstanceOf(PureEventDispatcher)
-			})
+		it(`should create an ${PureEventDispatcher.name}`, () => {
+			expect(object.activation).toBeInstanceOf(PureEventDispatcher)
 		})
 	})
 
@@ -41,18 +39,61 @@ describe(event.name, () => {
 
 		const c = new TestComponent()
 
-		describe('on HTMLElement objects', () => {
-			it('should create event dispatcher getter accessor', () => {
-				// @ts-expect-error - testing that setting the property throws an error
-				expect(() => sut.activation = null as any).toThrow()
+		it('should create event dispatcher getter accessor', () => {
+			expect(() => (c.activation as any) = null).toThrow()
+		})
+
+		it('should return the same instance', () => {
+			expect(c.activation).toBe(c.activation)
+		})
+
+		it(`should create an ${HTMLElementEventDispatcher.name}`, () => {
+			expect(c.activation).toBeInstanceOf(HTMLElementEventDispatcher)
+		})
+
+		describe('with explicit type option', () => {
+			@component('lit-test-event-custom-type')
+			class CustomTypeComponent extends Component {
+				@event({ type: 'custom' }) readonly customEvent!: EventDispatcher<string>
+				@event({ type: 'kebab-case-event' }) readonly kebabEvent!: EventDispatcher<string>
+				@event({ type: 'namespace:event' }) readonly namespacedEvent!: EventDispatcher<string>
+			}
+
+			const fixture = new ComponentTestFixture(() => new CustomTypeComponent())
+
+			const expectCustomEvent = (expectedEvent: string, property: keyof typeof fixture.component) => {
+				const listeners = {
+					expected: jasmine.createSpy('expected'),
+					unexpected: jasmine.createSpy('unexpected'),
+				}
+				fixture.component.addEventListener(expectedEvent, listeners.expected)
+				fixture.component.addEventListener(property, listeners.unexpected)
+
+				fixture.component[property].dispatch('test')
+
+				expect(listeners.unexpected).not.toHaveBeenCalled()
+				expect(listeners.expected).toHaveBeenCalledTimes(1)
+				const event = listeners.expected.calls.argsFor(0)[0] as CustomEvent<string>
+				expect(event.type).toBe(expectedEvent)
+				expect(event.detail).toBe('test')
+
+				fixture.component.removeEventListener(expectedEvent, listeners.expected)
+				listeners.expected.calls.reset()
+				fixture.component[property].dispatch('test2')
+				expect(listeners.expected).not.toHaveBeenCalled()
+				expect(listeners.unexpected).not.toHaveBeenCalled()
+			}
+
+			it('should dispatch native event with custom type name', () => {
+				expectCustomEvent('custom', 'customEvent')
 			})
 
-			it('should return the same instance', () => {
-				expect(c.activation).toBe(c.activation)
+			it('should handle kebab-case type', () => {
+				expectCustomEvent('kebab-case-event', 'kebabEvent')
 			})
 
-			it(`should create an ${HTMLElementEventDispatcher.name}`, () => {
-				expect(c.activation).toBeInstanceOf(HTMLElementEventDispatcher)
+			it('should handle namespaced type', () => {
+				expectCustomEvent('namespace:event', 'namespacedEvent')
 			})
 		})
 	})
