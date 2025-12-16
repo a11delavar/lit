@@ -61,27 +61,27 @@ describe(event.name, () => {
 
 			const fixture = new ComponentTestFixture(() => new CustomTypeComponent())
 
-			const expectCustomEvent = (correctEvent: string, incorrectEvent: keyof typeof fixture.component) => {
+			const expectCustomEvent = (expectedEvent: string, property: keyof typeof fixture.component) => {
 				const listeners = {
-					correct: jasmine.createSpy('correct'),
-					incorrect: jasmine.createSpy('incorrect'),
+					expected: jasmine.createSpy('expected'),
+					unexpected: jasmine.createSpy('unexpected'),
 				}
-				fixture.component.addEventListener(correctEvent, listeners.correct)
-				fixture.component.addEventListener(incorrectEvent, listeners.incorrect)
+				fixture.component.addEventListener(expectedEvent, listeners.expected)
+				fixture.component.addEventListener(property, listeners.unexpected)
 
-				fixture.component[incorrectEvent].dispatch('test')
+				fixture.component[property].dispatch('test')
 
-				expect(listeners.incorrect).not.toHaveBeenCalled()
-				expect(listeners.correct).toHaveBeenCalledTimes(1)
-				const event = listeners.correct.calls.argsFor(0)[0] as CustomEvent<string>
-				expect(event.type).toBe(correctEvent)
+				expect(listeners.unexpected).not.toHaveBeenCalled()
+				expect(listeners.expected).toHaveBeenCalledTimes(1)
+				const event = listeners.expected.calls.argsFor(0)[0] as CustomEvent<string>
+				expect(event.type).toBe(expectedEvent)
 				expect(event.detail).toBe('test')
 
-				fixture.component.removeEventListener(correctEvent, listeners.correct)
-				listeners.correct.calls.reset()
-				fixture.component[incorrectEvent].dispatch('test2')
-				expect(listeners.correct).not.toHaveBeenCalled()
-				expect(listeners.incorrect).not.toHaveBeenCalled()
+				fixture.component.removeEventListener(expectedEvent, listeners.expected)
+				listeners.expected.calls.reset()
+				fixture.component[property].dispatch('test2')
+				expect(listeners.expected).not.toHaveBeenCalled()
+				expect(listeners.unexpected).not.toHaveBeenCalled()
 			}
 
 			it('should dispatch native event with custom type name', () => {
