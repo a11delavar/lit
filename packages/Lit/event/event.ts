@@ -2,21 +2,17 @@ import { isServer } from 'lit'
 import { HTMLElementEventDispatcher } from './HTMLElementEventDispatcher.js'
 import { PureEventDispatcher } from './PureEventDispatcher.js'
 
-export function event(options?: EventInit) {
+export function event(options?: EventInit & { readonly type?: string }) {
 	return (prototype: unknown, propertyKey?: string) => {
 		if (propertyKey === undefined) {
 			return
 		}
 
-		const eventFieldName = `$${propertyKey}Event$`
 		Object.defineProperty(prototype, propertyKey, {
 			get(this: any) {
-				if (!this[eventFieldName]) {
-					this[eventFieldName] = !isServer && this instanceof HTMLElement
-						? new HTMLElementEventDispatcher(this, propertyKey, options)
-						: new PureEventDispatcher()
-				}
-				return this[eventFieldName]
+				return this[`$${propertyKey}Event$`] ??= !isServer && this instanceof HTMLElement
+					? new HTMLElementEventDispatcher(this, options?.type ?? propertyKey, options)
+					: new PureEventDispatcher()
 			}
 		})
 	}
