@@ -1,9 +1,8 @@
-// @ts-check
 import FileSystem from 'fs'
 import Path from 'path'
 import esbuild from 'esbuild'
 
-function getTestFiles(directory) {
+function getTestFiles(directory: string): string[] {
 	const files = FileSystem.readdirSync(directory)
 	// @ts-ignore - filter returns string[] | string[][]
 	return files.flatMap(file => {
