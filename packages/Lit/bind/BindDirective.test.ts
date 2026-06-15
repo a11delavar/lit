@@ -171,7 +171,7 @@ function expectBindToPass<T>(parameters: {
 		}
 		customElements.define(`test-non-deep-two-way-binder-component-${tagSuffix}`, TestNonDeepTwoWayBinderComponent)
 
-		const fixture = new ComponentTestFixture(() => new TestNonDeepTwoWayBinderComponent())
+		const fixture = new ComponentTestFixture(() => new TestNonDeepTwoWayBinderComponent)
 
 		expectBindingToPass({ fixture, property: 'value', expectedMode: BindingMode.TwoWay })
 	})
@@ -187,7 +187,7 @@ function expectBindToPass<T>(parameters: {
 
 		customElements.define(`test-deep-two-way-binder-component-${tagSuffix}`, TestDeepTwoWayBinderComponent)
 
-		const fixture = new ComponentTestFixture(() => new TestDeepTwoWayBinderComponent())
+		const fixture = new ComponentTestFixture(() => new TestDeepTwoWayBinderComponent)
 
 		expectBindingToPass({ fixture, property: 'deep', keyPath: 'object.value', expectedMode: BindingMode.TwoWay })
 	})
@@ -203,7 +203,7 @@ function expectBindToPass<T>(parameters: {
 
 		customElements.define(`test-deep-two-way-explicit-binder-component-${tagSuffix}`, TestTwoWayExplicitBinderComponent)
 
-		const fixture = new ComponentTestFixture(() => new TestTwoWayExplicitBinderComponent())
+		const fixture = new ComponentTestFixture(() => new TestTwoWayExplicitBinderComponent)
 
 		expectBindingToPass({ fixture, property: 'deep', keyPath: 'object.value', expectedMode: BindingMode.TwoWay })
 	})
@@ -212,8 +212,8 @@ function expectBindToPass<T>(parameters: {
 		class TestExplicitOneWayBinderComponent extends TestBinderComponent {
 			@state() deep = {
 				object: {
-					value: initialValue,
-				},
+					value: initialValue
+				}
 			}
 
 			override get template() {
@@ -223,7 +223,7 @@ function expectBindToPass<T>(parameters: {
 
 		customElements.define(`test-explicit-one-way-binder-component-${tagSuffix}`, TestExplicitOneWayBinderComponent)
 
-		const fixture = new ComponentTestFixture(() => new TestExplicitOneWayBinderComponent())
+		const fixture = new ComponentTestFixture(() => new TestExplicitOneWayBinderComponent)
 
 		expectBindingToPass({ fixture, property: 'deep', keyPath: 'object.value', expectedMode: BindingMode.OneWay })
 	})
@@ -235,8 +235,8 @@ function expectBindToPass<T>(parameters: {
 					_value: initialValue,
 					get value() {
 						return this._value
-					},
-				},
+					}
+				}
 			}
 
 			override get template() {
@@ -246,14 +246,14 @@ function expectBindToPass<T>(parameters: {
 
 		customElements.define(`test-implicit-one-way-binder-component-${tagSuffix}`, TestImplicitOneWayBinderComponent)
 
-		const fixture = new ComponentTestFixture(() => new TestImplicitOneWayBinderComponent())
+		const fixture = new ComponentTestFixture(() => new TestImplicitOneWayBinderComponent)
 
 		expectBindingToPass({
 			fixture,
 			property: 'deep',
 			keyPath: 'object.value',
 			expectedMode: BindingMode.OneWay,
-			updateValue: updatedValue => fixture.component.deep.object._value = updatedValue,
+			updateValue: updatedValue => fixture.component.deep.object._value = updatedValue
 		})
 	})
 
@@ -261,8 +261,8 @@ function expectBindToPass<T>(parameters: {
 		class TestExplicitOneWayToSourceBinderComponent extends TestBinderComponent {
 			@state() deep = {
 				object: {
-					value: initialValue,
-				},
+					value: initialValue
+				}
 			}
 
 			override get template() {
@@ -272,7 +272,7 @@ function expectBindToPass<T>(parameters: {
 
 		customElements.define(`test-explicit-one-way-to-source-binder-component-${tagSuffix}`, TestExplicitOneWayToSourceBinderComponent)
 
-		const fixture = new ComponentTestFixture(() => new TestExplicitOneWayToSourceBinderComponent())
+		const fixture = new ComponentTestFixture(() => new TestExplicitOneWayToSourceBinderComponent)
 
 		expectBindingToPass({ fixture, property: 'deep', keyPath: 'object.value', expectedMode: BindingMode.OneWayToSource })
 	})
@@ -288,8 +288,8 @@ function expectBindToPass<T>(parameters: {
 		class TestImplicitOneWayToSourceBinderComponent extends TestBinderComponent {
 			@state() deep = {
 				object: {
-					value: initialValue,
-				},
+					value: initialValue
+				}
 			}
 
 			override get template() {
@@ -299,7 +299,7 @@ function expectBindToPass<T>(parameters: {
 
 		customElements.define(`test-implicit-one-way-to-source-binder-component-${tagSuffix}`, TestImplicitOneWayToSourceBinderComponent)
 
-		const fixture = new ComponentTestFixture(() => new TestImplicitOneWayToSourceBinderComponent())
+		const fixture = new ComponentTestFixture(() => new TestImplicitOneWayToSourceBinderComponent)
 
 		expectBindingToPass({ fixture, property: 'deep', keyPath: 'object.value', expectedMode: BindingMode.OneWayToSource })
 	})
@@ -365,6 +365,157 @@ describe('BindDirective', () => {
 
 		it('should render nothing for a one-way-to-source binding', () => {
 			expect(renderOnServer(bind(source as any, 'value', { mode: BindingMode.OneWayToSource }))).toBe(noChange)
+		})
+	})
+
+	describe('dispatchChangeEvent option', () => {
+		describe('should automatically dispatch the associated event when source value changes', () => {
+			class TestBindableComponent extends Component {
+				@event() readonly change!: EventDispatcher<string>
+				@property({ type: String, bindingDefault: true }) value = ''
+			}
+			customElements.define('test-dispatch-event-bindable', TestBindableComponent)
+
+			class TestBinderComponent extends Component {
+				@query('test-dispatch-event-bindable') readonly bindableComponent!: TestBindableComponent
+				@state() sourceValue = 'initial'
+
+				override get template() {
+					return html`<test-dispatch-event-bindable ${bind(this, 'sourceValue', { dispatchChangeEvent: true })}></test-dispatch-event-bindable>`
+				}
+			}
+			customElements.define('test-dispatch-event-binder', TestBinderComponent)
+
+			const fixture = new ComponentTestFixture(() => new TestBinderComponent)
+
+			it('should dispatch event on initial render', async () => {
+				await fixture.updateComplete
+
+				const eventSpy = vi.fn()
+				fixture.component.bindableComponent.addEventListener('change', eventSpy)
+
+				// Trigger re-render to get the value
+				fixture.component.sourceValue = 'initial-trigger'
+				await fixture.updateComplete
+
+				expect(eventSpy).toHaveBeenCalledTimes(1)
+				expect(eventSpy).toHaveBeenCalledWith(expect.objectContaining({ detail: 'initial-trigger' }))
+			})
+
+			it('should dispatch event on source update', async () => {
+				await fixture.updateComplete
+
+				const eventSpy = vi.fn()
+				fixture.component.bindableComponent.addEventListener('change', eventSpy)
+
+				fixture.component.sourceValue = 'updated'
+				await fixture.updateComplete
+
+				expect(eventSpy).toHaveBeenCalledTimes(1)
+				expect(eventSpy).toHaveBeenCalledWith(expect.objectContaining({ detail: 'updated' }))
+			})
+		})
+
+		describe('should dispatch custom event name when event option is specified', () => {
+			class TestBindableComponent extends Component {
+				@event() readonly customChange!: EventDispatcher<string>
+				@property({ type: String, bindingDefault: true, event: 'customChange' }) value = ''
+			}
+			customElements.define('test-dispatch-custom-event-bindable', TestBindableComponent)
+
+			class TestBinderComponent extends Component {
+				@query('test-dispatch-custom-event-bindable') readonly bindableComponent!: TestBindableComponent
+				@state() sourceValue = 'initial'
+
+				override get template() {
+					return html`<test-dispatch-custom-event-bindable ${bind(this, 'sourceValue', { event: 'customChange', dispatchChangeEvent: true })}></test-dispatch-custom-event-bindable>`
+				}
+			}
+			customElements.define('test-dispatch-custom-event-binder', TestBinderComponent)
+
+			const fixture = new ComponentTestFixture(() => new TestBinderComponent)
+
+			it('should dispatch custom event on source update', async () => {
+				await fixture.updateComplete
+
+				const eventSpy = vi.fn()
+				fixture.component.bindableComponent.addEventListener('customChange', eventSpy)
+
+				fixture.component.sourceValue = 'updated'
+				await fixture.updateComplete
+
+				expect(eventSpy).toHaveBeenCalledTimes(1)
+				expect(eventSpy).toHaveBeenCalledWith(expect.objectContaining({ detail: 'updated' }))
+			})
+		})
+
+		describe('should not dispatch event when dispatchChangeEvent is false', () => {
+			class TestBindableComponent extends Component {
+				@event() readonly change!: EventDispatcher<string>
+				@property({ type: String, bindingDefault: true }) value = ''
+			}
+			customElements.define('test-no-dispatch-event-bindable', TestBindableComponent)
+
+			class TestBinderComponent extends Component {
+				@query('test-no-dispatch-event-bindable') readonly bindableComponent!: TestBindableComponent
+				@state() sourceValue = 'initial'
+
+				override get template() {
+					return html`<test-no-dispatch-event-bindable ${bind(this, 'sourceValue', { dispatchChangeEvent: false })}></test-no-dispatch-event-bindable>`
+				}
+			}
+			customElements.define('test-no-dispatch-event-binder', TestBinderComponent)
+
+			const fixture = new ComponentTestFixture(() => new TestBinderComponent)
+
+			it('should not dispatch event on source update', async () => {
+				await fixture.updateComplete
+
+				const eventSpy = vi.fn()
+				fixture.component.bindableComponent.addEventListener('change', eventSpy)
+
+				expect(eventSpy).not.toHaveBeenCalled()
+
+				fixture.component.sourceValue = 'updated'
+				await fixture.updateComplete
+
+				expect(eventSpy).not.toHaveBeenCalled()
+			})
+		})
+
+		describe('should not dispatch event in OneWayToSource mode', () => {
+			class TestBindableComponent extends Component {
+				@event() readonly change!: EventDispatcher<string>
+				@property({ type: String, bindingDefault: true }) value = ''
+			}
+			customElements.define('test-dispatch-one-way-to-source-bindable', TestBindableComponent)
+
+			class TestBinderComponent extends Component {
+				@query('test-dispatch-one-way-to-source-bindable') readonly bindableComponent!: TestBindableComponent
+				@state() sourceValue = 'initial'
+
+				override get template() {
+					return html`<test-dispatch-one-way-to-source-bindable ${bind(this, 'sourceValue', { mode: BindingMode.OneWayToSource, dispatchChangeEvent: true })}></test-dispatch-one-way-to-source-bindable>`
+				}
+			}
+			customElements.define('test-dispatch-one-way-to-source-binder', TestBinderComponent)
+
+			const fixture = new ComponentTestFixture(() => new TestBinderComponent)
+
+			it('should not dispatch event on source update', async () => {
+				await fixture.updateComplete
+
+				const eventSpy = vi.fn()
+				fixture.component.bindableComponent.addEventListener('change', eventSpy)
+
+				expect(eventSpy).not.toHaveBeenCalled()
+
+				fixture.component.sourceValue = 'updated'
+				await fixture.updateComplete
+
+				expect(eventSpy).not.toHaveBeenCalled()
+			})
+			clearedTargetValue: undefined,
 		})
 	})
 })
