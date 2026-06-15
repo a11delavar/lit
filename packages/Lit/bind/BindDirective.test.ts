@@ -9,8 +9,9 @@ function expectBindToPass<T>(parameters: {
 	// eslint-disable-next-line
 	converterType: String | Number | Boolean | Object
 	getTemplate: (tag: StaticValue, bind: unknown) => TemplateResult
+	clearedTargetValue: unknown
 }) {
-	const { initialValue, updatedValue, converterType, getTemplate } = parameters
+	const { initialValue, updatedValue, converterType, getTemplate, clearedTargetValue } = parameters
 
 	const random = () => Math.random().toString(36).slice(2)
 	const tagSuffix = random()
@@ -75,6 +76,15 @@ function expectBindToPass<T>(parameters: {
 			updateValue(updatedValue)
 			await fixture.update()
 			expect(fixture.component.bindableComponent.value).toBe(updatedValue)
+		})
+
+		mit([BindingMode.OneWay, BindingMode.TwoWay], 'should clear the target when the source becomes undefined', async () => {
+			updateValue(updatedValue)
+			await fixture.update()
+			expect(fixture.component.bindableComponent.value).toBe(updatedValue)
+			updateValue(undefined as T)
+			await fixture.update()
+			expect(fixture.component.bindableComponent.value).toBe(clearedTargetValue as T)
 		})
 
 		mit([BindingMode.OneWayToSource], 'should not initialize from source to target', () => {
@@ -304,6 +314,7 @@ describe('BindDirective', () => {
 			updatedValue: 'updated',
 			converterType: String,
 			getTemplate: (tag, bind) => staticHtml`<${tag} value=${bind}></${tag}>`,
+			clearedTargetValue: '',
 		})
 	})
 
@@ -313,6 +324,7 @@ describe('BindDirective', () => {
 			updatedValue: true,
 			converterType: Boolean,
 			getTemplate: (tag, bind) => staticHtml`<${tag} ?value=${bind}></${tag}>`,
+			clearedTargetValue: false,
 		})
 	})
 
@@ -322,6 +334,7 @@ describe('BindDirective', () => {
 			updatedValue: new Date('2024-01-01'),
 			converterType: Object,
 			getTemplate: (tag, bind) => staticHtml`<${tag} .value=${bind}></${tag}>`,
+			clearedTargetValue: undefined,
 		})
 	})
 
@@ -331,6 +344,7 @@ describe('BindDirective', () => {
 			updatedValue: 'updated',
 			converterType: String,
 			getTemplate: (tag, bind) => staticHtml`<${tag} ${bind}></${tag}>`,
+			clearedTargetValue: undefined,
 		})
 	})
 })

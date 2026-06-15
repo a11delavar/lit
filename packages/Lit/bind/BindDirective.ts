@@ -49,7 +49,7 @@ class BindDirective<Component extends ReactiveElement, Property extends keyof Co
 	}
 
 	render() {
-		return this.#valueBinder?.template ?? noChange
+		return this.#valueBinder ? this.#valueBinder.template : noChange
 	}
 
 	override update(part: BindDirectivePart, parameters: BindDirectiveParameters<Component, Property>) {
