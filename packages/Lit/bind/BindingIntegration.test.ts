@@ -8,9 +8,10 @@ import { property } from '..'
 
 @bindingIntegration()
 class TestRequiredIntegration extends BindingIntegration {
-	bind({ source, element }: ValueBinder) {
-		if (element instanceof HTMLInputElement && source.integrate) {
-			element.required = source.required
+	bind(valueBinder: ValueBinder) {
+		const { context, element } = valueBinder
+		if (element instanceof HTMLInputElement && context?.integrate) {
+			element.required = context.required
 		}
 	}
 }

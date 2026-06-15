@@ -347,4 +347,155 @@ describe('BindDirective', () => {
 			clearedTargetValue: undefined,
 		})
 	})
+
+	describe('dispatchChangeEvent option', () => {
+		describe('should automatically dispatch the associated event when source value changes', () => {
+			class TestBindableComponent extends Component {
+				@event() readonly change: EventDispatcher<string>
+				@property({ type: String, bindingDefault: true }) value = ''
+			}
+			customElements.define('test-dispatch-event-bindable', TestBindableComponent)
+
+			class TestBinderComponent extends Component {
+				@query('test-dispatch-event-bindable') readonly bindableComponent!: TestBindableComponent
+				@state() sourceValue = 'initial'
+
+				get template() {
+					return html`<test-dispatch-event-bindable ${bind(this, 'sourceValue', { dispatchChangeEvent: true })}></test-dispatch-event-bindable>`
+				}
+			}
+			customElements.define('test-dispatch-event-binder', TestBinderComponent)
+
+			const fixture = new ComponentTestFixture(() => new TestBinderComponent)
+
+			it('should dispatch event on initial render', async () => {
+				await fixture.updateComplete
+
+				const eventSpy = jasmine.createSpy('eventSpy')
+				fixture.component.bindableComponent.addEventListener('change', eventSpy)
+
+				// Trigger re-render to get the value
+				fixture.component.sourceValue = 'initial-trigger'
+				await fixture.updateComplete
+
+				expect(eventSpy).toHaveBeenCalledTimes(1)
+				expect(eventSpy).toHaveBeenCalledWith(jasmine.objectContaining({ detail: 'initial-trigger' }))
+			})
+
+			it('should dispatch event on source update', async () => {
+				await fixture.updateComplete
+
+				const eventSpy = jasmine.createSpy('eventSpy')
+				fixture.component.bindableComponent.addEventListener('change', eventSpy)
+
+				fixture.component.sourceValue = 'updated'
+				await fixture.updateComplete
+
+				expect(eventSpy).toHaveBeenCalledTimes(1)
+				expect(eventSpy).toHaveBeenCalledWith(jasmine.objectContaining({ detail: 'updated' }))
+			})
+		})
+
+		describe('should dispatch custom event name when event option is specified', () => {
+			class TestBindableComponent extends Component {
+				@event() readonly customChange: EventDispatcher<string>
+				@property({ type: String, bindingDefault: true, event: 'customChange' }) value = ''
+			}
+			customElements.define('test-dispatch-custom-event-bindable', TestBindableComponent)
+
+			class TestBinderComponent extends Component {
+				@query('test-dispatch-custom-event-bindable') readonly bindableComponent!: TestBindableComponent
+				@state() sourceValue = 'initial'
+
+				get template() {
+					return html`<test-dispatch-custom-event-bindable ${bind(this, 'sourceValue', { event: 'customChange', dispatchChangeEvent: true })}></test-dispatch-custom-event-bindable>`
+				}
+			}
+			customElements.define('test-dispatch-custom-event-binder', TestBinderComponent)
+
+			const fixture = new ComponentTestFixture(() => new TestBinderComponent)
+
+			it('should dispatch custom event on source update', async () => {
+				await fixture.updateComplete
+
+				const eventSpy = jasmine.createSpy('eventSpy')
+				fixture.component.bindableComponent.addEventListener('customChange', eventSpy)
+
+				fixture.component.sourceValue = 'updated'
+				await fixture.updateComplete
+
+				expect(eventSpy).toHaveBeenCalledTimes(1)
+				expect(eventSpy).toHaveBeenCalledWith(jasmine.objectContaining({ detail: 'updated' }))
+			})
+		})
+
+		describe('should not dispatch event when dispatchChangeEvent is false', () => {
+			class TestBindableComponent extends Component {
+				@event() readonly change: EventDispatcher<string>
+				@property({ type: String, bindingDefault: true }) value = ''
+			}
+			customElements.define('test-no-dispatch-event-bindable', TestBindableComponent)
+
+			class TestBinderComponent extends Component {
+				@query('test-no-dispatch-event-bindable') readonly bindableComponent!: TestBindableComponent
+				@state() sourceValue = 'initial'
+
+				get template() {
+					return html`<test-no-dispatch-event-bindable ${bind(this, 'sourceValue', { dispatchChangeEvent: false })}></test-no-dispatch-event-bindable>`
+				}
+			}
+			customElements.define('test-no-dispatch-event-binder', TestBinderComponent)
+
+			const fixture = new ComponentTestFixture(() => new TestBinderComponent)
+
+			it('should not dispatch event on source update', async () => {
+				await fixture.updateComplete
+
+				const eventSpy = jasmine.createSpy('eventSpy')
+				fixture.component.bindableComponent.addEventListener('change', eventSpy)
+
+				expect(eventSpy).not.toHaveBeenCalled()
+
+				fixture.component.sourceValue = 'updated'
+				await fixture.updateComplete
+
+				expect(eventSpy).not.toHaveBeenCalled()
+			})
+		})
+
+		describe('should not dispatch event in OneWayToSource mode', () => {
+			class TestBindableComponent extends Component {
+				@event() readonly change: EventDispatcher<string>
+				@property({ type: String, bindingDefault: true }) value = ''
+			}
+			customElements.define('test-dispatch-one-way-to-source-bindable', TestBindableComponent)
+
+			class TestBinderComponent extends Component {
+				@query('test-dispatch-one-way-to-source-bindable') readonly bindableComponent!: TestBindableComponent
+				@state() sourceValue = 'initial'
+
+				get template() {
+					return html`<test-dispatch-one-way-to-source-bindable ${bind(this, 'sourceValue', { mode: BindingMode.OneWayToSource, dispatchChangeEvent: true })}></test-dispatch-one-way-to-source-bindable>`
+				}
+			}
+			customElements.define('test-dispatch-one-way-to-source-binder', TestBinderComponent)
+
+			const fixture = new ComponentTestFixture(() => new TestBinderComponent)
+
+			it('should not dispatch event on source update', async () => {
+				await fixture.updateComplete
+
+				const eventSpy = jasmine.createSpy('eventSpy')
+				fixture.component.bindableComponent.addEventListener('change', eventSpy)
+
+				expect(eventSpy).not.toHaveBeenCalled()
+
+				fixture.component.sourceValue = 'updated'
+				await fixture.updateComplete
+
+				expect(eventSpy).not.toHaveBeenCalled()
+			})
+			clearedTargetValue: undefined,
+		})
+	})
 })
