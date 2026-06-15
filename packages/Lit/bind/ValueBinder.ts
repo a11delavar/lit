@@ -77,8 +77,16 @@ export abstract class ValueBinder<TPart extends Part = any> {
 		return this.parameters[2]?.event ?? getAssociatedEvent(this.element, this.targetProperty)
 	}
 
+	get dispatchChangeEvent() {
+		return this.parameters[2]?.dispatchChangeEvent ?? false
+	}
+
 	get value() {
-		return this.property.get?.()
+		const value = this.property.get?.()
+		if (this.dispatchChangeEvent && this.mode !== BindingMode.OneWayToSource) {
+			this.dispatchAssociatedEvent(value)
+		}
+		return value
 	}
 
 	set value(value: unknown) {
@@ -89,6 +97,16 @@ export abstract class ValueBinder<TPart extends Part = any> {
 				integration.bind(this)
 			}
 		}
+	}
+
+	private dispatchAssociatedEvent(value: unknown) {
+		const eventName = this.event
+		const event = new CustomEvent(eventName, {
+			detail: value,
+			bubbles: true,
+			composed: true,
+		})
+		this.element.dispatchEvent(event)
 	}
 
 	abstract get template(): unknown

@@ -33,6 +33,7 @@ export type BindDirectiveParametersOptions<Data> = {
 	keyPath?: KeyPath.Of<Data>
 	mode?: BindingMode
 	event?: string
+	dispatchChangeEvent?: boolean
 	sourceUpdate?: (value: Data) => void
 	sourceUpdated?: (value: Data) => void
 }

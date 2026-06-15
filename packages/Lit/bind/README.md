@@ -225,6 +225,27 @@ class MyComponent extends Component {
 }
 ```
 
+## Automatic Event Dispatching
+
+When `dispatchChangeEvent` is set to `true`, the bind directive will automatically dispatch the associated event to the target element whenever the source property changes. This is useful for scenarios where you want to ensure that listeners on the target element are notified of changes from the source:
+
+```ts
+@component('my-parent-component')
+class MyParentComponent extends Component {
+	@state() value = 'Hello World'
+
+	override get template() {
+		return html`
+			<my-component ${bind(this, 'value', { dispatchChangeEvent: true })}></my-component>
+		`
+	}
+}
+```
+
+In the example above, whenever the `value` property of `MyParentComponent` changes, a `change` event will be dispatched on the `my-component` element. This allows other parts of your application to react to source changes through standard event listeners.
+
+**Note:** Event dispatching only occurs in `one-way` and `two-way` binding modes. It does not occur in `one-way-to-source` mode since that mode doesn't propagate source changes to the target.
+
 # `Binder` Class
 
 The `Binder` class facilitates the creation of `bind` directives with deep bindings. It is especially useful for components which have a few central properties which are used often in bindings:
