@@ -33,11 +33,12 @@ export class Package {
 	}
 
 	async release(versionBumpType: string) {
+		const isPreRelease = versionBumpType.startsWith('pre')
 		await run('npm run clean')
 		await run('tsc', { directory: this.relativePath })
 		await run('npx copyfiles "README.md" "*/README.md" dist', { directory: this.relativePath })
-		await run(`npm version --loglevel=error ${versionBumpType}`, { directory: this.relativePath })
-		await run('npm publish --loglevel=error --access public', { directory: this.relativePath })
+		await run(`npm version --loglevel=error ${versionBumpType.replace('prepatch', 'prerelease')} ${!isPreRelease ? '' : '--preid=preview'}`, { directory: this.relativePath })
+		await run(`npm publish --loglevel=error --access public --tag ${isPreRelease ? 'preview' : 'latest'}`, { directory: this.relativePath })
 		await run('npm run clean')
 	}
 

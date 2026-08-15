@@ -1,5 +1,4 @@
-import { type ReactiveElement } from 'lit'
-import { bind, type BindDirectiveParametersOptions } from './BindDirective.js'
+import { bind, type BindDirectiveParametersOptions, type BindSource } from './BindDirective.js'
 
 type BinderParameters<T> =
 	| [keyPath: KeyPath.Of<T>]
@@ -25,12 +24,12 @@ type BinderParameters<T> =
  * ```
  */
 export class Binder<T> {
-	constructor(readonly host: ReactiveElement, readonly key: string) { }
+	constructor(readonly host: BindSource, readonly key: string) { }
 
 	bind = (...[parameter]: BinderParameters<T>) => {
-		const key = this.key as keyof ReactiveElement
+		const key = this.key as keyof BindSource
 		const parameters = (typeof parameter === 'string' ? { keyPath: parameter } : parameter) as BindDirectiveParametersOptions<T>
-		return bind(this.host, key, this.getParameters(parameters) as unknown as BindDirectiveParametersOptions<ReactiveElement[keyof ReactiveElement]>)
+		return bind(this.host, key, this.getParameters(parameters) as unknown as BindDirectiveParametersOptions<BindSource[keyof BindSource]>)
 	}
 
 	protected getParameters(parameters: BindDirectiveParametersOptions<T>): BindDirectiveParametersOptions<T> {

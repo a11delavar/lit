@@ -1,7 +1,8 @@
-import { ReactiveElement } from 'lit'
+import { type ReactiveElement } from 'lit'
 import { EventListenerController } from './EventListenerController.js'
 import type { EventListenerTarget } from './extractEventTargets.js'
 import type { Controller } from '../Controller/Controller.js'
+import { host } from '../host.js'
 
 type ShorthandEventListenerDecoratorOptions = [type: string, options?: AddEventListenerOptions | boolean]
 
@@ -26,7 +27,7 @@ export const eventListener = (...eventListenerOptions: EventListenerDecoratorOpt
 	return (prototype: ReactiveElement | Controller, propertyKey: string, descriptor?: PropertyDescriptor) => {
 		const Constructor = prototype.constructor as typeof ReactiveElement | typeof Controller
 		Constructor.addInitializer(context => {
-			const element = context instanceof ReactiveElement ? context : context['host'] as ReactiveElement
+			const element = context[host]
 			new class extends EventListenerController {
 				constructor() {
 					const { type, target, options } = extractOptions(eventListenerOptions)

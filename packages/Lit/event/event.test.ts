@@ -1,4 +1,4 @@
-import { Component, HTMLElementEventDispatcher, PureEventDispatcher, component } from '../index.js'
+import { Component, Controller, HTMLElementEventDispatcher, PureEventDispatcher, component } from '../index.js'
 import { event } from './event.js'
 import { ComponentTestFixture } from '@a11d/lit-testing'
 
@@ -95,6 +95,45 @@ describe(event.name, () => {
 			it('should handle namespaced type', () => {
 				expectCustomEvent('namespace:event', 'namespacedEvent')
 			})
+		})
+	})
+
+	describe('on Controller objects', () => {
+		class TestController extends Controller {
+			@event() readonly activation!: EventDispatcher<string>
+
+			constructor(override readonly host: ControllerEventTestComponent) {
+				super(host)
+			}
+
+			activate() {
+				this.activation.dispatch('test')
+			}
+		}
+
+		@component('lit-test-event-controller')
+		class ControllerEventTestComponent extends Component {
+			readonly controller = new TestController(this)
+		}
+
+		const fixture = new ComponentTestFixture(() => new ControllerEventTestComponent())
+
+		it(`should create an ${HTMLElementEventDispatcher.name}`, () => {
+			expect(fixture.component.controller.activation).toBeInstanceOf(HTMLElementEventDispatcher)
+		})
+
+		it('should return the same instance', () => {
+			expect(fixture.component.controller.activation).toBe(fixture.component.controller.activation)
+		})
+
+		it('should dispatch the event from the host element', () => {
+			const listener = jasmine.createSpy('activation')
+			fixture.component.addEventListener('activation', listener)
+
+			fixture.component.controller.activate()
+
+			expect(listener).toHaveBeenCalledTimes(1)
+			expect((listener.calls.argsFor(0)[0] as CustomEvent<string>).detail).toBe('test')
 		})
 	})
 })

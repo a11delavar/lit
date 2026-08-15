@@ -22,7 +22,15 @@ export enum BindingMode {
 	OneWayToSource = 'one-way-to-source',
 }
 
-export type BindDirectiveParameters<Component extends ReactiveElement, Property extends keyof Component> = [
+/**
+ * The source a binding can be established on.
+ *
+ * Besides `ReactiveElement`s this includes any context which forwards its updates to a host,
+ * such as a `ComponentPart`, so bindings can be declared in a part's template as well.
+ */
+export type BindSource = Pick<ReactiveElement, 'requestUpdate'>
+
+export type BindDirectiveParameters<Component extends BindSource, Property extends keyof Component> = [
 	component: Component,
 	property: Property,
 	options?: BindDirectiveParametersOptions<Component[Property]>
@@ -38,7 +46,7 @@ export type BindDirectiveParametersOptions<Data> = {
 
 type BindDirectivePart = ElementPart | AttributePart | BooleanAttributePart | PropertyPart
 
-class BindDirective<Component extends ReactiveElement, Property extends keyof Component> extends AsyncDirective {
+class BindDirective<Component extends BindSource, Property extends keyof Component> extends AsyncDirective {
 	#valueBinder?: ValueBinder<BindDirectivePart>
 
 	constructor(partInfo: PartInfo) {
@@ -73,6 +81,6 @@ class BindDirective<Component extends ReactiveElement, Property extends keyof Co
 	}
 }
 
-export const bind = <Component extends ReactiveElement, Property extends keyof Component>(...parameters: BindDirectiveParameters<Component, Property>) => {
+export const bind = <Component extends BindSource, Property extends keyof Component>(...parameters: BindDirectiveParameters<Component, Property>) => {
 	return (directive(BindDirective) as any)(...parameters) as DirectiveResult<typeof BindDirective<Component, Property>>
 }

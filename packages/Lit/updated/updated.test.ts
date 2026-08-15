@@ -1,6 +1,9 @@
 import { ComponentTestFixture } from '@a11d/lit-testing'
 import { property } from '../property.js'
+import { state } from '../state.js'
+import { Controller } from '../Controller/index.js'
 import { component, Component } from '../Component/index.js'
+import { requestHostUpdate } from './requestHostUpdate.js'
 import { updated as Updated } from './updated.js'
 
 describe(Updated.name, () => {
@@ -104,5 +107,89 @@ describe(Updated.name, () => {
 		fixture.component.requestUpdate()
 		await fixture.updateComplete
 		expect(fixture.component.callback).toHaveBeenCalledTimes(2)
+	})
+})
+
+describe(`${Updated.name} on a Controller`, () => {
+	function updated(this: TestController, value: string, oldValue: string) {
+		this.callback(this, value, oldValue)
+	}
+
+	class TestController extends Controller {
+		readonly callback = jasmine.createSpy()
+
+		@state() noObserver?: string
+		@state({ updated }) observed?: string
+		@state({ updated }) internalChange?: { foo: string }
+
+		constructor(override readonly host: ControllerUpdatedTestComponent) {
+			super(host)
+		}
+	}
+
+	@component('lit-test-updated-controller')
+	class ControllerUpdatedTestComponent extends Component {
+		@state() observed?: string
+
+		readonly controller = new TestController(this)
+		readonly anotherController = new TestController(this)
+	}
+
+	const fixture = new ComponentTestFixture(() => new ControllerUpdatedTestComponent())
+
+	it('should not call the callback when unrelated properties change', async () => {
+		fixture.component.controller.noObserver = 'foo'
+		await fixture.updateComplete
+
+		expect(fixture.component.controller.callback).not.toHaveBeenCalled()
+	})
+
+	it('should call the callback bound to the controller when the property changes', async () => {
+		const controller = fixture.component.controller
+
+		controller.observed = 'foo'
+		await fixture.updateComplete
+		expect(controller.callback).toHaveBeenCalledOnceWith(controller, 'foo', undefined)
+
+		controller.observed = 'bar'
+		await fixture.updateComplete
+		expect(controller.callback).toHaveBeenCalledTimes(2)
+		expect(controller.callback).toHaveBeenCalledWith(controller, 'bar', 'foo')
+	})
+
+	it('should not call the callback when a property of the same key changes on the host', async () => {
+		fixture.component.observed = 'foo'
+		await fixture.updateComplete
+
+		expect(fixture.component.controller.callback).not.toHaveBeenCalled()
+	})
+
+	it('should not call the callback of another controller of the same class', async () => {
+		fixture.component.controller.observed = 'foo'
+		await fixture.updateComplete
+
+		expect(fixture.component.controller.callback).toHaveBeenCalledTimes(1)
+		expect(fixture.component.anotherController.callback).not.toHaveBeenCalled()
+	})
+
+	it('should call the callback when a object is changed within and update is requested manually', async () => {
+		const controller = fixture.component.controller
+
+		controller.internalChange = { foo: 'bar' }
+		await fixture.updateComplete
+		expect(controller.callback).toHaveBeenCalledOnceWith(controller, { foo: 'bar' }, undefined)
+
+		controller.internalChange.foo = 'baz'
+		await fixture.updateComplete
+		expect(controller.callback).toHaveBeenCalledTimes(1)
+
+		requestHostUpdate(controller, 'internalChange', { foo: 'bar' })
+		await fixture.updateComplete
+		expect(controller.callback).toHaveBeenCalledTimes(2)
+		expect(controller.callback).toHaveBeenCalledWith(controller, { foo: 'baz' }, { foo: 'bar' })
+
+		requestHostUpdate(controller)
+		await fixture.updateComplete
+		expect(controller.callback).toHaveBeenCalledTimes(2)
 	})
 })

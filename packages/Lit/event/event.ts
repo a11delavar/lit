@@ -1,6 +1,7 @@
 import { isServer } from 'lit'
 import { HTMLElementEventDispatcher } from './HTMLElementEventDispatcher.js'
 import { PureEventDispatcher } from './PureEventDispatcher.js'
+import { host } from '../host.js'
 
 export function event(options?: EventInit & { readonly type?: string }) {
 	return (prototype: unknown, propertyKey?: string) => {
@@ -10,8 +11,9 @@ export function event(options?: EventInit & { readonly type?: string }) {
 
 		Object.defineProperty(prototype, propertyKey, {
 			get(this: any) {
-				return this[`$${propertyKey}Event$`] ??= !isServer && this instanceof HTMLElement
-					? new HTMLElementEventDispatcher(this, options?.type ?? propertyKey, options)
+				const element = this[host]
+				return this[`$${propertyKey}Event$`] ??= !isServer && element instanceof HTMLElement
+					? new HTMLElementEventDispatcher(element, options?.type ?? propertyKey, options)
 					: new PureEventDispatcher()
 			}
 		})
