@@ -11,6 +11,7 @@ npm install @a11d/lit
 ## Features
 
 - **[`Component` class](/packages/Lit/Component/README.md)** - Extended base class with additional lifecycle callbacks
+- **[`Controller` class](/packages/Lit/Controller/README.md)** - Base class for self-registering reactive controllers
 - **[`updated` Decorator](/packages/Lit/updated/README.md)** - React to property changes with callbacks
 - **[`event` Decorator](/packages/Lit/event/README.md)** - Type-safe custom event dispatchers
 - **[`eventListener` Decorator](/packages/Lit/eventListener/README.md)** - Declarative event listener registration
