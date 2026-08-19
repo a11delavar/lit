@@ -109,6 +109,35 @@ describe('KeyPath', () => {
 		})
 	})
 
+	describe('prototype pollution', () => {
+		afterEach(() => {
+			delete (Object.prototype as any).polluted
+			delete (Array.prototype as any).polluted
+		})
+
+		it('should not write through key-paths traversing a prototype', () => {
+			KeyPath.set(object as any, 'constructor.prototype.polluted', true)
+			KeyPath.set(object as any, '__proto__.polluted', true)
+			KeyPath.set(object as any, 'b.constructor.prototype.polluted', true)
+			KeyPath.set([] as any, 'constructor.prototype.polluted', true)
+
+			expect(({} as any).polluted).toBe(undefined)
+			expect(([] as any).polluted).toBe(undefined)
+		})
+
+		it('should not replace the prototype of an object', () => {
+			KeyPath.set(object as any, '__proto__', { polluted: true })
+
+			expect((object as any).polluted).toBe(undefined)
+		})
+
+		it('should report key-paths traversing a prototype as not writable', () => {
+			expect(KeyPath.isWritable(object as any, 'constructor.prototype.polluted')).toBe(false)
+			expect(KeyPath.isWritable(object as any, '__proto__.polluted')).toBe(false)
+			expect(KeyPath.isWritable(object as any, '__proto__')).toBe(false)
+		})
+	})
+
 	describe('entries', () => {
 		it('should return the path to the key', () => {
 			expect(KeyPath.entries(object, 'a')).toEqual([{ key: 'a', path: 'a', value: object.a }])

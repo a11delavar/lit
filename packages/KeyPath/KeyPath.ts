@@ -1,5 +1,7 @@
 import '@a11d/is-writable'
 
+const prototypeAccessingKeys = new Set(['__proto__', 'prototype', 'constructor'])
+
 export class KeyPath {
 	static of<T>(keyPath: KeyPath.Of<T>): KeyPath.Of<T> {
 		return keyPath
@@ -19,6 +21,9 @@ export class KeyPath {
 	static isWritable<T, KeyPath extends KeyPath.Of<T>>(object: T, keyPath: KeyPath): boolean {
 		const o = object as any
 		if (!keyPath || o === null || o === undefined) {
+			return false
+		}
+		if (keyPath.split('.').some(key => prototypeAccessingKeys.has(key))) {
 			return false
 		}
 		const entries = KeyPath.entries(object, keyPath)
