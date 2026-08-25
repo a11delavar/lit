@@ -1,5 +1,7 @@
 export * from './bindingDefaultProperty.js'
 export * from './associatedEvent/associatedEvent.js'
+export * from './associatedEvent/getAssociatedEvent.js'
+export * from './associatedEvent/dispatchAssociatedEvent.js'
 export * from './BindDirective.js'
 export * from './Binder.js'
 export * from './BindingIntegration.js'

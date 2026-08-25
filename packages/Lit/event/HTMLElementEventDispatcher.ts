@@ -5,7 +5,8 @@ export class HTMLElementEventDispatcher<T = void> implements EventDispatcher<T> 
 
 	constructor(
 		protected readonly element: HTMLElement,
-		protected readonly type: string,
+		/** The DOM event type this dispatcher dispatches, which may differ from the key it is declared with. */
+		readonly type: string,
 		protected readonly options?: EventInit,
 	) { }
 

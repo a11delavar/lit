@@ -1,6 +1,7 @@
 import { type Part } from 'lit'
 import { type BindDirectiveParameters, BindingMode } from './BindDirective.js'
-import { getAssociatedEvent } from './associatedEvent/getAssociatedEvent.js'
+import { findAssociatedEvent, getAssociatedEvent } from './associatedEvent/getAssociatedEvent.js'
+import { dispatchAssociatedEvent } from './associatedEvent/dispatchAssociatedEvent.js'
 import { bindingIntegrations } from './BindingIntegration.js'
 
 export abstract class ValueBinder<TPart extends Part = any> {
@@ -29,12 +30,13 @@ export abstract class ValueBinder<TPart extends Part = any> {
 		return this.parameters[2]?.sourceUpdated
 	}
 
-	get dispatchSourceAssociatedEvent() {
-		return this.parameters[2]?.dispatchSourceAssociatedEvent === true
+	get dispatchAssociatedEvent() {
+		return this.parameters[2]?.dispatchAssociatedEvent ?? false
 	}
 
+	/** The event associated with the source property, or `undefined` if the source has none. */
 	get sourceAssociatedEvent() {
-		return !this.dispatchSourceAssociatedEvent ? undefined : getAssociatedEvent(this.component, this.sourceKey)
+		return findAssociatedEvent(this.component, this.sourceKey)
 	}
 
 	get mode() {
@@ -93,16 +95,36 @@ export abstract class ValueBinder<TPart extends Part = any> {
 		this.element.removeEventListener(this.event, this.eventListener)
 	}
 
+	/**
+	 * Guards against feedback loops, in which updating the source leads - directly or through
+	 * whoever observes it - to the target event being dispatched again. Without this guard such a
+	 * loop recurses until the stack is exhausted, and does so silently, as exceptions thrown while
+	 * an event is being dispatched are reported instead of propagated to the dispatcher.
+	 */
+	#isUpdatingSource = false
+
 	private readonly eventListener = (e: Event) => {
-		const value = e instanceof CustomEvent
-			? e.detail
-			: (e.target as any)[this.property]
-		this.sourceUpdate?.call(this.component, value)
-		this.sourceValue = value
-		this.component.requestUpdate(this.sourceKey)
-		this.sourceUpdated?.call(this.component, value)
-		if (this.sourceAssociatedEvent) {
-			this.element.dispatchEvent(new CustomEvent(this.sourceAssociatedEvent, { detail: value }))
+		if (this.#isUpdatingSource) {
+			return
+		}
+
+		this.#isUpdatingSource = true
+
+		try {
+			const value = e instanceof CustomEvent
+				? e.detail
+				: (e.target as any)[this.property]
+			this.sourceUpdate?.call(this.component, value)
+			this.sourceValue = value
+			this.component.requestUpdate(this.sourceKey)
+			this.sourceUpdated?.call(this.component, value)
+			if (this.dispatchAssociatedEvent) {
+				// The event is associated with the source key, therefore it carries the source
+				// itself, which for a key-path binding is the object the key-path was written into.
+				dispatchAssociatedEvent(this.component, this.sourceKey, this.source)
+			}
+		} finally {
+			this.#isUpdatingSource = false
 		}
 	}
 }

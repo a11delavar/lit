@@ -61,9 +61,19 @@ class MyComponent extends Component {
 
 ### 2. Implicit Associated Event
 
-If no explicit associated event can be found, the `bind` decorator tries to find the implicitly associated event:
-- For properties named `value` the implicit event is `change`
-- For all other properties the implicit event is the property name with the `Change` suffix
+If no explicit associated event can be found, the `bind` decorator tries to find the implicitly associated event by looking for a declared `@event()` dispatcher:
+- For properties named `value` the implicit event is the `change` dispatcher
+- For all other properties the implicit event is the dispatcher named after the property with the `Change` suffix
+
+In both cases it is the DOM event type of that dispatcher which is used, which - thanks to the `type` option of the `@event()` decorator - is not necessarily the key it is declared with:
+
+```ts
+@component('my-component')
+class MyComponent extends Component {
+	@event({ type: 'date-change' }) readonly dateChange!: EventDispatcher<Date>
+	@property({ type: Object }) date?: Date // implicit event: 'date-change'
+}
+```
 
 Therefore in the example above you can omit the explicit associations of `value` and `date` properties:
 
@@ -86,6 +96,8 @@ class MyComponent extends Component {
 ### 3. Default Associated Event
 
 If no explicit or implicit associated event can be found, the default associated event will be used. The default associated event is the `change` event.
+
+This fallback only applies when an event is *listened* to, as a listener always has to be attached to some event. Whenever an event is *dispatched* - as with the `dispatchAssociatedEvent` option below - a property without an explicit or implicit association has no associated event at all, and nothing is dispatched. Falling back would otherwise dispatch a `change` event for every property which merely happens to have no association.
 
 
 ## Property Bindings
@@ -232,6 +244,37 @@ class MyComponent extends Component {
 	}
 }
 ```
+
+## `dispatchAssociatedEvent` option
+
+Components which are bindable themselves have to notify their own consumers whenever one of their bindable properties changes, which is what the `dispatchAssociatedEvent` option does. It dispatches the event associated with the bound property **on the source itself**, right after the source has been updated by the target:
+
+```ts
+@component('my-component')
+class MyComponent extends Component {
+	@event() readonly change!: EventDispatcher<string>
+	@property({ type: String }) value = ''
+
+	protected get template() {
+		return html`
+			<input ${bind(this, 'value', { dispatchAssociatedEvent: true })} />
+		`
+	}
+}
+```
+
+Typing into the `input` now sets `value` **and** dispatches `change` on `my-component`, which is exactly what makes `my-component` bindable by its own consumers:
+
+```ts
+html`<my-component value=${bind(this, 'name')}></my-component>`
+```
+
+The option supersedes dispatching by hand through `sourceUpdated`, and does so more faithfully: the event is dispatched through the associated `EventDispatcher` whenever there is one, so the DOM event type and the `EventInit` declared via `@event()` - `bubbles` and `composed` among them - are honored.
+
+A few things are worth knowing about:
+- **Nothing is dispatched for a property without an associated event.** See [Default Associated Event](#3-default-associated-event).
+- **The event carries the source, not the target value.** For a binding with a `keyPath` the event is the one associated with the *source property*, therefore it carries that property as a whole rather than the value the key-path was written to.
+- **Feedback loops are broken.** A binding never re-enters itself, so a consumer which reacts to the dispatched event by touching the target again cannot drive the binding into infinite recursion.
 
 # `Binder` Class
 
