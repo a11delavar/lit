@@ -4,7 +4,7 @@ import { Component, html, component } from '../Component'
 import { Binder } from './Binder'
 import { bindingIntegration, BindingIntegration } from './BindingIntegration'
 import { type ValueBinder } from './ValueBinder'
-import { property } from '..'
+import { BindingMode, property } from '..'
 
 @bindingIntegration()
 class TestRequiredIntegration extends BindingIntegration {
@@ -108,5 +108,106 @@ describe('BindingIntegration', () => {
 	it('should prefer the property over the integration when condition is not met', () => {
 		expect(fixtureNotAppliedRequiredConflict.component.input.required).toBe(false)
 		expect(fixtureNotAppliedNotRequiredConflict.component.input.required).toBe(true)
+	})
+
+
+	/**
+	 * Copies a label off the bound source onto the target, which is what a design-system integration does:
+	 * it decorates the *target* and never touches the source.
+	 *
+	 * Scoped to elements carrying "data-integrate-label" so that it cannot disturb any other spec.
+	 */
+	@bindingIntegration()
+	class LabelBindingIntegration extends BindingIntegration {
+		bind({ source, element }: ValueBinder) {
+			if (element.hasAttribute('data-integrate-label') && source?.label) {
+				element.setAttribute('data-label', source.label)
+			}
+		}
+	}
+
+	LabelBindingIntegration
+
+	type Source = { readonly label: string, readonly value: string }
+
+	/** Its "value" is a plain field, so binding to it is two-way. */
+	class WritableSource implements Source {
+		label = 'writable label'
+		value = 'writable value'
+	}
+
+	/** Its "value" is a getter without a setter, so binding to it is one-way. */
+	class ReadOnlySource implements Source {
+		label = 'read-only label'
+		get value() { return 'read-only value' }
+	}
+
+	describe('mode', () => {
+		@component('test-binding-integration-mode')
+		class TestBindingIntegrationMode extends Component {
+			@property({ type: Object }) source: Source = new WritableSource
+			@property({ type: Boolean }) forceTwoWay = false
+
+			private readonly binder = new Binder<Source>(this, 'source')
+
+			@query('input') readonly input!: HTMLInputElement
+
+			get template() {
+				return html`
+					<input data-integrate-label ${this.forceTwoWay
+						? this.binder.bind({ keyPath: 'value', mode: BindingMode.TwoWay })
+						: this.binder.bind('value')}>
+			`
+			}
+		}
+
+		const fixtureOf = (source: Source, forceTwoWay = false) => new ComponentTestFixture<TestBindingIntegrationMode>(html`
+			<test-binding-integration-mode .source=${source} ?forceTwoWay=${forceTwoWay}></test-binding-integration-mode>
+		`)
+
+		describe('with a writable source', () => {
+			const fixture = fixtureOf(new WritableSource)
+
+			it('should bind the value', () => {
+				expect(fixture.component.input.value).toBe('writable value')
+			})
+
+			it('should run the integration', () => {
+				expect(fixture.component.input.getAttribute('data-label')).toBe('writable label')
+			})
+		})
+
+		/**
+		 * A read-only source makes the binding one-way, which is only a statement about the direction the
+		 * *value* travels. The integration decorates the target either way, so it has to run either way.
+		 */
+		describe('with a read-only source', () => {
+			const fixture = fixtureOf(new ReadOnlySource)
+
+			it('should bind the value', () => {
+				expect(fixture.component.input.value).toBe('read-only value')
+			})
+
+			it('should run the integration', () => {
+				expect(fixture.component.input.getAttribute('data-label')).toBe('read-only label')
+			})
+		})
+
+		/** Forcing the mode is what isolates the direction as the cause: nothing else about this binding differs. */
+		describe('with a read-only source bound two-way explicitly', () => {
+			const fixture = fixtureOf(new ReadOnlySource, true)
+
+			it('should bind the value', () => {
+				expect(fixture.component.input.value).toBe('read-only value')
+			})
+
+			it('should run the integration', () => {
+				expect(fixture.component.input.getAttribute('data-label')).toBe('read-only label')
+			})
+
+			it('should leave the read-only source untouched', () => {
+				expect(fixture.component.source.value).toBe('read-only value')
+			})
+		})
 	})
 })

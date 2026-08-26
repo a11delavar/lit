@@ -66,10 +66,10 @@ export abstract class ValueBinder<TPart extends Part = any> {
 			this.keyPath
 				? KeyPath.set(this.source, this.keyPath as string, value)
 				: this.source = value
+		}
 
-			for (const integration of bindingIntegrations) {
-				integration.bind(this)
-			}
+		for (const integration of bindingIntegrations) {
+			integration.bind(this)
 		}
 	}
 
