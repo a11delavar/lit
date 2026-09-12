@@ -13,6 +13,7 @@ npm install @a11d/lit
 - **[`Component` class](/packages/Lit/Component/README.md)** - Extended base class with additional lifecycle callbacks
 - **[`ComponentPart` class](/packages/Lit/ComponentPart/README.md)** - Break up a large component without introducing a component boundary
 - **[`Controller` class](/packages/Lit/Controller/README.md)** - Base class for self-registering reactive controllers
+- **[`ElementRef` / `ElementRefs` classes](/packages/Lit/ElementRef/README.md)** - The element or elements a template designates, with the options it declares about them
 - **[`updated` Decorator](/packages/Lit/updated/README.md)** - React to property changes with callbacks
 - **[`event` Decorator](/packages/Lit/event/README.md)** - Type-safe custom event dispatchers
 - **[`eventListener` Decorator](/packages/Lit/eventListener/README.md)** - Declarative event listener registration
