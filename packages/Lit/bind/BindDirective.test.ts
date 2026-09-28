@@ -1,6 +1,6 @@
 import { ComponentTestFixture } from '@a11d/lit-testing'
 import '../index.js'
-import { event, Component, html, property, state, query, staticHtml, literal, unsafeStatic, type TemplateResult, type StaticValue } from '../index'
+import { event, Component, html, property, state, query, staticHtml, literal, unsafeStatic, noChange, PartType, type TemplateResult, type StaticValue } from '../index'
 import { BindingMode, bind } from './BindDirective.js'
 
 function expectBindToPass<T>(parameters: {
@@ -345,6 +345,28 @@ describe('BindDirective', () => {
 			converterType: String,
 			getTemplate: (tag, bind) => staticHtml`<${tag} ${bind}></${tag}>`,
 			clearedTargetValue: undefined,
+		})
+	})
+
+	describe('server-side rendering', () => {
+		const source = { value: 'initial', deep: { value: 'deep' } }
+
+		// The server calls nothing but `render`, with the directive's parameters:
+		const renderOnServer = (result: unknown) => {
+			const { _$litDirective$: Directive, values } = result as { _$litDirective$: new (partInfo: unknown) => { render(...values: Array<unknown>): unknown }, values: Array<unknown> }
+			return new Directive({ type: PartType.ATTRIBUTE, name: 'value', strings: ['', ''] }).render(...values)
+		}
+
+		it('should render the source value into an attribute', () => {
+			expect(renderOnServer(bind(source as any, 'value'))).toBe('initial')
+		})
+
+		it('should render the value at the key path', () => {
+			expect(renderOnServer(bind(source as any, 'deep', { keyPath: 'value' }))).toBe('deep')
+		})
+
+		it('should render nothing for a one-way-to-source binding', () => {
+			expect(renderOnServer(bind(source as any, 'value', { mode: BindingMode.OneWayToSource }))).toBe(noChange)
 		})
 	})
 })

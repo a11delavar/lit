@@ -56,8 +56,12 @@ class BindDirective<Component extends BindSource, Property extends keyof Compone
 		}
 	}
 
-	render() {
-		return this.#valueBinder ? this.#valueBinder.template : noChange
+	// The server only calls `render`, so without a binder the source value is rendered into attributes and properties:
+	render(...[component, property, options]: BindDirectiveParameters<Component, Property>) {
+		return this.#valueBinder ? this.#valueBinder.template
+			: options?.mode === BindingMode.OneWayToSource ? noChange
+				: options?.keyPath ? KeyPath.get(component[property] as any, options.keyPath as string)
+					: component[property]
 	}
 
 	override update(part: BindDirectivePart, parameters: BindDirectiveParameters<Component, Property>) {

@@ -170,6 +170,14 @@ class MyParentComponent extends Component {
 }
 ```
 
+### Server-Side Rendering
+
+A server renders attribute, boolean attribute and property bindings with the source's value, but no element bindings, as Lit renders no element directives on a server. Hydration assumes an element's first render in the browser to equal the server's, so an element binding whose value changes what the element renders leaves it as the server rendered it. Server-rendered templates therefore bind the default property by name:
+
+```ts
+html`<my-component .value=${bind(this, 'value')}></my-component>`
+```
+
 ### Default Property
 
 The default property of an element can be declared using the `@bindingDefaultProperty()` decorator or by passing the `bindingDefault` property to the `@property()` decorator. Both examples below are equivalent:
