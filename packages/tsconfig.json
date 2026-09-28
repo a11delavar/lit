@@ -1,0 +1,17 @@
+{
+	"extends": "../tsconfig.base.json",
+	"compilerOptions": {
+		/* The specs, which the packages exclude so that nothing but source is published, are only ever type-checked here. */
+		"noEmit": true,
+		"types": [
+			"vitest/globals"
+		]
+	},
+	"include": [
+		"**/*.test.ts"
+	],
+	"exclude": [
+		"**/node_modules",
+		"**/dist"
+	]
+}

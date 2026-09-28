@@ -123,7 +123,7 @@ describe('ElementRef', () => {
 
 		expect(target.value).toBe(element)
 		expect(target.options).toBe('x')
-		expect(target.delete(element)).toBeTrue()
+		expect(target.delete(element)).toBe(true)
 		expect(target.value).toBeUndefined()
 	})
 
@@ -132,7 +132,7 @@ describe('ElementRef', () => {
 		const element = document.createElement('div')
 		target.set(element, 'x')
 
-		expect(target.delete(document.createElement('div'))).toBeFalse()
+		expect(target.delete(document.createElement('div'))).toBe(false)
 		expect(target.value).toBe(element)
 		expect(disconnected).toEqual([])
 	})

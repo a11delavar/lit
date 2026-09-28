@@ -1,7 +1,7 @@
 import { ComponentTestFixture } from '@a11d/lit-testing'
-import { Component, component, html } from '../Component'
-import { query } from '../query'
-import { style } from './style'
+import { Component, component, html } from '../Component/index.js'
+import { query } from '../query/index.js'
+import { style } from './style.js'
 import { state } from 'lit/decorators.js'
 
 @component('test-style-directive')
@@ -10,7 +10,7 @@ class TestStyleDirective extends Component {
 
 	@state() declaration: Parameters<typeof style>[0] = {}
 
-	get template() {
+	override get template() {
 		return html`<div ${style(this.declaration)}></div>`
 	}
 }

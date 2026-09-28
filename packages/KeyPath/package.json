@@ -1,10 +1,14 @@
 {
 	"name": "@a11d/key-path",
-	"version": "2.1.1",
+	"version": "2.1.2",
 	"description": "A set of type-safe utilities for working with objects and their properties with support for array members.",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/a11delavar/lit.git"
+		"url": "git+https://github.com/a11delavar/lit.git",
+		"directory": "packages/KeyPath"
+	},
+	"bugs": {
+		"url": "https://github.com/a11delavar/lit/issues"
 	},
 	"keywords": [
 		"key-path",
@@ -12,12 +16,13 @@
 	],
 	"author": "a11delavar",
 	"license": "MIT",
-	"homepage": "https://github.com/a11delavar/lit#readme",
+	"homepage": "https://github.com/a11delavar/lit/tree/main/packages/KeyPath#readme",
 	"type": "module",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",
 	"files": [
-		"dist"
+		"dist",
+		"CHANGELOG.md"
 	],
 	"dependencies": {
 		"@a11d/is-writable": "1.x"

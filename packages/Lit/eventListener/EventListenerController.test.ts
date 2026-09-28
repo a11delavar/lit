@@ -4,7 +4,7 @@ import { EventListenerController } from './EventListenerController.js'
 import { extractEventTargets } from './extractEventTargets.js'
 
 abstract class EventListenerControllerTestComponent extends Component {
-	readonly fakeCall = jasmine.createSpy('fakeCall')
+	readonly fakeCall = vi.fn()
 	handlerThis!: this
 	handlerEvent!: Event
 	handleEvent(e: Event) {

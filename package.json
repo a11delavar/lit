@@ -1,46 +1,35 @@
 {
-	"scripts": {
-		"dev": "node ./scripts/test.ts",
-		"watch": "npm-watch",
-		"clean": "node ./scripts/clean.ts",
-		"release": "node ./scripts/release.ts",
-		"readme": "node ./scripts/readme.ts",
-		"release:all": "node ./scripts/release-all.ts",
-		"test": "node ./scripts/test.ts && karma start --single-run",
-		"typescript": "npm run clean && tsgo --build --noEmit",
-		"lint": "eslint **/*.ts"
-	},
-	"watch": {
-		"dev": {
-			"patterns": [
-				"packages"
-			],
-			"extensions": "ts"
-		}
-	},
 	"type": "module",
+	"scripts": {
+		"dev": "vitest --project chromium",
+		"test": "vitest run",
+		"lint": "eslint \"**/*.ts\"",
+		"typescript": "npm run clean && tsgo --build --noEmit && tsgo -p packages/tsconfig.json",
+		"clean": "node ./scripts/clean.ts",
+		"bump": "node ./scripts/bump.ts",
+		"release": "node ./scripts/release.ts",
+		"changelog": "node ./scripts/changelog.ts",
+		"readme": "node ./scripts/readme.ts",
+		"docs:build": "node ./scripts/docs-build.ts"
+	},
 	"workspaces": [
 		"./packages/*"
 	],
 	"devDependencies": {
+		"@3mo/commit-analyzer": "x",
 		"@a11d/eslint-config": "x",
-		"@a11d/lit": "x",
-		"@types/jasmine": "x",
+		"@types/node": "26.x",
 		"@typescript-eslint/eslint-plugin": "x",
 		"@typescript-eslint/parser": "x",
-		"esbuild": "0.x",
+		"@typescript/native-preview": "latest",
+		"@vitest/browser-playwright": "5.x",
 		"eslint": "x",
 		"eslint-plugin-import": "x",
 		"eslint-plugin-lit": "x",
-		"karma": "x",
-		"karma-chrome-launcher": "x",
-		"karma-firefox-launcher": "x",
-		"karma-helpful-reporter": "x",
-		"karma-jasmine": "x",
-		"npm-watch": "0.x",
-		"typescript": "5.x",
+		"execa": "x",
+		"playwright": "1.x",
 		"tslib": "2.x",
-		"@typescript/native-preview": "latest",
-		"execa": "x"
+		"typescript": "5.x",
+		"vitest": "5.x"
 	}
 }

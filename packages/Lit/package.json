@@ -1,23 +1,29 @@
 {
 	"name": "@a11d/lit",
-	"version": "0.13.2",
+	"version": "0.13.3",
 	"description": "A thin wrapper around the Lit library",
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/a11delavar/lit.git"
+		"url": "git+https://github.com/a11delavar/lit.git",
+		"directory": "packages/Lit"
+	},
+	"bugs": {
+		"url": "https://github.com/a11delavar/lit/issues"
 	},
 	"keywords": [
 		"lit"
 	],
 	"author": "a11delavar",
 	"license": "MIT",
-	"homepage": "https://github.com/a11delavar/lit#readme",
+	"homepage": "https://github.com/a11delavar/lit/tree/main/packages/Lit#readme",
 	"type": "module",
 	"module": "./dist/index.js",
 	"main": "./dist/index.js",
 	"types": "./dist/index.d.ts",
 	"files": [
-		"dist"
+		"dist",
+		"CHANGELOG.md",
+		"*/README.md"
 	],
 	"dependencies": {
 		"csstype": "x",

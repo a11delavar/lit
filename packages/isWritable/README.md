@@ -127,3 +127,11 @@ Object.isWritable(new Base(), 'value') // false (getter-only)
 Object.isWritable(new Child(), 'value') // true (has both getter and setter)
 ```
 </details>
+
+<!-- exports -->
+## Exports
+
+| Name | Kind |
+| --- | --- |
+| `isWritable` | function |
+<!-- /exports -->

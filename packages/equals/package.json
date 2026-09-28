@@ -1,10 +1,14 @@
 {
 	"name": "@a11d/equals",
-	"version": "0.2.3",
+	"version": "0.2.4",
 	"description": "A value equality utility library.",
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/a11delavar/lit.git"
+		"url": "git+https://github.com/a11delavar/lit.git",
+		"directory": "packages/equals"
+	},
+	"bugs": {
+		"url": "https://github.com/a11delavar/lit/issues"
 	},
 	"keywords": [
 		"object",
@@ -14,12 +18,13 @@
 	],
 	"author": "a11delavar",
 	"license": "MIT",
-	"homepage": "https://github.com/a11delavar/lit#readme",
+	"homepage": "https://github.com/a11delavar/lit/tree/main/packages/equals#readme",
 	"type": "module",
 	"module": "./dist/index.js",
 	"main": "./dist/index.js",
 	"types": "./dist/index.d.ts",
 	"files": [
-		"dist"
+		"dist",
+		"CHANGELOG.md"
 	]
 }

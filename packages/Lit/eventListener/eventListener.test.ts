@@ -3,7 +3,7 @@ import { ComponentTestFixture } from '@a11d/lit-testing'
 import { extractEventTargets } from './extractEventTargets.js'
 
 abstract class EventListenerTestComponent extends Component {
-	readonly fakeCall = jasmine.createSpy('fakeCall')
+	readonly fakeCall = vi.fn()
 	handlerThis!: this
 	handlerEvent!: Event
 	handleEvent(e: Event) {
@@ -118,14 +118,14 @@ describe(eventListener.name, () => {
 
 	describe('on Controller class', () => {
 		abstract class EventListenerTestController extends Controller {
-			constructor(readonly host: EventListenerTestComponent) {
+			constructor(override readonly host: EventListenerTestComponent) {
 				super(host)
 			}
 		}
 
 		describe('used as method', () => {
 			class SampleController extends Controller {
-				constructor(readonly host: ComponentWithControllerComponent) {
+				constructor(override readonly host: ComponentWithControllerComponent) {
 					super(host)
 				}
 
@@ -146,7 +146,7 @@ describe(eventListener.name, () => {
 
 		describe('used as arrow function', () => {
 			class SampleController extends Controller {
-				constructor(readonly host: ComponentWithControllerComponent) {
+				constructor(override readonly host: ComponentWithControllerComponent) {
 					super(host)
 				}
 

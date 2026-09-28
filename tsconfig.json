@@ -1,61 +1,30 @@
 {
-	"compileOnSave": true,
-	"compilerOptions": {
-		"incremental": true,
-		"declaration": true,
-		"declarationMap": true,
-		"target": "ES2022",
-		"module": "NodeNext",
-		"moduleResolution": "NodeNext",
-		"useDefineForClassFields": false,
-		"strict": true,
-		"importHelpers": true,
-		"noUnusedLocals": true,
-		"noUnusedParameters": true,
-		"noImplicitReturns": true,
-		"noFallthroughCasesInSwitch": true,
-		"allowSyntheticDefaultImports": true,
-		"resolveJsonModule": true,
-		"noEmitOnError": true,
-		"experimentalDecorators": true,
-		"forceConsistentCasingInFileNames": true,
-		"noUncheckedIndexedAccess": true,
-		"noImplicitOverride": true,
-		"esModuleInterop": true,
-		"skipLibCheck": true,
-		"isolatedModules": true,
-		"plugins": [
-			{
-				"name": "ts-lit-plugin",
-				"strict": true,
-				"rules": {
-					"no-missing-import": "off",
-					"no-unclosed-tag": "error",
-					"no-incompatible-type-binding": "warning",
-					"no-incompatible-property-type": "warning"
-				}
-			}
-		]
-	},
+	"extends": "./tsconfig.base.json",
 	"files": [],
 	"references": [
 		{
-			"path": "./packages/Lit"
+			"path": "./scripts"
+		},
+		{
+			"path": "./packages/BidirectionalMap"
 		},
 		{
 			"path": "./packages/Constructor"
 		},
 		{
+			"path": "./packages/equals"
+		},
+		{
+			"path": "./packages/isWritable"
+		},
+		{
 			"path": "./packages/KeyPath"
 		},
 		{
+			"path": "./packages/Lit"
+		},
+		{
 			"path": "./packages/LitTesting"
-		},
-		{
-			"path": "./packages/Object.equals"
-		},
-		{
-			"path": "./packages/Object.isWritable"
 		}
-	],
+	]
 }

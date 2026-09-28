@@ -12,27 +12,27 @@ describe('Controller', () => {
 	const fixture = new ComponentTestFixture<TestComponent>('test-component')
 
 	it('should tunnel firstUpdated to initialized', async () => {
-		spyOn(Component.prototype as any, 'initialized')
+		vi.spyOn(Component.prototype as any, 'initialized').mockImplementation(() => {})
 
 		await fixture.initialize()
 
-		expect((fixture.component as any).initialized).toHaveBeenCalledOnceWith()
+		expect((fixture.component as any).initialized).toHaveBeenCalledExactlyOnceWith()
 	})
 
 	it('should tunnel connectedCallback to connected', () => {
-		spyOn(fixture.component as any, 'connected')
+		vi.spyOn(fixture.component as any, 'connected').mockImplementation(() => {})
 
 		fixture.component.connectedCallback()
 
-		expect((fixture.component as any).connected).toHaveBeenCalledOnceWith()
+		expect((fixture.component as any).connected).toHaveBeenCalledExactlyOnceWith()
 	})
 
 	it('should tunnel disconnectedCallback to disconnected', () => {
-		spyOn(fixture.component as any, 'disconnected')
+		vi.spyOn(fixture.component as any, 'disconnected').mockImplementation(() => {})
 
 		fixture.component.disconnectedCallback()
 
-		expect((fixture.component as any).disconnected).toHaveBeenCalledOnceWith()
+		expect((fixture.component as any).disconnected).toHaveBeenCalledExactlyOnceWith()
 	})
 
 	it('should tunnel template to render()', () => {

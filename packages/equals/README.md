@@ -153,3 +153,12 @@ class MyComponent extends Component {
 ```
 
 Without this, Lit re-renders whenever you assign a new object reference, even if the content is identical.
+
+<!-- exports -->
+## Exports
+
+| Name | Kind | Description |
+| --- | --- | --- |
+| `hasChanged` | function | A helper function usually used with Lit \@property's "hasChanged" option to replace the default identity check with an equality check. |
+| `equals` | const |  |
+<!-- /exports -->

@@ -5,6 +5,10 @@
 		"**/*.test.ts"
 	],
 	"compilerOptions": {
-		"outDir": "./dist"
+		"outDir": "./dist",
+		/* The fixture registers its hooks through the globals of whichever test framework runs it. */
+		"types": [
+			"vitest/globals"
+		]
 	}
 }

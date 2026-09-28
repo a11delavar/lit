@@ -1,5 +1,5 @@
-import { equals } from './symbol'
-import './equals.js'
+import './index.js'
+import { equals } from './symbol.js'
 
 describe('Global "equals" method', () => {
 	afterEach(() => {

@@ -2,17 +2,17 @@ import { PureEventDispatcher } from './PureEventDispatcher.js'
 
 describe(PureEventDispatcher.name, () => {
 	it('should subscribe to event', () => {
-		const handler = jasmine.createSpy()
+		const handler = vi.fn()
 
 		const dispatcher = new PureEventDispatcher<string>()
 		dispatcher.subscribe(handler)
 		dispatcher.dispatch('test')
 
-		expect(handler).toHaveBeenCalledOnceWith('test')
+		expect(handler).toHaveBeenCalledExactlyOnceWith('test')
 	})
 
 	it('should unsubscribe from event', () => {
-		const handler = jasmine.createSpy()
+		const handler = vi.fn()
 
 		const dispatcher = new PureEventDispatcher<string>()
 		dispatcher.subscribe(handler)
@@ -23,13 +23,13 @@ describe(PureEventDispatcher.name, () => {
 	})
 
 	it('should subscribe to an event only once', () => {
-		const handler = jasmine.createSpy()
+		const handler = vi.fn()
 
 		const dispatcher = new PureEventDispatcher<string>()
 		dispatcher.subscribe(handler)
 		dispatcher.subscribe(handler)
 		dispatcher.dispatch('test')
 
-		expect(handler).toHaveBeenCalledOnceWith('test')
+		expect(handler).toHaveBeenCalledExactlyOnceWith('test')
 	})
 })

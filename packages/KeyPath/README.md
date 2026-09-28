@@ -29,3 +29,11 @@ KeyPath.set(customer, 'addresses.0.street', '180 Azadi St')
 }
 */
 ```
+
+<!-- exports -->
+## Exports
+
+| Name | Kind |
+| --- | --- |
+| `KeyPath` | class |
+<!-- /exports -->

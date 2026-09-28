@@ -24,7 +24,7 @@ describe('Controller', () => {
 		const controller = new TestController(fixture.component)
 
 		expect(fixture.component.controllers.size).toBe(1)
-		expect(fixture.component.controllers.has(controller)).toBeTrue()
+		expect(fixture.component.controllers.has(controller)).toBe(true)
 	})
 
 	describe('construction on an already connected host', () => {
@@ -48,7 +48,7 @@ describe('Controller', () => {
 		it('should invoke hostConnected re-entrantly during construction, before subclass members are initialized', () => {
 			const controller = new LateController(fixture.component)
 
-			expect(fixture.component.controllers.has(controller)).toBeTrue()
+			expect(fixture.component.controllers.has(controller)).toBe(true)
 			expect(hostConnectedCalls).toEqual([undefined])
 		})
 
@@ -56,7 +56,7 @@ describe('Controller', () => {
 			const component = new ControllerTestComponent()
 			const controller = new LateController(component)
 
-			expect(component.controllers.has(controller)).toBeTrue()
+			expect(component.controllers.has(controller)).toBe(true)
 			expect(hostConnectedCalls.length).toBe(0)
 
 			document.body.append(component)
@@ -69,19 +69,19 @@ describe('Controller', () => {
 	describe('initializers', () => {
 		it('should be called when a controller is constructed', () => {
 			class TestController extends Controller { }
-			const spy = jasmine.createSpy('initializer')
+			const spy = vi.fn()
 			TestController.addInitializer(spy)
 
 			expect(spy).not.toHaveBeenCalled()
 
 			const controller = new TestController(fixture.component)
 
-			expect(spy).toHaveBeenCalledOnceWith(controller)
+			expect(spy).toHaveBeenCalledExactlyOnceWith(controller)
 		})
 
 		it('should inherit initializers from parent classes', () => {
-			const spy1 = jasmine.createSpy('initializer1')
-			const spy2 = jasmine.createSpy('initializer2')
+			const spy1 = vi.fn()
+			const spy2 = vi.fn()
 			class TestController1 extends Controller { }
 			TestController1.addInitializer(spy1)
 			class TestController2 extends TestController1 { }
@@ -92,8 +92,8 @@ describe('Controller', () => {
 
 			const controller = new TestController2(fixture.component)
 
-			expect(spy1).toHaveBeenCalledOnceWith(controller)
-			expect(spy2).toHaveBeenCalledOnceWith(controller)
+			expect(spy1).toHaveBeenCalledExactlyOnceWith(controller)
+			expect(spy2).toHaveBeenCalledExactlyOnceWith(controller)
 		})
 	})
 })

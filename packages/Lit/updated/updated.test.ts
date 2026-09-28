@@ -9,7 +9,7 @@ import { updated as Updated } from './updated.js'
 describe(Updated.name, () => {
 	@component('lit-test-updated')
 	class TestComponent extends Component {
-		readonly callback = jasmine.createSpy()
+		readonly callback = vi.fn()
 
 		@property() noObserver?: string
 
@@ -50,7 +50,7 @@ describe(Updated.name, () => {
 
 		fixture.component.primitive = 'bar'
 		await fixture.updateComplete
-		expect(fixture.component.callback).toHaveBeenCalledOnceWith(fixture.component, 'bar', undefined)
+		expect(fixture.component.callback).toHaveBeenCalledExactlyOnceWith(fixture.component, 'bar', undefined)
 
 		fixture.component.primitive = 'baz'
 		await fixture.updateComplete
@@ -63,7 +63,7 @@ describe(Updated.name, () => {
 
 		fixture.component.complex = new Date('2020-01-01')
 		await fixture.updateComplete
-		expect(fixture.component.callback).toHaveBeenCalledOnceWith(fixture.component, new Date('2020-01-01'), undefined)
+		expect(fixture.component.callback).toHaveBeenCalledExactlyOnceWith(fixture.component, new Date('2020-01-01'), undefined)
 
 		fixture.component.complex = new Date('2020-01-02')
 		await fixture.updateComplete
@@ -76,7 +76,7 @@ describe(Updated.name, () => {
 
 		fixture.component.complexWithComparer = new Date('2020-01-01')
 		await fixture.updateComplete
-		expect(fixture.component.callback).toHaveBeenCalledOnceWith(fixture.component, new Date('2020-01-01'), undefined)
+		expect(fixture.component.callback).toHaveBeenCalledExactlyOnceWith(fixture.component, new Date('2020-01-01'), undefined)
 
 		fixture.component.complexWithComparer = new Date('2020-01-02')
 		await fixture.updateComplete
@@ -93,7 +93,7 @@ describe(Updated.name, () => {
 
 		fixture.component.internalChange = { foo: 'bar' }
 		await fixture.updateComplete
-		expect(fixture.component.callback).toHaveBeenCalledOnceWith(fixture.component, { foo: 'bar' }, undefined)
+		expect(fixture.component.callback).toHaveBeenCalledExactlyOnceWith(fixture.component, { foo: 'bar' }, undefined)
 
 		fixture.component.internalChange.foo = 'baz'
 		await fixture.updateComplete
@@ -116,7 +116,7 @@ describe(`${Updated.name} on a Controller`, () => {
 	}
 
 	class TestController extends Controller {
-		readonly callback = jasmine.createSpy()
+		readonly callback = vi.fn()
 
 		@state() noObserver?: string
 		@state({ updated }) observed?: string
@@ -149,7 +149,7 @@ describe(`${Updated.name} on a Controller`, () => {
 
 		controller.observed = 'foo'
 		await fixture.updateComplete
-		expect(controller.callback).toHaveBeenCalledOnceWith(controller, 'foo', undefined)
+		expect(controller.callback).toHaveBeenCalledExactlyOnceWith(controller, 'foo', undefined)
 
 		controller.observed = 'bar'
 		await fixture.updateComplete
@@ -177,7 +177,7 @@ describe(`${Updated.name} on a Controller`, () => {
 
 		controller.internalChange = { foo: 'bar' }
 		await fixture.updateComplete
-		expect(controller.callback).toHaveBeenCalledOnceWith(controller, { foo: 'bar' }, undefined)
+		expect(controller.callback).toHaveBeenCalledExactlyOnceWith(controller, { foo: 'bar' }, undefined)
 
 		controller.internalChange.foo = 'baz'
 		await fixture.updateComplete

@@ -14,7 +14,7 @@ describe('isWritable', () => {
 		readonly frozen = 1
 		readonly frozenCustom = {}
 
-		readonly getterOnlyNonPrototype: number
+		readonly getterOnlyNonPrototype!: number
 		get getterOnly() { return 2 }
 
 		set setterOnly(value: any) { value }

@@ -91,7 +91,7 @@ describe('BidirectionalMap', () => {
 
 		it('should return false when key does not exist', () => {
 			const map = new BidirectionalMap<string, string>()
-			expect(map.delete('key1')).toBeFalse()
+			expect(map.delete('key1')).toBe(false)
 		})
 	})
 
@@ -106,7 +106,7 @@ describe('BidirectionalMap', () => {
 
 		it('should return false when value does not exist', () => {
 			const map = new BidirectionalMap<string, string>()
-			expect(map.deleteValue('value1')).toBeFalse()
+			expect(map.deleteValue('value1')).toBe(false)
 		})
 	})
 
@@ -133,8 +133,8 @@ describe('BidirectionalMap', () => {
 		it('should check if a key exists', () => {
 			const map = new BidirectionalMap<string, string>()
 			map.set('key1', 'value1')
-			expect(map.has('key1')).toBeTrue()
-			expect(map.has('key2')).toBeFalse()
+			expect(map.has('key1')).toBe(true)
+			expect(map.has('key2')).toBe(false)
 		})
 	})
 
@@ -142,8 +142,8 @@ describe('BidirectionalMap', () => {
 		it('should check if a value exists', () => {
 			const map = new BidirectionalMap<string, string>()
 			map.set('key1', 'value1')
-			expect(map.hasValue('value1')).toBeTrue()
-			expect(map.hasValue('value2')).toBeFalse()
+			expect(map.hasValue('value1')).toBe(true)
+			expect(map.hasValue('value2')).toBe(false)
 		})
 	})
 })

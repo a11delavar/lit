@@ -33,12 +33,12 @@ describe(state.name, () => {
 		})
 
 		it('should not register the property on the host', () => {
-			expect('value' in fixture.component).toBeFalse()
-			expect((fixture.component.constructor as typeof Component).elementProperties.has('value')).toBeFalse()
+			expect('value' in fixture.component).toBe(false)
+			expect((fixture.component.constructor as typeof Component).elementProperties.has('value')).toBe(false)
 		})
 
 		it('should request an update of the host when the value changes', () => {
-			const requestUpdate = spyOn(fixture.component, 'requestUpdate').and.callThrough()
+			const requestUpdate = vi.spyOn(fixture.component, 'requestUpdate')
 
 			fixture.component.first.value = 'changed'
 
@@ -46,7 +46,7 @@ describe(state.name, () => {
 		})
 
 		it('should not request an update of the host when the value does not change', () => {
-			const requestUpdate = spyOn(fixture.component, 'requestUpdate').and.callThrough()
+			const requestUpdate = vi.spyOn(fixture.component, 'requestUpdate')
 
 			fixture.component.first.value = fixture.component.first.value
 
@@ -54,7 +54,7 @@ describe(state.name, () => {
 		})
 
 		it('should respect a custom hasChanged', () => {
-			const requestUpdate = spyOn(fixture.component, 'requestUpdate').and.callThrough()
+			const requestUpdate = vi.spyOn(fixture.component, 'requestUpdate')
 
 			fixture.component.first.tolerant = 1
 			expect(requestUpdate).not.toHaveBeenCalled()

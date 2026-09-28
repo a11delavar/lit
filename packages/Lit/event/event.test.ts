@@ -61,10 +61,10 @@ describe(event.name, () => {
 
 			const fixture = new ComponentTestFixture(() => new CustomTypeComponent())
 
-			const expectCustomEvent = (expectedEvent: string, property: keyof typeof fixture.component) => {
+			const expectCustomEvent = (expectedEvent: string, property: 'customEvent' | 'kebabEvent' | 'namespacedEvent') => {
 				const listeners = {
-					expected: jasmine.createSpy('expected'),
-					unexpected: jasmine.createSpy('unexpected'),
+					expected: vi.fn(),
+					unexpected: vi.fn(),
 				}
 				fixture.component.addEventListener(expectedEvent, listeners.expected)
 				fixture.component.addEventListener(property, listeners.unexpected)
@@ -73,12 +73,12 @@ describe(event.name, () => {
 
 				expect(listeners.unexpected).not.toHaveBeenCalled()
 				expect(listeners.expected).toHaveBeenCalledTimes(1)
-				const event = listeners.expected.calls.argsFor(0)[0] as CustomEvent<string>
+				const event = listeners.expected.mock.calls[0]![0] as CustomEvent<string>
 				expect(event.type).toBe(expectedEvent)
 				expect(event.detail).toBe('test')
 
 				fixture.component.removeEventListener(expectedEvent, listeners.expected)
-				listeners.expected.calls.reset()
+				listeners.expected.mockClear()
 				fixture.component[property].dispatch('test2')
 				expect(listeners.expected).not.toHaveBeenCalled()
 				expect(listeners.unexpected).not.toHaveBeenCalled()
@@ -127,13 +127,13 @@ describe(event.name, () => {
 		})
 
 		it('should dispatch the event from the host element', () => {
-			const listener = jasmine.createSpy('activation')
+			const listener = vi.fn()
 			fixture.component.addEventListener('activation', listener)
 
 			fixture.component.controller.activate()
 
 			expect(listener).toHaveBeenCalledTimes(1)
-			expect((listener.calls.argsFor(0)[0] as CustomEvent<string>).detail).toBe('test')
+			expect((listener.mock.calls[0]![0] as CustomEvent<string>).detail).toBe('test')
 		})
 	})
 })

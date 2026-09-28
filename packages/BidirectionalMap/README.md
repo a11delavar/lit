@@ -62,3 +62,11 @@ The package automatically registers itself globally, so TypeScript recognizes `B
 // Type is available globally
 const map: BidirectionalMap<string, number> = new BidirectionalMap()
 ```
+
+<!-- exports -->
+## Exports
+
+| Name | Kind |
+| --- | --- |
+| `BidirectionalMap` | class |
+<!-- /exports -->

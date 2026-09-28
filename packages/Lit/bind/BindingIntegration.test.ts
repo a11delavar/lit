@@ -1,10 +1,10 @@
 import { ComponentTestFixture } from '@a11d/lit-testing'
-import { query } from '../query'
-import { Component, html, component } from '../Component'
-import { Binder } from './Binder'
-import { bindingIntegration, BindingIntegration } from './BindingIntegration'
-import { type ValueBinder } from './ValueBinder'
-import { BindingMode, property } from '..'
+import { query } from '../query/index.js'
+import { Component, html, component } from '../Component/index.js'
+import { Binder } from './Binder.js'
+import { bindingIntegration, BindingIntegration } from './BindingIntegration.js'
+import { type ValueBinder } from './ValueBinder.js'
+import { BindingMode, property } from '../index.js'
 
 @bindingIntegration()
 class TestRequiredIntegration extends BindingIntegration {
@@ -32,7 +32,7 @@ describe('BindingIntegration', () => {
 
 		@query('input') readonly input!: HTMLInputElement
 
-		get template() {
+		override get template() {
 			return html`<input ${this.binder.bind('value')}>`
 		}
 	}
@@ -79,7 +79,7 @@ describe('BindingIntegration', () => {
 
 		@query('input') readonly input!: HTMLInputElement
 
-		get template() {
+		override get template() {
 			return html`<input ?required=${this.required} ${this.binder.bind('value')}>`
 		}
 	}
@@ -152,7 +152,7 @@ describe('BindingIntegration', () => {
 
 			@query('input') readonly input!: HTMLInputElement
 
-			get template() {
+			override get template() {
 				return html`
 					<input data-integrate-label ${this.forceTwoWay
 						? this.binder.bind({ keyPath: 'value', mode: BindingMode.TwoWay })

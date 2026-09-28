@@ -1,13 +1,11 @@
 import { ComponentTestFixture } from '@a11d/lit-testing'
-import '../index.js'
-import { event, Component, html, property, state, query, staticHtml, literal, unsafeStatic, noChange, PartType, type TemplateResult, type StaticValue } from '../index'
+import { event, Component, html, property, state, query, staticHtml, literal, unsafeStatic, noChange, PartType, type TemplateResult, type StaticValue } from '../index.js'
 import { BindingMode, bind } from './BindDirective.js'
 
 function expectBindToPass<T>(parameters: {
 	initialValue: T
 	updatedValue: T
-	// eslint-disable-next-line
-	converterType: String | Number | Boolean | Object
+	converterType: typeof String | typeof Number | typeof Boolean | typeof Object
 	getTemplate: (tag: StaticValue, bind: unknown) => TemplateResult
 	clearedTargetValue: unknown
 }) {
@@ -17,19 +15,19 @@ function expectBindToPass<T>(parameters: {
 	const tagSuffix = random()
 
 	class TestBindableComponent extends Component {
-		@event() readonly change: EventDispatcher<T>
+		@event() readonly change!: EventDispatcher<T>
 		@property({ type: converterType, bindingDefault: true }) value?: T
 
 		registeredEvents!: Record<string, EventListenerOrEventListenerObject>
 		get registeredEventsCount() { return Object.keys(this.registeredEvents ?? {}).length }
 
-		addEventListener(...parameters: Parameters<typeof Component.prototype.addEventListener>) {
+		override addEventListener(...parameters: Parameters<typeof Component.prototype.addEventListener>) {
 			super.addEventListener(...parameters)
 			this.registeredEvents ??= {}
 			this.registeredEvents[parameters[0]] = parameters[1]
 		}
 
-		removeEventListener(...parameters: Parameters<typeof Component.prototype.removeEventListener>) {
+		override removeEventListener(...parameters: Parameters<typeof Component.prototype.removeEventListener>) {
 			super.removeEventListener(...parameters)
 			delete this.registeredEvents?.[parameters[0]]
 		}
@@ -40,8 +38,8 @@ function expectBindToPass<T>(parameters: {
 
 	abstract class TestBinderComponent extends Component {
 		@query(bindableComponentTagName) readonly bindableComponent!: TestBindableComponent
-		sourceUpdate = jasmine.createSpy('sourceUpdate')
-		sourceUpdated = jasmine.createSpy('sourceUpdated')
+		sourceUpdate = vi.fn()
+		sourceUpdated = vi.fn()
 	}
 
 	const expectBindingToPass = (parameters: {
@@ -117,13 +115,13 @@ function expectBindToPass<T>(parameters: {
 		mit([BindingMode.OneWayToSource, BindingMode.TwoWay], 'should call sourceUpdate and sourceUpdated with the updated value while binding from target to source', async () => {
 			fixture.component.bindableComponent.change.dispatch(updatedValue)
 			await fixture.updateComplete
-			expect(fixture.component.sourceUpdate).toHaveBeenCalledOnceWith(updatedValue)
+			expect(fixture.component.sourceUpdate).toHaveBeenCalledExactlyOnceWith(updatedValue)
 			expect(KeyPath.get(fixture.component as any, keyPath)).toBe(updatedValue)
-			expect(fixture.component.sourceUpdated).toHaveBeenCalledOnceWith(updatedValue)
+			expect(fixture.component.sourceUpdated).toHaveBeenCalledExactlyOnceWith(updatedValue)
 		})
 
 		mit([BindingMode.OneWayToSource, BindingMode.TwoWay], 'should call requestUpdate with the property key while binding from target to source', async () => {
-			spyOn(fixture.component, 'requestUpdate')
+			vi.spyOn(fixture.component, 'requestUpdate').mockImplementation(() => {})
 			fixture.component.bindableComponent.change.dispatch(updatedValue)
 			await fixture.updateComplete
 			expect(fixture.component.requestUpdate).toHaveBeenCalledWith(property)
@@ -150,7 +148,7 @@ function expectBindToPass<T>(parameters: {
 		})
 
 		mit([BindingMode.OneWay], 'should not call requestUpdate with the property key while not binding from target to source', async () => {
-			spyOn(fixture.component, 'requestUpdate')
+			vi.spyOn(fixture.component, 'requestUpdate').mockImplementation(() => {})
 			fixture.component.bindableComponent.change.dispatch(updatedValue)
 			await fixture.updateComplete
 			expect(fixture.component.requestUpdate).not.toHaveBeenCalledWith(property)
@@ -167,7 +165,7 @@ function expectBindToPass<T>(parameters: {
 		class TestNonDeepTwoWayBinderComponent extends TestBinderComponent {
 			@state() value = initialValue
 
-			get template() {
+			override get template() {
 				return html`${getTemplate(tag, bind(this, 'value', { sourceUpdate: this.sourceUpdate, sourceUpdated: this.sourceUpdated }))}`
 			}
 		}
@@ -182,7 +180,7 @@ function expectBindToPass<T>(parameters: {
 		class TestDeepTwoWayBinderComponent extends TestBinderComponent {
 			@state() deep = { object: { value: initialValue } }
 
-			get template() {
+			override get template() {
 				return html`${getTemplate(tag, bind(this as TestDeepTwoWayBinderComponent, 'deep', { keyPath: 'object.value', sourceUpdate: this.sourceUpdate, sourceUpdated: this.sourceUpdated }))}`
 			}
 		}
@@ -198,7 +196,7 @@ function expectBindToPass<T>(parameters: {
 		class TestTwoWayExplicitBinderComponent extends TestBinderComponent {
 			@state() deep = { object: { value: initialValue } }
 
-			get template() {
+			override get template() {
 				return html`${getTemplate(tag, bind(this as TestTwoWayExplicitBinderComponent, 'deep', { keyPath: 'object.value', mode: BindingMode.TwoWay, sourceUpdate: this.sourceUpdate, sourceUpdated: this.sourceUpdated }))}`
 			}
 		}
@@ -218,7 +216,7 @@ function expectBindToPass<T>(parameters: {
 				}
 			}
 
-			get template() {
+			override get template() {
 				return html`${getTemplate(tag, bind(this as TestExplicitOneWayBinderComponent, 'deep', { keyPath: 'object.value', mode: BindingMode.OneWay, sourceUpdate: this.sourceUpdate, sourceUpdated: this.sourceUpdated }))}`
 			}
 		}
@@ -241,7 +239,7 @@ function expectBindToPass<T>(parameters: {
 				}
 			}
 
-			get template() {
+			override get template() {
 				return html`${getTemplate(tag, bind(this as TestImplicitOneWayBinderComponent, 'deep', { keyPath: 'object.value', sourceUpdate: this.sourceUpdate, sourceUpdated: this.sourceUpdated }))}`
 			}
 		}
@@ -267,7 +265,7 @@ function expectBindToPass<T>(parameters: {
 				}
 			}
 
-			get template() {
+			override get template() {
 				return html`${getTemplate(tag, bind(this as TestExplicitOneWayToSourceBinderComponent, 'deep', { keyPath: 'object.value', mode: BindingMode.OneWayToSource, sourceUpdate: this.sourceUpdate, sourceUpdated: this.sourceUpdated }))}`
 			}
 		}
@@ -281,9 +279,9 @@ function expectBindToPass<T>(parameters: {
 
 	describe('implicit one-way-to-source binding', () => {
 		const original = Object.isWritable
-		beforeAll(() => {
-			spyOn(KeyPath, 'isWritable').and.returnValue(true)
-			spyOn(Object, 'isWritable').and.callFake((target: any, key: string) =>
+		beforeEach(() => {
+			vi.spyOn(KeyPath, 'isWritable').mockReturnValue(true)
+			vi.spyOn(Object, 'isWritable').mockImplementation((target: any, key: string) =>
 				!(key === 'value' && (target.tagName?.toLowerCase().includes('implicit-one-way-to-source-binder') ?? false)) && original(target, key))
 		})
 
@@ -294,7 +292,7 @@ function expectBindToPass<T>(parameters: {
 				}
 			}
 
-			get template() {
+			override get template() {
 				return html`${getTemplate(tag, bind(this as TestImplicitOneWayToSourceBinderComponent, 'deep', { keyPath: 'object.value', sourceUpdate: this.sourceUpdate, sourceUpdated: this.sourceUpdated }))}`
 			}
 		}

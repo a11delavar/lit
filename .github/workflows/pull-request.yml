@@ -1,0 +1,9 @@
+name: Pull Request
+
+on:
+  pull_request:
+
+jobs:
+  qa:
+    name: 🔍 Quality Assurance
+    uses: ./.github/workflows/qa.yml

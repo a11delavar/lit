@@ -1,10 +1,14 @@
 {
 	"name": "@a11d/bidirectional-map",
-	"version": "0.1.1",
+	"version": "0.1.2",
 	"description": "Map with bidirectional lookups - query by key or value",
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/a11delavar/lit.git"
+		"url": "git+https://github.com/a11delavar/lit.git",
+		"directory": "packages/BidirectionalMap"
+	},
+	"bugs": {
+		"url": "https://github.com/a11delavar/lit/issues"
 	},
 	"keywords": [
 		"map",
@@ -15,12 +19,13 @@
 	],
 	"author": "a11delavar",
 	"license": "MIT",
-	"homepage": "https://github.com/a11delavar/lit#readme",
+	"homepage": "https://github.com/a11delavar/lit/tree/main/packages/BidirectionalMap#readme",
 	"type": "module",
 	"module": "./dist/index.js",
 	"main": "./dist/index.js",
 	"types": "./dist/index.d.ts",
 	"files": [
-		"dist"
+		"dist",
+		"CHANGELOG.md"
 	]
 }

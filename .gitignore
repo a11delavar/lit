@@ -1,4 +1,10 @@
 node_modules
-test-temp
 dist
+docs-dist
 *.tsbuildinfo
+
+# Generated from the git history by "npm run changelog", and shipped in the packages
+CHANGELOG.md
+
+# Vitest failure screenshots
+.vitest

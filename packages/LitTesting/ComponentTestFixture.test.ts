@@ -2,9 +2,8 @@ import { html, Component } from '@a11d/lit'
 import { ComponentTestFixture } from './ComponentTestFixture.js'
 
 class FixtureTestComponent extends Component {
-	// @ts-expect-error requestUpdate does exist on this
-	readonly requestUpdateSpy = spyOn(this, 'requestUpdate').and.callThrough()
-	readonly updateCompleteSpy = spyOnProperty(this, 'updateComplete', 'get').and.callThrough()
+	readonly requestUpdateSpy = vi.spyOn(this as Component, 'requestUpdate')
+	readonly updateCompleteSpy = vi.spyOn(this as Component, 'updateComplete', 'get')
 }
 customElements.define('fixture-test-component', FixtureTestComponent)
 
@@ -31,7 +30,7 @@ describe('ComponentTestFixture', () => {
 
 	it('should have been initialized', () => {
 		expect(fixture.component).toBeInstanceOf(FixtureTestComponent)
-		expect(fixture.component.isConnected).toBeTrue()
+		expect(fixture.component.isConnected).toBe(true)
 		expect(fixture.component.requestUpdateSpy).toHaveBeenCalledTimes(0)
 		expect(fixture.component.updateCompleteSpy).toHaveBeenCalledTimes(1)
 	})

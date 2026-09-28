@@ -1,4 +1,5 @@
-import { equals } from './symbol'
+import './index.js'
+import { equals } from './symbol.js'
 
 describe('Object.prototype.equals', () => {
 	it('should compare two objects', () => {

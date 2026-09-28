@@ -15,8 +15,8 @@ class CounterPart extends ComponentPart<ComponentPartTestComponent> {
 	@state({ updated: trackedUpdated }) tracked = 'a'
 	@state() text = ''
 
-	readonly trackedUpdatedCallback = jasmine.createSpy('trackedUpdated')
-	readonly clickCallback = jasmine.createSpy('click')
+	readonly trackedUpdatedCallback = vi.fn()
+	readonly clickCallback = vi.fn()
 
 	@query('#count') readonly countElement!: HTMLSpanElement | undefined
 	@queryAll('.item') readonly itemElements!: Array<HTMLSpanElement>
@@ -64,7 +64,7 @@ class ComponentPartTestComponent extends Component {
 	@state() total = 0
 	@state({ updated: countUpdated }) count = 100
 
-	readonly countUpdatedCallback = jasmine.createSpy('countUpdated')
+	readonly countUpdatedCallback = vi.fn()
 
 	readonly counter = new CounterPart(this)
 	readonly first = new LabelPart(this, 'first')
@@ -94,7 +94,7 @@ describe('ComponentPart', () => {
 	it('should initialize state through field initializers', () => {
 		expect(fixture.component.counter.count).toBe(0)
 		expect(fixture.component.counter.tracked).toBe('a')
-		expect(fixture.component.first.visible).toBeFalse()
+		expect(fixture.component.first.visible).toBe(false)
 	})
 
 	it('should resolve the host', () => {
@@ -109,7 +109,7 @@ describe('ComponentPart', () => {
 	})
 
 	it('should not request an update when the state of a part does not change', () => {
-		const requestUpdate = spyOn(fixture.component, 'requestUpdate').and.callThrough()
+		const requestUpdate = vi.spyOn(fixture.component, 'requestUpdate')
 
 		fixture.component.counter.count = fixture.component.counter.count
 
@@ -120,13 +120,13 @@ describe('ComponentPart', () => {
 		fixture.component.first.visible = true
 		await fixture.updateComplete
 
-		expect(fixture.component.first.visible).toBeTrue()
-		expect(fixture.component.second.visible).toBeFalse()
+		expect(fixture.component.first.visible).toBe(true)
+		expect(fixture.component.second.visible).toBe(false)
 		expect([...fixture.component.renderRoot.querySelectorAll('.label')].map(e => e.textContent)).toEqual(['first', ''])
 	})
 
 	it('should not track the state of a part by a key of the host', async () => {
-		fixture.component.countUpdatedCallback.calls.reset()
+		fixture.component.countUpdatedCallback.mockClear()
 
 		fixture.component.counter.count = 42
 		await fixture.updateComplete
@@ -137,7 +137,7 @@ describe('ComponentPart', () => {
 
 	it('should support the updated callback bound to the part', async () => {
 		const part = fixture.component.counter
-		expect(part.trackedUpdatedCallback).toHaveBeenCalledOnceWith(part, 'a', undefined)
+		expect(part.trackedUpdatedCallback).toHaveBeenCalledExactlyOnceWith(part, 'a', undefined)
 
 		part.tracked = 'b'
 		await fixture.updateComplete
@@ -158,12 +158,12 @@ describe('ComponentPart', () => {
 	})
 
 	it('should support events dispatched from the host', () => {
-		const handler = jasmine.createSpy('countChange')
+		const handler = vi.fn()
 		fixture.component.addEventListener('countChange', (e: Event) => handler((e as CustomEvent<number>).detail))
 
 		fixture.component.counter.increment()
 
-		expect(handler).toHaveBeenCalledOnceWith(fixture.component.counter.count)
+		expect(handler).toHaveBeenCalledExactlyOnceWith(fixture.component.counter.count)
 	})
 
 	it('should let a part read and write the state of its host', async () => {

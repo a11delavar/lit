@@ -60,7 +60,7 @@ describe('ElementRefs', () => {
 
 	it('answers nothing for an element it does not hold', () => {
 		expect(fixture.component.items.get(document.createElement('div'))).toBeUndefined()
-		expect(fixture.component.items.has(document.createElement('div'))).toBeFalse()
+		expect(fixture.component.items.has(document.createElement('div'))).toBe(false)
 	})
 
 	it('reports its size', () => {
@@ -90,7 +90,7 @@ describe('ElementRefs', () => {
 		fixture.component.indices = [0, 1]
 		await fixture.updateComplete
 
-		expect(fixture.component.items.has(dropped)).toBeFalse()
+		expect(fixture.component.items.has(dropped)).toBe(false)
 		expect(fixture.component.disconnectedCalls).toEqual([[dropped, 2]])
 	})
 
@@ -107,14 +107,14 @@ describe('ElementRefs', () => {
 		fixture.component.movableElsewhere = true
 		await fixture.updateComplete
 
-		expect(fixture.component.items.has(movable)).toBeFalse()
+		expect(fixture.component.items.has(movable)).toBe(false)
 		expect(fixture.component.others.get(movable)).toBe(99)
 		expect(fixture.component.disconnectedCalls).toEqual([[movable, 99]])
 	})
 
 	it('keeps two references apart', () => {
 		expect([...fixture.component.others]).toEqual([])
-		expect(fixture.component.others.has(fixture.component.itemElements[0]!)).toBeFalse()
+		expect(fixture.component.others.has(fixture.component.itemElements[0]!)).toBe(false)
 	})
 
 	it('memoises its directive, so a re-render never tears the part down', () => {
@@ -128,8 +128,8 @@ describe('ElementRefs', () => {
 		items.set(element, 7)
 
 		expect(items.get(element)).toBe(7)
-		expect(items.delete(element)).toBeTrue()
-		expect(items.delete(element)).toBeFalse()
+		expect(items.delete(element)).toBe(true)
+		expect(items.delete(element)).toBe(false)
 		expect(items.size).toBe(0)
 	})
 
@@ -137,7 +137,7 @@ describe('ElementRefs', () => {
 		const disconnected = new Array<Element>()
 		const items = new ElementRefs<HTMLElement, number>({ disconnected: element => disconnected.push(element) })
 
-		expect(items.delete(document.createElement('div'))).toBeFalse()
+		expect(items.delete(document.createElement('div'))).toBe(false)
 		expect(disconnected).toEqual([])
 	})
 

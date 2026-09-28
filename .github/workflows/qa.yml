@@ -2,20 +2,17 @@ name: 🔍 Quality Assurance
 
 on:
   workflow_dispatch:
-  pull_request:
-  push:
-    branches:
-      - main
+  workflow_call:
 
 jobs:
   type-check:
     name: 🏗️ Type Check
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v6
         with:
-          node-version: latest
+          node-version: 26.x
           cache: 'npm'
       - run: npm ci
       - run: npm run typescript
@@ -24,22 +21,27 @@ jobs:
     name: 📝 Lint
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v6
         with:
-          node-version: latest
+          node-version: 26.x
           cache: 'npm'
       - run: npm ci
       - run: npm run lint
+      - name: READMEs are up to date
+        run: |
+          npm run --silent readme
+          git diff --exit-code -- '*.md' || { echo '::error::The generated sections of the READMEs are out of date. Run "npm run readme" and commit the result.'; exit 1; }
 
   test:
     name: 🧪 Test
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v6
         with:
-          node-version: latest
+          node-version: 26.x
           cache: 'npm'
       - run: npm ci
+      - run: npx playwright install --with-deps chromium firefox
       - run: npm run test

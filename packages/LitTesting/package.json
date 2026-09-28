@@ -1,25 +1,30 @@
 {
 	"name": "@a11d/lit-testing",
-	"version": "0.0.4",
+	"version": "0.0.5",
 	"description": "Utilities to facilitate testing lit components",
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/a11delavar/lit.git"
+		"url": "git+https://github.com/a11delavar/lit.git",
+		"directory": "packages/LitTesting"
+	},
+	"bugs": {
+		"url": "https://github.com/a11delavar/lit/issues"
 	},
 	"keywords": [
 		"lit"
 	],
 	"author": "a11delavar",
 	"license": "MIT",
-	"homepage": "https://github.com/a11delavar/lit#readme",
+	"homepage": "https://github.com/a11delavar/lit/tree/main/packages/LitTesting#readme",
 	"type": "module",
 	"module": "./dist/index.js",
 	"main": "./dist/index.js",
 	"types": "./dist/index.d.ts",
 	"files": [
-		"dist"
+		"dist",
+		"CHANGELOG.md"
 	],
-	"dependencies": {
+	"peerDependencies": {
 		"@a11d/lit": "x"
 	}
 }
