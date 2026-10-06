@@ -1,7 +1,7 @@
 {
 	"name": "@a11d/bidirectional-map",
-	"version": "0.1.2",
-	"description": "Map with bidirectional lookups - query by key or value",
+	"version": "0.1.3",
+	"description": "A Map that looks up values by key and keys by value.",
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/a11delavar/lit.git",

@@ -16,9 +16,9 @@ describe('KeyPath', () => {
 			b: {
 				c: 2,
 				d: {
-					e: 3
-				}
-			}
+					e: 3,
+				},
+			},
 		}
 	})
 
@@ -145,7 +145,7 @@ describe('KeyPath', () => {
 			expect(KeyPath.entries(object as any, 'b.d.e')).toEqual([
 				{ key: 'b', path: 'b', value: object.b },
 				{ key: 'd', path: 'b.d', value: object.b.d },
-				{ key: 'e', path: 'b.d.e', value: object.b.d.e }
+				{ key: 'e', path: 'b.d.e', value: object.b.d.e },
 			])
 		})
 

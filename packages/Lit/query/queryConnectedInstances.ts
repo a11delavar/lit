@@ -22,7 +22,7 @@ export function queryConnectedInstances() {
 
 		constructor.addInitializer(element => element.addController({
 			hostConnected: () => (element.constructor as any)[propertyName].add(element),
-			hostDisconnected: () => (element.constructor as any)[propertyName].delete(element)
+			hostDisconnected: () => (element.constructor as any)[propertyName].delete(element),
 		}))
 
 		Object.defineProperty(constructor, propertyKey, {

@@ -6,7 +6,6 @@ Function.prototype[equals] = function (this: Function, other: unknown) {
 		return true
 	}
 
-
 	if (!(other instanceof Function)) {
 		return false
 	}

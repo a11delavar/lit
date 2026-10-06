@@ -29,7 +29,7 @@ export class KeyPath {
 		const entries = KeyPath.entries(object, keyPath)
 		return Object.isWritable(
 			(entries.length <= 1 ? object : entries.at(-2)!.value),
-			entries.at(-1)!.key
+			entries.at(-1)!.key,
 		)
 	}
 
@@ -43,7 +43,7 @@ export class KeyPath {
 			entries.push({
 				key,
 				path: [lastEntry?.path, key].filter(Boolean).join('.'),
-				value: (index === 0 ? object : lastEntry?.value)?.[key]
+				value: (index === 0 ? object : lastEntry?.value)?.[key],
 			})
 			return entries
 		}, new Array<KeyPath.Entry>())

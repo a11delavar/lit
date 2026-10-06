@@ -1,6 +1,6 @@
 # `Component` class
 
-The `Component` class is the base class for all components.
+The base class for components, extending `LitElement` with a `template` getter and additional lifecycle callbacks.
 
 In addition to [Lit's standard lifecycle](https://lit.dev/docs/components/lifecycle/), `Component` provides:
 - `template` getter - Define the component's template

@@ -1,7 +1,7 @@
 {
 	"name": "@a11d/lit",
-	"version": "0.13.3",
-	"description": "A thin wrapper around the Lit library",
+	"version": "0.13.4",
+	"description": "A layer over Lit with a component base class, controllers, element references, two-way binding and typed events.",
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/a11delavar/lit.git",

@@ -101,6 +101,7 @@ export class ChangeLog {
 				releases.push(release)
 			}
 		}
-		return releases.map(release => release.toString()).filter(text => !!text.trim()).join('\n\n')
+		const text = releases.map(release => release.toString()).filter(text => !!text.trim()).join('\n\n')
+		return !text ? '' : `${text}\n`
 	}
 }

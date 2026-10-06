@@ -53,15 +53,14 @@ describe('isWritable', () => {
 		})
 	}
 
-
 	describe('direct', () => {
-		const object = new Class
+		const object = new Class()
 		expectBase(object)
 	})
 
 	describe('inheritance', () => {
 		class Inherited extends Class { }
-		const object = new Inherited
+		const object = new Inherited()
 
 		expectBase(object)
 
@@ -70,13 +69,13 @@ describe('isWritable', () => {
 		}
 
 		it('should return true if the property is a getter and setter added on the inherited class', () => {
-			const object = new InheritedWithAddedSetter
+			const object = new InheritedWithAddedSetter()
 			expect(Object.isWritable(object, 'readonly')).toBe(true)
 		})
 	})
 
 	describe('frozen', () => {
-		const object = new Class
+		const object = new Class()
 		Object.freeze(object)
 		expectBase(object, false)
 	})

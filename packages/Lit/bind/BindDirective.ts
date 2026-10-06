@@ -33,7 +33,7 @@ export type BindSource = Pick<ReactiveElement, 'requestUpdate'>
 export type BindDirectiveParameters<Component extends BindSource, Property extends keyof Component> = [
 	component: Component,
 	property: Property,
-	options?: BindDirectiveParametersOptions<Component[Property]>
+	options?: BindDirectiveParametersOptions<Component[Property]>,
 ]
 
 export type BindDirectiveParametersOptions<Data> = {

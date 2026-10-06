@@ -1,7 +1,7 @@
 {
 	"name": "@a11d/equals",
-	"version": "0.2.4",
-	"description": "A value equality utility library.",
+	"version": "0.2.5",
+	"description": "Value equality for objects, arrays, maps, sets and functions, comparing structure instead of reference.",
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/a11delavar/lit.git",

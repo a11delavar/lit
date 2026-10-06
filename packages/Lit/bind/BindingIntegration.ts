@@ -4,7 +4,7 @@ export const bindingIntegrations = new Set<BindingIntegration>()
 
 export const bindingIntegration = () => {
 	return (BindingIntegrationConstructor: Constructor<BindingIntegration>) => {
-		bindingIntegrations.add(new BindingIntegrationConstructor)
+		bindingIntegrations.add(new BindingIntegrationConstructor())
 	}
 }
 

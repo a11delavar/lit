@@ -1,7 +1,7 @@
 {
 	"name": "@a11d/constructor",
-	"version": "0.1.1",
-	"description": "Global constructor types",
+	"version": "0.1.2",
+	"description": "Global Constructor and AbstractConstructor types for typing classes by the instances they create.",
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/a11delavar/lit.git",

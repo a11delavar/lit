@@ -13,7 +13,7 @@ Array.prototype[equals] = function (this: Array<unknown>, other: unknown) {
 		return false
 	}
 
-	for (const index in this) {
+	for (let index = 0; index < this.length; index++) {
 		if (Object[equals](this[index], other[index]) === false) {
 			return false
 		}

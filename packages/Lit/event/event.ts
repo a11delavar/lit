@@ -15,7 +15,7 @@ export function event(options?: EventInit & { readonly type?: string }) {
 				return this[`$${propertyKey}Event$`] ??= !isServer && element instanceof HTMLElement
 					? new HTMLElementEventDispatcher(element, options?.type ?? propertyKey, options)
 					: new PureEventDispatcher()
-			}
+			},
 		})
 	}
 }

@@ -1,7 +1,7 @@
 {
 	"name": "@a11d/lit-testing",
-	"version": "0.0.5",
-	"description": "Utilities to facilitate testing lit components",
+	"version": "0.0.6",
+	"description": "A test fixture that creates, attaches and removes a Lit component around each spec.",
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/a11delavar/lit.git",

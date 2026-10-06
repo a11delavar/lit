@@ -30,7 +30,7 @@ describe(HTMLElementEventDispatcher.name, () => {
 		}
 
 		div.addEventListener<any>('special', (e: SpecialEvent) => handler(e.constructor.name, e.detail))
-		new HTMLElementEventDispatcher<string>(div, 'special').dispatch(new SpecialEvent)
+		new HTMLElementEventDispatcher<string>(div, 'special').dispatch(new SpecialEvent())
 		expect(handler).toHaveBeenCalledExactlyOnceWith(SpecialEvent.name, 'special')
 	})
 

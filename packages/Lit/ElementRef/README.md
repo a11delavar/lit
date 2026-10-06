@@ -1,6 +1,6 @@
 # `ElementRef` / `ElementRefs` classes
 
-The element — or the elements — a template designates, with whatever it declares about them. Code gets the elements it works with from the template instead of querying for them.
+The element or elements a template designates, with whatever it declares about them. Code gets the elements it works with from the template instead of querying for them.
 
 ```ts
 import { Component, component, ElementRef, html } from '@a11d/lit'

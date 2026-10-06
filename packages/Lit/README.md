@@ -13,10 +13,10 @@ npm install @a11d/lit
 <!-- features -->
 ## Features
 
-- **[`Component` class](https://github.com/a11delavar/lit/tree/main/packages/Lit/Component)** - The `Component` class is the base class for all components.
-- **[`ComponentPart` class](https://github.com/a11delavar/lit/tree/main/packages/Lit/ComponentPart)** - A `ComponentPart` is a part of a component, extracted into a class of its own **without introducing a component boundary**.
-- **[`Controller` class](https://github.com/a11delavar/lit/tree/main/packages/Lit/Controller)** - A base class for [reactive controllers](https://lit.dev/docs/composition/controllers/) which registers itself with its host, so implementations only define the callbacks they are interested in.
-- **[`ElementRef` / `ElementRefs` classes](https://github.com/a11delavar/lit/tree/main/packages/Lit/ElementRef)** - The element — or the elements — a template designates, with whatever it declares about them.
+- **[`Component` class](https://github.com/a11delavar/lit/tree/main/packages/Lit/Component)** - The base class for components, extending `LitElement` with a `template` getter and additional lifecycle callbacks.
+- **[`ComponentPart` class](https://github.com/a11delavar/lit/tree/main/packages/Lit/ComponentPart)** - A part of a component, extracted into a class of its own **without introducing a component boundary**.
+- **[`Controller` class](https://github.com/a11delavar/lit/tree/main/packages/Lit/Controller)** - A base class for [reactive controllers](https://lit.dev/docs/composition/controllers/) that registers itself with its host.
+- **[`ElementRef` / `ElementRefs` classes](https://github.com/a11delavar/lit/tree/main/packages/Lit/ElementRef)** - The element or elements a template designates, with whatever it declares about them.
 - **[`style` Directive](https://github.com/a11delavar/lit/tree/main/packages/Lit/style)** - Apply inline styles to elements with proper typing and reactivity.
 - **[`updated` Decorator](https://github.com/a11delavar/lit/tree/main/packages/Lit/updated)** - React to property changes with callbacks.
 - **[`eventListener` Decorator](https://github.com/a11delavar/lit/tree/main/packages/Lit/eventListener)** - Declaratively register event listeners on methods.

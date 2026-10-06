@@ -44,7 +44,6 @@ describe(Updated.name, () => {
 		expect(fixture.component.callback).not.toHaveBeenCalled()
 	})
 
-
 	it('should call the callback when the primitive property changes', async () => {
 		expect(fixture.component.callback).not.toHaveBeenCalled()
 

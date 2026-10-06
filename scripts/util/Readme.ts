@@ -47,11 +47,11 @@ export class Readme {
 
 	/** Writes the root README and the generated sections of every package's. */
 	static async generate() {
-		await FileSystem.promises.writeFile('README.md', Readme.root())
+		await FileSystem.promises.writeFile('README.md', `${Readme.root()}\n`)
 		await Promise.all(Package.all.map(async p => {
 			const path = Path.join(p.path, 'README.md')
 			if (FileSystem.existsSync(path)) {
-				await FileSystem.promises.writeFile(path, Readme.of(p, Readme.read(path)))
+				await FileSystem.promises.writeFile(path, `${Readme.of(p, Readme.read(path))}\n`)
 			}
 		}))
 	}

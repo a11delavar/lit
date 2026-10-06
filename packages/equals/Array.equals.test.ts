@@ -20,4 +20,12 @@ describe('Array.prototype.equals', () => {
 		expect(set1[equals](set2)).toBe(false)
 		expect(set2[equals](set1)).toBe(false)
 	})
+
+	it('should compare holes with the values at their index', () => {
+		// eslint-disable-next-line no-sparse-arrays
+		const sparse = [1, , 3]
+
+		expect(sparse[equals]([1, 2, 3])).toBe(false)
+		expect(sparse[equals]([1, undefined, 3])).toBe(true)
+	})
 })

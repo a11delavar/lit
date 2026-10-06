@@ -30,7 +30,7 @@ describe('style', () => {
 		for (const { value, expected } of [
 			{ value: null, expected: '' },
 			{ value: undefined, expected: '' },
-			{ value: 'red', expected: 'red' }
+			{ value: 'red', expected: 'red' },
 		]) {
 			it(`should handle setting value ${value}`, async () => {
 				fixture.component.declaration = { color: value as any }

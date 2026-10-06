@@ -1,6 +1,6 @@
 # `Controller` class
 
-A base class for [reactive controllers](https://lit.dev/docs/composition/controllers/) which registers itself with its host, so implementations only define the callbacks they are interested in.
+A base class for [reactive controllers](https://lit.dev/docs/composition/controllers/) that registers itself with its host. Implementations only define the callbacks they are interested in.
 
 ```ts
 import { Controller } from '@a11d/lit'

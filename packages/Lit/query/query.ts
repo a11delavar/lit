@@ -7,7 +7,7 @@ export const query = (selector: string) => {
 		Object.defineProperty(prototype, propertyKey, {
 			get(this: ReactiveElement | Controller) {
 				return this[host]?.renderRoot?.querySelector(selector) ?? undefined
-			}
+			},
 		})
 	}
 }

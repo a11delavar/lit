@@ -110,7 +110,6 @@ describe('BindingIntegration', () => {
 		expect(fixtureNotAppliedNotRequiredConflict.component.input.required).toBe(true)
 	})
 
-
 	/**
 	 * Copies a label off the bound source onto the target, which is what a design-system integration does:
 	 * it decorates the *target* and never touches the source.
@@ -145,7 +144,7 @@ describe('BindingIntegration', () => {
 	describe('mode', () => {
 		@component('test-binding-integration-mode')
 		class TestBindingIntegrationMode extends Component {
-			@property({ type: Object }) source: Source = new WritableSource
+			@property({ type: Object }) source: Source = new WritableSource()
 			@property({ type: Boolean }) forceTwoWay = false
 
 			private readonly binder = new Binder<Source>(this, 'source')
@@ -166,7 +165,7 @@ describe('BindingIntegration', () => {
 		`)
 
 		describe('with a writable source', () => {
-			const fixture = fixtureOf(new WritableSource)
+			const fixture = fixtureOf(new WritableSource())
 
 			it('should bind the value', () => {
 				expect(fixture.component.input.value).toBe('writable value')
@@ -182,7 +181,7 @@ describe('BindingIntegration', () => {
 		 * *value* travels. The integration decorates the target either way, so it has to run either way.
 		 */
 		describe('with a read-only source', () => {
-			const fixture = fixtureOf(new ReadOnlySource)
+			const fixture = fixtureOf(new ReadOnlySource())
 
 			it('should bind the value', () => {
 				expect(fixture.component.input.value).toBe('read-only value')
@@ -195,7 +194,7 @@ describe('BindingIntegration', () => {
 
 		/** Forcing the mode is what isolates the direction as the cause: nothing else about this binding differs. */
 		describe('with a read-only source bound two-way explicitly', () => {
-			const fixture = fixtureOf(new ReadOnlySource, true)
+			const fixture = fixtureOf(new ReadOnlySource(), true)
 
 			it('should bind the value', () => {
 				expect(fixture.component.input.value).toBe('read-only value')

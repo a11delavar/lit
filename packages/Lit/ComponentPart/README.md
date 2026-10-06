@@ -1,6 +1,6 @@
 # `ComponentPart` class
 
-A `ComponentPart` is a part of a component, extracted into a class of its own **without introducing a component boundary**.
+A part of a component, extracted into a class of its own **without introducing a component boundary**.
 
 A part contributes a `template` to its host and may declare its own state, queries, events and event listeners with the very same decorators a component uses. As a part shares the update lifecycle of its host, changing the state of a part re-renders the host as a whole — no properties have to be passed down and no updates have to be propagated by hand.
 

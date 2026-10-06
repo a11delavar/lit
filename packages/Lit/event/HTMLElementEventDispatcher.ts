@@ -13,7 +13,7 @@ export class HTMLElementEventDispatcher<T = void> implements EventDispatcher<T> 
 		this.element.dispatchEvent(
 			value instanceof CustomEvent
 				? value
-				: new CustomEvent<T>(this.type, { detail: value, ...this.options })
+				: new CustomEvent<T>(this.type, { detail: value, ...this.options }),
 		)
 	}
 

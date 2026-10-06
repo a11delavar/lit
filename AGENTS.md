@@ -79,7 +79,7 @@ A new package also needs a reference in the root `tsconfig.json`, `npm install` 
 
 ## Code style
 
-- Tabs, LF, no final newline (`.editorconfig`, and `eol-last: never` in lint). Single quotes, no semicolons, no `public` keyword, `import { type X }` for types, no `console`, no duplicate imports.
+- Tabs, LF, a final newline in every file (`.editorconfig`, and `eol-last` in lint). Single quotes, no semicolons, no `public` keyword, `import { type X }` for types, no `console`, no duplicate imports.
 - Comments: a JSDoc header on what renders in the docs, and one line inside code only where a reader would otherwise undo it. No narration.
 - Scripts run through node's type stripping, which rejects TypeScript that is not erasable: no parameter properties, enums or namespaces. They import each other with `.ts` extensions.
 

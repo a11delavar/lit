@@ -3,9 +3,9 @@ import { equals } from './symbol.js'
 
 describe('Object.prototype.equals', () => {
 	it('should compare two objects', () => {
-		const a = { a: 1, b: new Date, c: { d: 1 } }
-		const b = { a: 1, b: new Date, c: { d: 1 } }
-		const c = { a: 1, b: new Date, c: { d: 2 } }
+		const a = { a: 1, b: new Date(), c: { d: 1 } }
+		const b = { a: 1, b: new Date(), c: { d: 1 } }
+		const c = { a: 1, b: new Date(), c: { d: 2 } }
 
 		expect(a[equals](b)).toBe(true)
 		expect(b[equals](a)).toBe(true)

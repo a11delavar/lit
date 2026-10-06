@@ -47,7 +47,7 @@ export const eventListener = (...eventListenerOptions: EventListenerDecoratorOpt
 							: descriptor.value
 					).call(context, event)
 				}
-			}
+			}()
 		})
 	}
 }

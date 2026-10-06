@@ -10,5 +10,5 @@ await FileSystem.promises.rm(directory, { recursive: true, force: true })
 for (const [path, content] of LlmsText.files()) {
 	const target = Path.join(directory, path)
 	await FileSystem.promises.mkdir(Path.dirname(target), { recursive: true })
-	await FileSystem.promises.writeFile(target, content)
+	await FileSystem.promises.writeFile(target, `${content}\n`)
 }

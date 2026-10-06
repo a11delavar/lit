@@ -1,7 +1,7 @@
 {
 	"name": "@a11d/is-writable",
-	"version": "1.0.3",
-	"description": "A function on the Object constructor that determines if a property is writable.",
+	"version": "1.0.4",
+	"description": "Object.isWritable, telling whether a property can be assigned, considering descriptors, accessors, freezing and prototypes.",
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/a11delavar/lit.git",
