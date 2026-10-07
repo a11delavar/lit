@@ -172,7 +172,7 @@ class MyParentComponent extends Component {
 
 ### Server-Side Rendering
 
-A server renders attribute, boolean attribute and property bindings with the source's value, but no element bindings, as Lit renders no element directives on a server. Hydration assumes an element's first render in the browser to equal the server's, so an element binding whose value changes what the element renders leaves it as the server rendered it. Server-rendered templates therefore bind the default property by name:
+A server renders attribute, boolean attribute and property bindings with the source's value, but no element bindings, as Lit renders no element directives on a server. In the browser, an element binding runs while the parent hydrates, before the element does, so the element's first render has the value the server's did not. That is fine as long as the value changes only the element's attributes, which hydration writes; where it changes text or a template choice, bind the default property by name, which the server renders too:
 
 ```ts
 html`<my-component .value=${bind(this, 'value')}></my-component>`

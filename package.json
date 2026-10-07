@@ -18,6 +18,7 @@
 	"devDependencies": {
 		"@3mo/commit-analyzer": "x",
 		"@a11d/eslint-config": "x",
+		"@lit-labs/ssr-client": "1.x",
 		"@types/node": "26.x",
 		"@typescript/native-preview": "latest",
 		"@vitest/browser-playwright": "5.x",
