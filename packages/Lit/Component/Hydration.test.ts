@@ -1,6 +1,6 @@
 import '@lit-labs/ssr-client/lit-element-hydrate-support.js'
 import { digestForTemplateResult } from '@lit-labs/ssr-client'
-import { Component, Controller, html } from '../index.js'
+import { Component, Controller, html, property } from '../index.js'
 
 describe('Hydration', () => {
 	const template = html`<slot></slot>`
@@ -8,6 +8,9 @@ describe('Hydration', () => {
 	class TestHydrationComponent extends Component {
 		readonly renders = new Array<boolean>()
 		readonly hostUpdates = new Array<boolean>()
+		readonly sizeUpdates = new Array<string>()
+
+		@property({ updated(this: TestHydrationComponent, size: string) { this.sizeUpdates.push(size) } }) size = 'small'
 
 		readonly controller = new class extends Controller {
 			override hostUpdated() {
@@ -54,6 +57,16 @@ describe('Hydration', () => {
 
 			expect(element.renders).toEqual([false])
 			expect(element.hostUpdates).toEqual([false])
+		})
+
+		it('should run the updated hooks of properties, which Lit\'s hydration support must not bypass', async () => {
+			const element = document.createElement('test-hydration-component') as TestHydrationComponent
+			container.append(element)
+			await settle(element)
+			element.size = 'large'
+			await settle(element)
+
+			expect(element.sizeUpdates).toEqual(['small', 'large'])
 		})
 	})
 

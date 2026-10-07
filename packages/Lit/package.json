@@ -1,6 +1,6 @@
 {
 	"name": "@a11d/lit",
-	"version": "0.14.0",
+	"version": "0.14.1",
 	"description": "A layer over Lit with a component base class, controllers, element references, two-way binding and typed events.",
 	"repository": {
 		"type": "git",

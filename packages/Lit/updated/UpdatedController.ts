@@ -1,4 +1,4 @@
-import { ReactiveElement, type PropertyValues } from 'lit'
+import { LitElement, ReactiveElement, type PropertyValues } from 'lit'
 import { Controller } from '../Controller/index.js'
 import { host, type HostProvider } from '../host.js'
 import { getChangedPropertyKey } from './getChangedPropertyKey.js'
@@ -9,11 +9,17 @@ type ReactiveControllerWithChangedProperties<T extends ReactiveElement = Reactiv
 	[changedPropertiesKey]?: PropertyValues
 }
 
-const originalUpdate = ReactiveElement.prototype['update']
-ReactiveElement.prototype['update'] = function (this: ReactiveElement, changedProperties: PropertyValues) {
-	(this as ReactiveControllerWithChangedProperties)[changedPropertiesKey] = changedProperties
-	return originalUpdate.call(this, changedProperties)
+const recordChangedProperties = (prototype: ReactiveElement) => {
+	const update = prototype['update']
+	prototype['update'] = function (this: ReactiveElement, changedProperties: PropertyValues) {
+		(this as ReactiveControllerWithChangedProperties)[changedPropertiesKey] = changedProperties
+		return update.call(this, changedProperties)
+	}
 }
+
+recordChangedProperties(ReactiveElement.prototype)
+// Lit's hydration support replaces LitElement's update with one calling the ReactiveElement update it captured before this module ran
+recordChangedProperties(LitElement.prototype)
 
 export type UpdatedCallback<T> = (value: T, oldValue: T) => void
 
