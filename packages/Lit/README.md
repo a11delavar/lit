@@ -48,6 +48,10 @@ npm install @a11d/lit
 | `event` | function |  |
 | `bindingDefaultProperty` | function |  |
 | `associatedEvent` | function |  |
+| `findAssociatedEventDispatcher` | function | Resolves the `EventDispatcher` associated with a property, or `undefined` if there is none. |
+| `findAssociatedEvent` | function | Resolves the event associated with a property, or `undefined` if no association can be found. |
+| `getAssociatedEvent` | function | Resolves the event associated with a property, falling back to the default associated event. |
+| `dispatchAssociatedEvent` | function | Dispatches the event associated with a property *on the source itself*, so that whoever observes the source - and not whoever happens to sit inside of it - is notified of the change. |
 | `BindingMode` | enum |  |
 | `component` | const |  |
 | `host` | const | The symbol resolving the `ReactiveElement` which owns the update lifecycle of a given context. |
@@ -60,6 +64,7 @@ npm install @a11d/lit
 | `extractEventHandler` | const | The function an event listener runs, which for a template's event binding also passes on what the bound function returns. |
 | `bindingDefaultPropertyKey` | const |  |
 | `associatedEventsByPropertiesKey` | const |  |
+| `defaultAssociatedEvent` | const | The event associated with a property when neither an explicit nor an implicit association can be found. |
 | `bind` | const |  |
 | `bindingIntegrations` | const |  |
 | `bindingIntegration` | const |  |
