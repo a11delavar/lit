@@ -6,11 +6,11 @@ export class PropertyValueBinder extends ValueBinder<PropertyPart | AttributePar
 		return this.part.element
 	}
 
-	get property() {
+	get targetProperty() {
 		return this.part.name
 	}
 
 	get template() {
-		return this.mode === BindingMode.OneWayToSource ? noChange : this.sourceValue
+		return this.mode === BindingMode.OneWayToSource ? noChange : this.value
 	}
 }

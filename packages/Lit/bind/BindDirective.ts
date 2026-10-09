@@ -3,6 +3,7 @@ import '@a11d/key-path'
 import { type ValueBinder } from './ValueBinder.js'
 import { PropertyValueBinder } from './PropertyValueBinder.js'
 import { DefaultPropertyBinder } from './DefaultPropertyBinder.js'
+import { Property } from './Property.js'
 
 export enum BindingMode {
 	/**
@@ -30,23 +31,24 @@ export enum BindingMode {
  */
 export type BindSource = Pick<ReactiveElement, 'requestUpdate'>
 
-export type BindDirectiveParameters<Component extends BindSource, Property extends keyof Component> = [
+export type BindDirectiveParameters<Component extends BindSource, ComponentProperty extends keyof Component> = [
 	component: Component,
-	property: Property,
-	options?: BindDirectiveParametersOptions<Component[Property]>,
+	property: Property<Component[ComponentProperty]> | ComponentProperty,
+	options?: BindDirectiveParametersOptions<Component[ComponentProperty]>,
 ]
 
 export type BindDirectiveParametersOptions<Data> = {
 	keyPath?: KeyPath.Of<Data>
 	mode?: BindingMode
 	event?: string
+	dispatchChangeEvent?: boolean
 	sourceUpdate?: (value: Data) => void
 	sourceUpdated?: (value: Data) => void
 }
 
 type BindDirectivePart = ElementPart | AttributePart | BooleanAttributePart | PropertyPart
 
-class BindDirective<Component extends BindSource, Property extends keyof Component> extends AsyncDirective {
+class BindDirective<Component extends BindSource, ComponentProperty extends keyof Component> extends AsyncDirective {
 	#valueBinder?: ValueBinder<BindDirectivePart>
 
 	constructor(partInfo: PartInfo) {
@@ -57,14 +59,15 @@ class BindDirective<Component extends BindSource, Property extends keyof Compone
 	}
 
 	// The server only calls `render`, so without a binder the source value is rendered into attributes and properties:
-	render(...[component, property, options]: BindDirectiveParameters<Component, Property>) {
+	render(...[component, property, options]: BindDirectiveParameters<Component, ComponentProperty>) {
+		const source = property instanceof Property ? property.get?.() : component[property]
 		return this.#valueBinder ? this.#valueBinder.template
 			: options?.mode === BindingMode.OneWayToSource ? noChange
-				: options?.keyPath ? KeyPath.get(component[property] as any, options.keyPath as string)
-					: component[property]
+				: options?.keyPath ? KeyPath.get(source as any, options.keyPath as string)
+					: source
 	}
 
-	override update(part: BindDirectivePart, parameters: BindDirectiveParameters<Component, Property>) {
+	override update(part: BindDirectivePart, parameters: BindDirectiveParameters<Component, ComponentProperty>) {
 		if (!this.#valueBinder) {
 			this.#valueBinder = [PartType.PROPERTY, PartType.BOOLEAN_ATTRIBUTE, PartType.ATTRIBUTE].includes(part.type as any)
 				? new PropertyValueBinder(part as any, parameters)
@@ -85,6 +88,6 @@ class BindDirective<Component extends BindSource, Property extends keyof Compone
 	}
 }
 
-export const bind = <Component extends BindSource, Property extends keyof Component>(...parameters: BindDirectiveParameters<Component, Property>) => {
-	return (directive(BindDirective) as any)(...parameters) as DirectiveResult<typeof BindDirective<Component, Property>>
+export const bind = <Component extends BindSource, ComponentProperty extends keyof Component>(...parameters: BindDirectiveParameters<Component, ComponentProperty>) => {
+	return (directive(BindDirective) as any)(...parameters) as DirectiveResult<typeof BindDirective<Component, ComponentProperty>>
 }
