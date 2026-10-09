@@ -42,6 +42,12 @@ export type BindDirectiveParametersOptions<Data> = {
 	event?: string
 	sourceUpdate?: (value: Data) => void
 	sourceUpdated?: (value: Data) => void
+	/**
+	 * Dispatches the event associated with the bound property on the source itself, whenever the
+	 * source is updated by the target. Nothing is dispatched when the property has no associated
+	 * event. Defaults to `false`.
+	 */
+	dispatchAssociatedEvent?: boolean
 }
 
 type BindDirectivePart = ElementPart | AttributePart | BooleanAttributePart | PropertyPart

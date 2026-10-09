@@ -1,5 +1,5 @@
 import { ComponentTestFixture } from '@a11d/lit-testing'
-import { event, Component, html, property, state, query, staticHtml, literal, unsafeStatic, noChange, PartType, type TemplateResult, type StaticValue } from '../index.js'
+import { event, Component, html, nothing, property, render, state, query, staticHtml, literal, unsafeStatic, noChange, PartType, type TemplateResult, type StaticValue } from '../index.js'
 import { BindingMode, bind } from './BindDirective.js'
 
 function expectBindToPass<T>(parameters: {
@@ -174,6 +174,101 @@ function expectBindToPass<T>(parameters: {
 		const fixture = new ComponentTestFixture(() => new TestNonDeepTwoWayBinderComponent())
 
 		expectBindingToPass({ fixture, property: 'value', expectedMode: BindingMode.TwoWay })
+	})
+
+	describe('associated event dispatching', () => {
+		class TestDispatchingBinderComponent extends TestBinderComponent {
+			@event() readonly change!: EventDispatcher<T>
+			@state() value = initialValue
+
+			override get template() {
+				return html`${getTemplate(tag, bind(this, 'value', { dispatchAssociatedEvent: true, sourceUpdated: this.sourceUpdated }))}`
+			}
+		}
+		customElements.define(`test-dispatching-binder-component-${tagSuffix}`, TestDispatchingBinderComponent)
+
+		const fixture = new ComponentTestFixture(() => new TestDispatchingBinderComponent())
+
+		it('should dispatch the associated event on the source exactly once', async () => {
+			const received = new Array<T>()
+			fixture.component.change.subscribe(value => received.push(value))
+
+			fixture.component.bindableComponent.change.dispatch(updatedValue)
+			await fixture.updateComplete
+
+			expect(received).toEqual([updatedValue])
+		})
+
+		it('should dispatch the associated event after the source has been updated', async () => {
+			const sourceValues = new Array<T>()
+			fixture.component.change.subscribe(() => sourceValues.push(fixture.component.value))
+
+			fixture.component.bindableComponent.change.dispatch(updatedValue)
+			await fixture.updateComplete
+
+			expect(sourceValues).toEqual([updatedValue])
+		})
+
+		it('should not dispatch the associated event when the target is not the origin of the change', async () => {
+			const received = new Array<T>()
+			fixture.component.change.subscribe(value => received.push(value))
+
+			fixture.component.value = updatedValue
+			await fixture.update()
+
+			expect(received).toEqual([])
+		})
+	})
+
+	describe('associated event dispatching being opted out of', () => {
+		class TestNonDispatchingBinderComponent extends TestBinderComponent {
+			@event() readonly change!: EventDispatcher<T>
+			@state() value = initialValue
+
+			override get template() {
+				return html`${getTemplate(tag, bind(this, 'value', { sourceUpdated: this.sourceUpdated }))}`
+			}
+		}
+		customElements.define(`test-non-dispatching-binder-component-${tagSuffix}`, TestNonDispatchingBinderComponent)
+
+		const fixture = new ComponentTestFixture(() => new TestNonDispatchingBinderComponent())
+
+		it('should not dispatch the associated event by default', async () => {
+			const received = new Array<T>()
+			fixture.component.change.subscribe(value => received.push(value))
+
+			fixture.component.bindableComponent.change.dispatch(updatedValue)
+			await fixture.updateComplete
+
+			expect(fixture.component.sourceUpdated).toHaveBeenCalledExactlyOnceWith(updatedValue)
+			expect(received).toEqual([])
+		})
+	})
+
+	describe('associated event dispatching without an association', () => {
+		class TestUnassociatedBinderComponent extends TestBinderComponent {
+			@event() readonly change!: EventDispatcher<T>
+			@state() unassociated = initialValue
+
+			override get template() {
+				return html`${getTemplate(tag, bind(this, 'unassociated', { dispatchAssociatedEvent: true, sourceUpdated: this.sourceUpdated }))}`
+			}
+		}
+		customElements.define(`test-unassociated-binder-component-${tagSuffix}`, TestUnassociatedBinderComponent)
+
+		const fixture = new ComponentTestFixture(() => new TestUnassociatedBinderComponent())
+
+		it('should update the source but dispatch nothing when the source property has no associated event', async () => {
+			const received = new Array<unknown>()
+			fixture.component.change.subscribe(value => received.push(value))
+			fixture.component.addEventListener('unassociatedChange', e => received.push(e))
+
+			fixture.component.bindableComponent.change.dispatch(updatedValue)
+			await fixture.updateComplete
+
+			expect(fixture.component.unassociated).toBe(updatedValue)
+			expect(received).toEqual([])
+		})
 	})
 
 	describe('two-way binding', () => {
@@ -365,6 +460,159 @@ describe('BindDirective', () => {
 
 		it('should render nothing for a one-way-to-source binding', () => {
 			expect(renderOnServer(bind(source as any, 'value', { mode: BindingMode.OneWayToSource }))).toBe(noChange)
+		})
+	})
+})
+
+describe('BindDirective re-entrancy', () => {
+	describe('of a binding whose associated event is observed', () => {
+		class TestReentrantBinderComponent extends Component {
+			@event() readonly change!: EventDispatcher<string>
+			@state() value = ''
+			@query('input') readonly input!: HTMLInputElement
+
+			readonly sourceUpdated = vi.fn()
+
+			override get template() {
+				return html`<input ${bind(this, 'value', { dispatchAssociatedEvent: true, sourceUpdated: this.sourceUpdated })}>`
+			}
+		}
+		customElements.define('test-reentrant-binder-component', TestReentrantBinderComponent)
+
+		const fixture = new ComponentTestFixture(() => new TestReentrantBinderComponent())
+
+		const changeTargetValue = (value: string) => {
+			fixture.component.input.value = value
+			fixture.component.input.dispatchEvent(new Event('change'))
+		}
+
+		it('should update the source once per target event', () => {
+			changeTargetValue('a')
+
+			expect(fixture.component.sourceUpdated).toHaveBeenCalledTimes(1)
+			expect(fixture.component.value).toBe('a')
+		})
+
+		it('should keep updating the source for subsequent target events', () => {
+			changeTargetValue('a')
+			changeTargetValue('b')
+			changeTargetValue('c')
+
+			expect(fixture.component.sourceUpdated).toHaveBeenCalledTimes(3)
+			expect(fixture.component.value).toBe('c')
+		})
+
+		it('should not re-enter when a listener of the associated event dispatches the target event again', () => {
+			fixture.component.change.subscribe(() => changeTargetValue('feedback'))
+
+			changeTargetValue('a')
+
+			expect(fixture.component.sourceUpdated).toHaveBeenCalledTimes(1)
+			expect(fixture.component.value).toBe('a')
+		})
+
+		it('should keep updating the source after a feedback loop has been broken', () => {
+			const handler = () => changeTargetValue('feedback')
+			fixture.component.change.subscribe(handler)
+			changeTargetValue('a')
+			fixture.component.change.unsubscribe(handler)
+
+			changeTargetValue('b')
+
+			expect(fixture.component.sourceUpdated).toHaveBeenCalledTimes(2)
+			expect(fixture.component.value).toBe('b')
+		})
+	})
+
+	describe('of a binding whose lifecycle callbacks dispatch the target event', () => {
+		class TestReentrantCallbackComponent extends Component {
+			@event() readonly change!: EventDispatcher<string>
+			@state() value = ''
+			@query('input') readonly input!: HTMLInputElement
+
+			readonly sourceUpdate = vi.fn(() => this.redispatch())
+			readonly sourceUpdated = vi.fn(() => this.redispatch())
+
+			private redispatch() {
+				this.input.dispatchEvent(new Event('change'))
+			}
+
+			override get template() {
+				return html`<input ${bind(this, 'value', { dispatchAssociatedEvent: true, sourceUpdate: this.sourceUpdate, sourceUpdated: this.sourceUpdated })}>`
+			}
+		}
+		customElements.define('test-reentrant-callback-component', TestReentrantCallbackComponent)
+
+		const fixture = new ComponentTestFixture(() => new TestReentrantCallbackComponent())
+
+		it('should not re-enter when "sourceUpdate" or "sourceUpdated" dispatch the target event again', () => {
+			fixture.component.input.value = 'a'
+			fixture.component.input.dispatchEvent(new Event('change'))
+
+			expect(fixture.component.sourceUpdate).toHaveBeenCalledTimes(1)
+			expect(fixture.component.sourceUpdated).toHaveBeenCalledTimes(1)
+			expect(fixture.component.value).toBe('a')
+		})
+	})
+
+	describe('of a binding whose source is its own target', () => {
+		class TestReentrantBindableComponent extends Component {
+			@event() readonly change!: EventDispatcher<string>
+			@property({ bindingDefault: true }) value = ''
+		}
+		customElements.define('test-reentrant-bindable-component', TestReentrantBindableComponent)
+
+		const template = (binding: unknown) => html`<test-reentrant-bindable-component ${binding as never}></test-reentrant-bindable-component>`
+
+		let container: HTMLDivElement
+		beforeEach(() => {
+			container = document.createElement('div')
+			document.body.appendChild(container)
+		})
+		afterEach(() => container.remove())
+
+		it('should not re-enter when the source and the target are the same element', () => {
+			render(template(nothing), container)
+			const element = container.firstElementChild as TestReentrantBindableComponent
+			const sourceUpdated = vi.fn()
+			render(template(bind(element, 'value', { dispatchAssociatedEvent: true, sourceUpdated })), container)
+
+			element.change.dispatch('a')
+
+			expect(sourceUpdated).toHaveBeenCalledTimes(1)
+			expect(element.value).toBe('a')
+		})
+	})
+
+	describe('of two bindings on the same element', () => {
+		class TestDoublyBoundComponent extends Component {
+			@event() readonly change!: EventDispatcher<string>
+			@event() readonly otherChange!: EventDispatcher<boolean>
+			@state() value = ''
+			@state() other = false
+			@query('input') readonly input!: HTMLInputElement
+
+			readonly valueUpdated = vi.fn()
+			readonly otherUpdated = vi.fn()
+
+			override get template() {
+				return html`<input
+						.value=${bind(this, 'value', { dispatchAssociatedEvent: true, sourceUpdated: this.valueUpdated })}
+						?disabled=${bind(this, 'other', { dispatchAssociatedEvent: true, sourceUpdated: this.otherUpdated })}
+					>`
+			}
+		}
+		customElements.define('test-doubly-bound-component', TestDoublyBoundComponent)
+
+		const fixture = new ComponentTestFixture(() => new TestDoublyBoundComponent())
+
+		it('should not let the bindings feed each other', () => {
+			fixture.component.input.value = 'a'
+			fixture.component.input.dispatchEvent(new Event('change'))
+
+			expect(fixture.component.valueUpdated).toHaveBeenCalledTimes(1)
+			expect(fixture.component.otherUpdated).toHaveBeenCalledTimes(1)
+			expect(fixture.component.value).toBe('a')
 		})
 	})
 })
